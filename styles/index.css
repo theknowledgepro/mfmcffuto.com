@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* ALL CSS ROOTS FOR THIS PROJECT ALL DEFINED HERE */
+@import url(./root.css);
+
+/* ALL CSS ANIMATIONS KEYFRAMES ARE DEFINED HERE */
+@import url(./keyframes.css);
+
+/* ALL CSS STYLES USUALLY TOGGLED BY JAVASCRIPT AND AS SUCH CANNOT BE IN THE MODULE CSS FORMAT ARE DEFINED HERE */
+@import url(./custom.css);
+
+/* ALL CSS ANIMATIONS ARE DEFINED HERE */
+@import url(./animations.css);
+
+@font-face {
+    font-family: 'FSJoey';
+    src: url('./fonts/ABeeZee-Regular.ttf');
+    font-weight: 500;
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: FSJoey;
+    min-width: 100vw !important;
+    min-height: 100vh !important;
+    height: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    background: var(--app-bg) !important;
+}
+
+*::selection {
+    color: #000;
+    background: var(--color-user-select)
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+figure {
+    margin: 0 0 1rem;
+}
+
+img,
+svg {
+    vertical-align: middle;
+}
+
+table {
+    caption-side: bottom;
+    border-collapse: collapse;
+}
+
+button:focus:not(:focus-visible) {
+    outline: 0;
+}
+
+input,
+button,
+select,
+optgroup,
+textarea {
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+
+
+@media only screen and (max-width:767.98px) {
+    body {
+        font-size: 15px
+    }
+
+    h1,
+    .h1 {
+        font-size: 28px
+    }
+
+    h2,
+    .h2 {
+        font-size: 26px
+    }
+
+    h3,
+    .h3 {
+        font-size: 20px
+    }
+
+    h4,
+    .h4 {
+        font-size: 18px
+    }
+
+    h5,
+    .h5 {
+        font-size: 15px
+    }
+
+    h6,
+    .h6 {
+        font-size: 16px
+    }
+}
