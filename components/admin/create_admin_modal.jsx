@@ -6,7 +6,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import { useDispatch, useSelector } from 'react-redux';
 import { AdminProfileDetails } from '..';
-import { loading } from '@/utils/misc_functions';
+import { isLoading } from '@/utils/get_loading_state';
 import { createAdmin } from '@/redux/actions/auth_action';
 import { LOADING } from '@/config';
 import { validate } from '@/utils/validate';
@@ -65,7 +65,7 @@ const CreateAdminModal = ({ openModal, setOpenModal, children, adminsStore, setA
 			!member_role
 		)
 			return;
-		if (loading(loadingStore, LOADING.CREATE_ADMIN)) return;
+		if (isLoading(LOADING.CREATE_ADMIN, loadingStore)) return;
 		const res = await dispatch(createAdmin({ auth, newAdminData, avatarFile: file }));
 		if (res?.status === 200) {
 			dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res.data.message } });
@@ -92,7 +92,7 @@ const CreateAdminModal = ({ openModal, setOpenModal, children, adminsStore, setA
 						type='CREATEADMIN'
 						onEdit={true}
 						errors={errors}
-						isSubmitting={loading(loadingStore, LOADING.CREATE_ADMIN)}
+						isSubmitting={isLoading(LOADING.CREATE_ADMIN, loadingStore)}
 						file={file}
 						setFile={setFile}
 					/>
@@ -100,17 +100,17 @@ const CreateAdminModal = ({ openModal, setOpenModal, children, adminsStore, setA
 
 				<DialogActions className='w-full flex justify-between items-center'>
 					<Button onClick={handleCreateAdmin} className='w-full mr-2 text-decor-none' variant='contained'>
-						{!loading(loadingStore, LOADING.CREATE_ADMIN) && (
+						{!isLoading(LOADING.CREATE_ADMIN, loadingStore) && (
 							<React.Fragment>
 								<PersonAdd fontSize='small' sx={{ mr: '5px' }} /> Create New Admin
 							</React.Fragment>
 						)}
-						{loading(loadingStore, LOADING.CREATE_ADMIN) && (
+						{isLoading(LOADING.CREATE_ADMIN, loadingStore) && (
 							<CircularProgress style={{ color: 'white', height: '20px', width: '20px', marginRight: '5px' }} />
 						)}
 					</Button>
 
-					{!loading(loadingStore, LOADING.CREATE_ADMIN) && (
+					{!isLoading(LOADING.CREATE_ADMIN, loadingStore) && (
 						<Button onClick={handleClose} className='ml-2 text-decor-none'>
 							Cancel
 						</Button>

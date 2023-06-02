@@ -77,7 +77,7 @@ const AuthController = {
 		try {
 			await connectDB();
 			const redirectObject = {
-				redirect: { destination: SITE_DATA.TYPE === 'ADMIN_AND_USER_AUTH' ? APP_ROUTES.LOGIN : APP_ROUTES.ADMIN_LOGIN, permanent: false },
+				redirect: { destination: APP_ROUTES.LOGIN, permanent: false },
 			};
 
 			const rf_token = req.cookies?.refreshtoken;

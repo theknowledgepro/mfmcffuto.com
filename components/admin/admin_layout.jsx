@@ -511,7 +511,7 @@ const ResponsiveLayout = ({ children }) => {
 	);
 };
 
-const AdminLayout = ({ children, SeoData }) => {
+const AdminLayout = ({ children, metatags }) => {
 	const { isMatchWidth } = UseMediaQuery({ vw: '768px' });
 	const { isBreakpointMd, setIsBreakpointMd } = useAppContext();
 
@@ -525,7 +525,7 @@ const AdminLayout = ({ children, SeoData }) => {
 
 	return (
 		<React.Fragment>
-			<HeadElement SeoData={SeoData} />
+			<HeadElement metatags={metatags} />
 			{isBreakpointMd !== undefined && !isBreakpointMd && <DesktopLayout children={children} />}
 			{isBreakpointMd !== undefined && isBreakpointMd && <ResponsiveLayout children={children} />}
 		</React.Fragment>

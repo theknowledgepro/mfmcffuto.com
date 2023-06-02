@@ -14,6 +14,8 @@ const RawRouter = async (incomingReqObj, incomingResObj) => {
 		// // ** SITE SETTINGS ROUTES
 		// case 'update-site-settings':
 		// 	return authenticate(req, res, RawReqController.updateSiteSettings);
+		// case 'create-admin':
+		// 	return RawReqController.createAdmin(req, res);
 		default:
 			break;
 	}

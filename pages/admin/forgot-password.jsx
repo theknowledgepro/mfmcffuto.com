@@ -9,13 +9,13 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import EmailOutlined from '@mui/icons-material/EmailOutlined';
-import { loading } from '@/utils/misc_functions';
 import Link from 'next/link';
 import { validate } from '@/utils/validate';
-import AuthController from '../api/auth/controller';
-import WebController from '../api/controller';
+import { isLoading } from '@/utils/get_loading_state';
+import WebController from '@/pages/api/controller';
+import AuthController from '@/pages/api/auth/controller';
 
-const ForgotPassword = ({ seoData, settings }) => {
+const ForgotPassword = ({ metatags, settings }) => {
 	const { loading: loadingStore } = useSelector((state) => state);
 	const dispatch = useDispatch();
 
@@ -32,7 +32,7 @@ const ForgotPassword = ({ seoData, settings }) => {
 	const handleSubmit = async () => {
 		setErrors({ email: validate.email({ email }).errMsg });
 		if (validate.email({ email }).errMsg) return;
-		if (loading(loadingStore, LOADING.REQUEST_PASSWORD_RESET_MAIL)) return;
+		if (isLoading(LOADING.REQUEST_PASSWORD_RESET_TOKEN, loadingStore)) return;
 		// const res = await dispatch(requestPasswordResetEmail({ email }));
 		// if (res?.status === 200) {
 		//     setIsSent(true)
@@ -40,23 +40,23 @@ const ForgotPassword = ({ seoData, settings }) => {
 	};
 
 	return (
-		<AuthLayout SeoData={{ ...seoData, meta_title: `Forgot Password | ${SITE_DATA.NAME}` }}>
+		<AuthLayout metatags={{ ...metatags, meta_title: `Forgot Password | ${SITE_DATA.NAME}` }}>
 			<section className={`${lgn_styse.parent} row`}>
-				<div className='px-2 pt-5 pb-2 col-12 flex-centered-column'>
+				<div className='px-2 pt-5 pb-2 col-12 flex flex-col items-center justify-center'>
 					<div className={`card card-primary ${lgn_styse.auth_box}`}>
 						<AuthTopArea settings={settings} title={'Forgot Password?'} />
 
 						<div className={lgn_styse.auth_form_field}>
 							{!isSent && (
 								<React.Fragment>
-									<div className='flex-end w-100'>
+									<div className='flex place-items-end w-full'>
 										<EmailOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 0.5 }} />
 										<TextField
 											onChange={handleChangeInput}
 											value={email}
 											type={'email'}
 											color='primary'
-											className='mt-3 w-100'
+											className='mt-3 w-full'
 											name='email'
 											label='Email Address'
 											variant='standard'
@@ -64,7 +64,7 @@ const ForgotPassword = ({ seoData, settings }) => {
 											error={errors.email ? true : false}
 										/>
 									</div>
-									<div className='text-muted mt-3 small'>
+									<div className='text-muted text-center mt-3 text-sm'>
 										Kindly provide your email address to receive password reset instructions.
 									</div>
 
@@ -73,23 +73,24 @@ const ForgotPassword = ({ seoData, settings }) => {
 										onClick={handleSubmit}
 										color='primary'
 										className={`${lgn_styse.auth_btn} btn-animated mt-5`}>
-										{loading(loadingStore, LOADING.REQUEST_PASSWORD_RESET_MAIL) && (
+										{isLoading(LOADING.REQUEST_PASSWORD_RESET_TOKEN, loadingStore) && (
 											<CircularProgress style={{ color: 'white', height: '20px', width: '20px', marginRight: '5px' }} />
 										)}
-										{!loading(loadingStore, LOADING.REQUEST_PASSWORD_RESET_MAIL) && 'Request for Password Reset!'}
+										{!isLoading(LOADING.REQUEST_PASSWORD_RESET_TOKEN, loadingStore) && 'Request for Password Reset!'}
 									</Button>
 								</React.Fragment>
 							)}
 
-							<div className='mt-2 mb-3 w-100 flex-centered-row'>
+							<div className='mt-2 mb-3 w-full text-center'>
 								<Link href={APP_ROUTES.LOGIN} className={lgn_styse.home_link}>
-									{' '}
-									Back to Login{' '}
+									Back to Login
 								</Link>
 							</div>
 						</div>
 					</div>
-					<div className='text-center text-muted fs-14'>&copy; 2023 {SITE_DATA.OFFICIAL_NAME}</div>
+					<div className='text-center text-gray-500 text-sm font-semibold'>
+						&copy; {new Date().getFullYear()} {SITE_DATA.OFFICIAL_NAME}
+					</div>
 				</div>
 			</section>
 		</AuthLayout>
@@ -101,7 +102,7 @@ export async function getServerSideProps({ req, res }) {
 	const verifyUserAuth = await AuthController.generateAccessToken(req, res);
 	if (verifyUserAuth?.user && verifyUserAuth?.access_token) {
 		return {
-			redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false },
+			redirect: { destination: APP_ROUTES.DASHBOARD, permanent: false },
 		};
 	}
 	// ** GET SITE SETTINGS
@@ -110,7 +111,7 @@ export async function getServerSideProps({ req, res }) {
 	return {
 		props: {
 			settings: settings,
-			seoData: {},
+			metatags: {},
 		},
 	};
 }

@@ -12,26 +12,58 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 import lgn_styse from './admin_styles.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '@/redux/actions/auth_action';
 import { isLoading } from '@/utils/get_loading_state';
-// import WebController from '@/pages/api/controller';
-// import AuthController from '@/pages/api/auth/controller';
+import { GLOBALTYPES } from '@/redux/types';
+import WebController from '@/pages/api/controller';
+import AuthController from '@/pages/api/auth/controller';
 
-const Login = ({ metatags, redirectProps, sitesettings }) => {
+const Login = ({ metatags, redirectProps, siteite }) => {
 	const { loading: loadingStore, redirect } = useSelector((state) => state);
 	const dispatch = useDispatch();
 
-	// ** PUSH 'redirectProps' TO REDIRECT STORE FOR AUTO NAVIGATION ON USER AUTH
-	React.useEffect(() => {
+	// ** PUSH 'redirectProps' TO REDIRECT STORE FOR AUTO NAVIGATION ON USER LOGIN SUCCESS ** SEE '/_persistlayout.js' and 'README.md' FOR IMPLEMENTATION AND CLARITY...
+	useEffect(() => {
+		if (!redirectProps) return;
+		const queryKeys = Object.keys(redirectProps);
+		const queryValues = Object.values(redirectProps);
+
+		const queryParamsKeys = queryKeys.filter((index) => index !== 'base' && index !== 'sub' && index !== 'view');
+		const queryParamsValues = queryValues.filter(
+			(index) => index !== redirectProps.base && index !== redirectProps.sub && index !== redirectProps.view
+		);
 		const url = `/${redirectProps.base ? redirectProps.base + '/' : ''}${redirectProps.sub ? redirectProps.sub : ''}${
 			redirectProps.view ? '/' + redirectProps.view : ''
-		}`;
+		}${queryParamsKeys.length > 0 ? '?' : ''}${queryParamsKeys
+			.map((elem, i) => {
+				return `${queryParamsKeys[i]}=${queryParamsValues[i]}${queryParamsKeys[i + 1] !== undefined ? '&' : ''}`;
+			})
+			.join('')}`;
 
-		redirectProps?.base && dispatch({ type: GLOBALTYPES.REDIRECT, payload: { url: url.trim() } });
-		redirectProps?.base && dispatch({ type: GLOBALTYPES.TOAST, payload: { info: 'Please login to continue!', title: 'Hey there!' } });
+		Object.keys(redirectProps).includes('base') &&
+			dispatch({
+				type: GLOBALTYPES.REDIRECT,
+				payload: { url: url.trim() },
+			});
+		Object.keys(redirectProps).includes('base') &&
+			dispatch({
+				type: GLOBALTYPES.TOAST,
+				payload: {
+					info: 'Please login to continue!',
+					title: 'Hey there!',
+				},
+			});
+		Object.keys(redirectProps).includes('error') &&
+			dispatch({
+				type: GLOBALTYPES.TOAST,
+				payload: {
+					error: redirectProps?.error,
+					title: 'Error!',
+				},
+			});
 	}, [redirectProps]);
 
 	const [userData, setUserData] = React.useState({ username: '', password: '' });
@@ -63,7 +95,7 @@ const Login = ({ metatags, redirectProps, sitesettings }) => {
 			<section className={`${lgn_styse.parent} row`}>
 				<div className='px-2 pt-5 pb-2 col-12 flex flex-col items-center justify-center'>
 					<div className={`card card-primary ${lgn_styse.auth_box}`}>
-						<AuthTopArea sitesettings={sitesettings} title={'Admin Login'} />
+						<AuthTopArea siteite={siteite} title={'Admin Login'} />
 
 						<div className={lgn_styse.auth_form_field}>
 							<div className='flex place-items-end w-full mt-4'>
@@ -106,7 +138,7 @@ const Login = ({ metatags, redirectProps, sitesettings }) => {
 								/>
 							</div>
 							<div className={lgn_styse.forgot_pass}>
-								<Link href={APP_ROUTES.ADMIN_FORGOT_PASSWORD} className={lgn_styse.forgot_pass_link}>
+								<Link href={APP_ROUTES.FORGOT_PASSWORD} className={lgn_styse.forgot_pass_link}>
 									Forgot Password?
 								</Link>
 							</div>
@@ -125,7 +157,9 @@ const Login = ({ metatags, redirectProps, sitesettings }) => {
 							</div>
 						</div>
 					</div>
-					<div className='text-center text-sm text-gray-500 font-semibold'>&copy; 2023 {SITE_DATA.OFFICIAL_NAME}</div>
+					<div className='text-center text-sm text-gray-500 font-semibold'>
+						&copy; {new Date().getFullYear()} {SITE_DATA.OFFICIAL_NAME}
+					</div>
 				</div>
 			</section>
 		</AuthLayout>
@@ -134,21 +168,20 @@ const Login = ({ metatags, redirectProps, sitesettings }) => {
 
 export async function getServerSideProps({ req, res, query }) {
 	// ** REDIRECT TO DEFAULT HOME IF COOKIE EXISTS
-	// const verifyUserAuth = await AuthController.generateAccessToken(req, res);
-	// if (verifyUserAuth?.user && verifyUserAuth?.access_token) {
-	// 	return {
-	// 		redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false },
-	// 	};
-	// }
-	// ** GET SITE SETTINGS
-	// const settings = await WebController.getSiteSettings(req, res);
+	const verifyUserAuth = await AuthController.generateAccessToken(req, res);
+	if (verifyUserAuth?.user && verifyUserAuth?.access_token) {
+		return {
+			redirect: { destination: APP_ROUTES.DASHBOARD, permanent: false },
+		};
+	}
+	//** GET SITE ite
+	const settings = await WebController.getSiteSettings(req, res);
 
-	console.log({ req });
 	return {
 		props: {
 			metatags: {},
 			redirectProps: query,
-			settings: {},
+			sitesettings: settings,
 		},
 	};
 }

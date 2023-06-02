@@ -3,6 +3,7 @@
 import { MEMBER_ROLES } from '@/config';
 import mongoose from 'mongoose';
 const { v4: uuidv4 } = require('uuid');
+const { SITE_DATA } = require('@/config');
 
 const UserSchema = new mongoose.Schema(
 	{
@@ -74,6 +75,6 @@ const UserSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
-const DB = mongoose.connection.useDb('greenexperientials');
+const DB = mongoose.connection.useDb(SITE_DATA.MONGODB_DB_NAME);
 
 module.exports = DB.models.User || DB.model('User', UserSchema);

@@ -5,6 +5,7 @@ import { APP_ROUTES, MEMBER_ROLES, SITE_DATA } from '@/config';
 import React from 'react';
 import { Typography } from '@mui/material';
 import FlutterDashIcon from '@mui/icons-material/FlutterDash';
+import CheckAdminRestriction from '@/middlewares/check_admin_restriction';
 import { DispatchUserAuth } from '@/utils/misc_functions';
 import AuthController from '@/pages/api/auth/controller';
 
@@ -12,7 +13,7 @@ const Dashboard = ({ userAuth }) => {
 	// ** DISPATCH USER AUTH
 	DispatchUserAuth({ userAuth });
 	return (
-		<AdminLayout metatags={{ meta_title: `Admin Dashboard | ${SITE_DATA.NAME}` }}>
+		<AdminLayout SeoData={{ meta_title: `Admin Dashboard | ${SITE_DATA.NAME}` }}>
 			<Typography
 				sx={{ fontWeight: '700', mt: 2, mb: 3, fontSize: { xs: '20px', sm: '22px', md: '30px' }, alignItems: 'center', display: 'flex' }}
 				className='color-primary'>
@@ -34,6 +35,11 @@ export async function getServerSideProps({ req, res }) {
 		return {
 			redirect: { destination: APP_ROUTES.NOT_FOUND, permanent: false },
 		};
+
+	// REDIRECT TO DASHBOARD IF ADMIN IS RESTRICTED TO VIEW THIS PAGE
+	const isRestricted = await CheckAdminRestriction({ page: APP_ROUTES.DASHBOARD, adminId: verifyUserAuth?.user?._id });
+	console.log({ isRestricted });
+	// if (isRestricted) return { redirect: { destination: APP_ROUTES.DASHBOARD, permanent: false } };
 
 	return {
 		props: {

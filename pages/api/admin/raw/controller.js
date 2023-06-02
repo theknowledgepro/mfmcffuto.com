@@ -59,7 +59,6 @@ const RawReqController = {
 				mobile,
 				member_role,
 				avatar,
-				avatar_public_id,
 			});
 			await newAdmin.save();
 

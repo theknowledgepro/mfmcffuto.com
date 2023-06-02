@@ -22,7 +22,7 @@ export const ACTIVITY_TYPES = {
  */
 
 import mongoose from 'mongoose';
-const MONGODB_URI = process.env.PROD_ENV === 'production' ? process.env.DATABASE_URL : process.env.PROD_DATABASE_URL;
+const MONGODB_URI = process.env.PROD_ENV === 'production' ? process.env.DATABASE_URL : process.env.DEV_DATABASE_URL;
 
 if (!MONGODB_URI) throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
 
