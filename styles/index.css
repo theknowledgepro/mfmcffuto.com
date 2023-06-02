@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 /* ALL CSS ROOTS FOR THIS PROJECT ALL DEFINED HERE */
 @import url(./root.css);
 

@@ -2,10 +2,6 @@ import { useDispatch } from "react-redux";
 import { useEffect } from 'react'
 import { GLOBALTYPES } from "@/redux/types";
 
-export const loading = (loadingStore, key) => {
-    return loadingStore.find(index => Object.keys(index)[0] === key);
-}
-
 // ** USED TO DISPATCH 'userAuth' TO REDUX 'auth' STATE
 export const DispatchUserAuth = ({ userAuth }) => {
     const dispatch = useDispatch();
