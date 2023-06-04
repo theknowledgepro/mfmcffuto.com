@@ -57,7 +57,7 @@ const requestPasswordResetOTPEmail = ({ email, OTP, expiresIn }) => {
 		to: ['promisedera@officehotspot.com'],
 		subject: 'Password Reset OTP',
 		replacements: { email, OTP, expiresIn },
-		htmlTemplate: './request_password_reset_otp.handlebars',
+		htmlTemplate: 'request_password_reset_otp.handlebars',
 	});
 };
 
