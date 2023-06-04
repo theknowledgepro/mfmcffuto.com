@@ -32,8 +32,10 @@ const mailHandler = async ({ from, to, subject, replacements, htmlTemplate, atta
 			pass: process.env.AWS_SMTP_PASSWORD,
 		},
 	});
-	const rootDir = path.join(process.cwd());
-    const source = await fs.readFileSync(rootDir + `/mails/${htmlTemplate}`, 'utf8').toString();
+	// const rootDir = path.join(process.cwd());
+    // const source = await fs.readFileSync(rootDir + `/mails/${htmlTemplate}`, 'utf8').toString();
+	const filePath = path.join(__dirname, htmlTemplate);
+	const source = fs.readFileSync(filePath, 'utf-8').toString();
 	const template = handlebars.compile(source);
 	const htmlToSend = template(replacements);
 	const mailOptions = {
@@ -57,7 +59,7 @@ const requestPasswordResetOTPEmail = ({ email, OTP, expiresIn }) => {
 		to: ['promisedera@officehotspot.com'],
 		subject: 'Password Reset OTP',
 		replacements: { email, OTP, expiresIn },
-		htmlTemplate: 'request_password_reset_otp.handlebars',
+		htmlTemplate: './request_password_reset_otp.handlebars',
 	});
 };
 
