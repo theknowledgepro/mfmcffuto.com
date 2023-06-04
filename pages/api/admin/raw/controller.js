@@ -22,7 +22,6 @@ const RawReqController = {
 			const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.CREATE_ADMIN, adminId: req?.user?._id });
 			if (isRestricted) return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 
-
 			const { firstname, secondname, lastname, username, email, password, gender, mobile, member_role } = req.body;
 
 			if (validate.email({ email }).isInValid) return responseLogic({ req, res, status: 400, data: { message: 'Invalid email address!' } });
