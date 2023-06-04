@@ -8,7 +8,7 @@ const Users = require('@/models/user_model');
 const { createAccessToken, createRefreshToken, ExpiresIn } = require('@/middlewares/create_jwt_token');
 const activityLog = require('@/middlewares/activity_log');
 const { APP_ROUTES, SITE_DATA } = require('@/config');
-const { requestPasswordResetOTPEmail } = require('@/mails');
+const { requestPasswordResetOTPEmail } = require('../mails');
 const randomNumberGenerator = (length) => {
 	let numbers = '';
 	for (var i = 0; i < length; i++) {
@@ -136,26 +136,17 @@ const AuthController = {
 
 			const user = await Users.findOne({ email });
 			if (!user) return responseLogic({ req, res, status: 400, data: { message: 'This email does not exist in our records!' } });
-
 			const otp_secret = user?.otp_secret;
 
-			const { err, result } = await new Promise((resolve, reject) => {
-				jwt.verify(otp_secret, process.env.RESET_PASSWORD_TOKEN_SECRET, async (err, result) => {
-					if (err) reject({ err }); // ** THE ONLY POSSIBLE ERROR WILL BE THAT OF EXPIRY SINCE OTP_SECRET WAS FETCHED FROM DB...
-					if (result?.OTP !== OTPValue) reject({ err: 'The value you entered is incorrect!' });
+			const { result } = await new Promise((resolve, reject) => {
+				return jwt.verify(otp_secret, process.env.RESET_PASSWORD_TOKEN_SECRET, async (err, result) => {
+					if (err) reject(new Error('The OTP you entered is expired!')); // ** THE ONLY POSSIBLE ERROR WILL BE THAT OF EXPIRY SINCE OTP_SECRET WAS FETCHED FROM DB...
+					if (result?.OTP !== OTPValue) reject(new Error('The value you entered is incorrect!'));
 					resolve({ result });
 				});
 			});
 
-			// console.log({ err, result });
-
-			if (err === 'The value you entered is incorrect!') {
-				return responseLogic({ req, res, status: 400, data: { message: 'The value you entered is incorrect!' } });
-			} else if (err?.exp) {
-				return responseLogic({ req, res, status: 400, data: { message: 'The OTP you entered is expired!' } });
-			} else {
-				return responseLogic({ req, res, status: 200, data: { message: 'Your OTP was verified succesfully!' } });
-			}
+			return responseLogic({ req, res, status: 200, data: { message: 'Your OTP was verified succesfully!' } });
 		} catch (err) {
 			return responseLogic({ res, catchError: err });
 		}
