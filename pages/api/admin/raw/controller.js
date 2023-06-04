@@ -15,13 +15,13 @@ const RawReqController = {
 	createAdmin: async (req, res) => {
 		try {
 			if (req.method !== 'POST') return responseLogic({ req, res, status: 404, data: { message: 'This route does not exist!' } });
+			await connectDB();
 			// if (req.user?.member_role !== MEMBER_ROLES.MASTER)
 			// 	return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 
 			const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.CREATE_ADMIN, adminId: req?.user?._id });
 			if (isRestricted) return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 
-			await connectDB();
 
 			const { firstname, secondname, lastname, username, email, password, gender, mobile, member_role } = req.body;
 

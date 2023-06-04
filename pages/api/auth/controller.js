@@ -106,6 +106,9 @@ const AuthController = {
 	},
 	requestPasswordResetToken: async (req, res) => {
 		try {
+			if (req.method !== 'POST') return responseLogic({ req, res, status: 404, data: { message: 'This route does not exist!' } });
+			await connectDB();
+
 			const { email } = req.body;
 
 			const user = await Users.findOne({ email });
@@ -127,6 +130,8 @@ const AuthController = {
 	},
 	verifyPasswordResetToken: async (req, res) => {
 		try {
+			if (req.method !== 'POST') return responseLogic({ req, res, status: 404, data: { message: 'This route does not exist!' } });
+			await connectDB();
 			const { email, OTPValue } = req.body;
 
 			const user = await Users.findOne({ email });
@@ -157,6 +162,8 @@ const AuthController = {
 	},
 	resetAccountPassword: async (req, res) => {
 		try {
+			if (req.method !== 'POST') return responseLogic({ req, res, status: 404, data: { message: 'This route does not exist!' } });
+			await connectDB();
 			const { email, OTPValue, password, confirmPassword } = req.body;
 			if (password !== confirmPassword)
 				return responseLogic({ req, res, status: 400, data: { message: 'Password and Confirm Password do not match!' } });
