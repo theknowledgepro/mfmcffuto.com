@@ -41,6 +41,20 @@ export const createAdmin =
 		}
 	};
 
+export const editAdminData =
+	({ auth, newAdminData, avatarFile, loadingData = { [LOADING.CREATE_ADMIN]: true } }) =>
+	async (dispatch) => {
+		try {
+			dispatch({ type: GLOBALTYPES.LOADING, payload: loadingData });
+
+			const res = await postFormDataAPI(API_ROUTES.CREATE_ADMIN, { ...newAdminData, avatar: avatarFile }, auth?.token);
+			if (res.status === 200) dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: loadingData });
+			return res;
+		} catch (err) {
+			return handleClientAPIRequestErrors({ err, dispatch, loadingData, returnData: true });
+		}
+	};
+
 export const login =
 	({ redirect, username, password, loadingData = { [LOADING.LOGIN]: true } }) =>
 	async (dispatch) => {
