@@ -34,7 +34,7 @@ export const createAdmin =
 			dispatch({ type: GLOBALTYPES.LOADING, payload: loadingData });
 
 			const res = await postFormDataAPI(API_ROUTES.CREATE_ADMIN, { ...newAdminData, avatar: avatarFile }, auth?.token);
-
+			if (res.status === 200) dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: loadingData });
 			return res;
 		} catch (err) {
 			return handleClientAPIRequestErrors({ err, dispatch, loadingData, returnData: true });
@@ -64,6 +64,51 @@ export const logout =
 			dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res.data.message } });
 			dispatch({ type: GLOBALTYPES.AUTH, payload: {} });
 			window.location.href = APP_ROUTES.HOME;
+		} catch (err) {
+			return handleClientAPIRequestErrors({ err, dispatch, loadingData });
+		}
+	};
+
+export const requestPasswordResetToken =
+	({ email, loadingData = { [LOADING.REQUEST_PASSWORD_RESET_TOKEN]: true } }) =>
+	async (dispatch) => {
+		if (!email) return;
+		try {
+			dispatch({ type: GLOBALTYPES.LOADING, payload: loadingData });
+			const res = await postDataAPI(API_ROUTES.REQUEST_PASSWORD_RESET_TOKEN, { email });
+			if (res.status === 200) dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: loadingData });
+			dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
+			return res;
+		} catch (err) {
+			return handleClientAPIRequestErrors({ err, dispatch, loadingData, returnData: true });
+		}
+	};
+
+export const verifyPasswordResetToken =
+	({ email, OTPValue, loadingData = { [LOADING.VERIFY_PASSWORD_RESET_TOKEN]: true } }) =>
+	async (dispatch) => {
+		if (!email || !OTPValue) return;
+		try {
+			dispatch({ type: GLOBALTYPES.LOADING, payload: loadingData });
+			const res = await postDataAPI(API_ROUTES.VERIFY_PASSWORD_RESET_TOKEN, { email, OTPValue });
+			if (res.status === 200) dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: loadingData });
+			dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
+			return res;
+		} catch (err) {
+			return handleClientAPIRequestErrors({ err, dispatch, loadingData, returnData: true });
+		}
+	};
+
+export const passwordReset =
+	({ email, OTPValue, password, confirmPassword, loadingData = { [LOADING.PASSWORD_RESET]: true } }) =>
+	async (dispatch) => {
+		if (!email || !OTPValue || !password || !confirmPassword) return;
+		try {
+			dispatch({ type: GLOBALTYPES.LOADING, payload: loadingData });
+			const res = await postDataAPI(API_ROUTES.PASSWORD_RESET, { email, OTPValue, password, confirmPassword });
+			if (res.status === 200) dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: loadingData });
+			dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
+			window.location.href = APP_ROUTES.LOGIN;
 		} catch (err) {
 			return handleClientAPIRequestErrors({ err, dispatch, loadingData });
 		}

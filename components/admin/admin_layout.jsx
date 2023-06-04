@@ -19,7 +19,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import UseMediaQuery from '@/utils/use_media_query';
 import HeadElement from '@/pages/_meta_tags';
-import { Accordion, AccordionDetails, AccordionSummary, Tooltip } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Tooltip, Typography } from '@mui/material';
 import admin_comp_styles from './admin_components.module.css';
 import FlutterDashIcon from '@mui/icons-material/FlutterDash';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
@@ -428,7 +428,20 @@ const UserMenu = () => {
 	);
 };
 
-const DesktopLayout = ({ children }) => {
+const RenderChildTopLayout = ({ pageIcon, pageTitle }) => {
+	return (
+		<React.Fragment>
+			<Typography
+				sx={{ fontWeight: '700', mt: 2, mb: 3, fontSize: { xs: '20px', sm: '22px', md: '30px' }, alignItems: 'center', display: 'flex' }}
+				className='color-primary'>
+				{pageIcon} {pageTitle}
+			</Typography>
+			<Divider className='mb-4' />
+		</React.Fragment>
+	);
+};
+
+const DesktopLayout = ({ children, pageIcon, pageTitle }) => {
 	const theme = useTheme();
 	const { isSideNavExpand, setIsSideNavExpand, isFullScreen, setIsFullScreen } = useAppContext();
 
@@ -465,13 +478,14 @@ const DesktopLayout = ({ children }) => {
 			<DesktopDrawer variant='permanent' open={isSideNavExpand} children={<DrawerContent open={isSideNavExpand} />} />
 			<Box component='main' sx={{ flexGrow: 1, p: 2, width: '100%', height: '100%', position: 'relative' }}>
 				<DrawerHeader />
+				<RenderChildTopLayout pageIcon={pageIcon} pageTitle={pageTitle} />
 				{children}
 			</Box>
 		</Box>
 	);
 };
 
-const ResponsiveLayout = ({ children }) => {
+const ResponsiveLayout = ({ children, pageIcon, pageTitle }) => {
 	const [open, setOpen] = React.useState(false);
 	const handleDrawerToggle = () => setOpen(!open);
 
@@ -505,13 +519,14 @@ const ResponsiveLayout = ({ children }) => {
 			/>
 			<Box component='main' sx={{ flexGrow: 1, p: 1, width: '100%', height: '100%', position: 'relative' }}>
 				<Toolbar />
+				<RenderChildTopLayout pageIcon={pageIcon} pageTitle={pageTitle} />
 				{children}
 			</Box>
 		</Box>
 	);
 };
 
-const AdminLayout = ({ children, metatags }) => {
+const AdminLayout = ({ children, metatags, pageIcon, pageTitle }) => {
 	const { isMatchWidth } = UseMediaQuery({ vw: '768px' });
 	const { isBreakpointMd, setIsBreakpointMd } = useAppContext();
 
@@ -526,8 +541,8 @@ const AdminLayout = ({ children, metatags }) => {
 	return (
 		<React.Fragment>
 			<HeadElement metatags={metatags} />
-			{isBreakpointMd !== undefined && !isBreakpointMd && <DesktopLayout children={children} />}
-			{isBreakpointMd !== undefined && isBreakpointMd && <ResponsiveLayout children={children} />}
+			{isBreakpointMd !== undefined && !isBreakpointMd && <DesktopLayout children={children} pageIcon={pageIcon} pageTitle={pageTitle} />}
+			{isBreakpointMd !== undefined && isBreakpointMd && <ResponsiveLayout children={children} pageIcon={pageIcon} pageTitle={pageTitle} />}
 		</React.Fragment>
 	);
 };

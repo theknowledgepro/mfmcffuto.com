@@ -1,6 +1,6 @@
 /** @format */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MEMBER_ROLES, SITE_DATA } from '@/config';
 import AccountCircleOutlined from '@mui/icons-material/AccountCircleOutlined';
 import IconButton from '@mui/material/IconButton';
@@ -67,6 +67,11 @@ const AdminProfileDetails = ({ adminData, setAdminData, onEdit = false, type, er
 		reader.readAsDataURL(file);
 		setFile(file);
 	};
+
+	// ON COMPONENT DID UNMOUNT RESTORE DEFAULT STATE
+	useEffect(() => {
+		return () => setAdminData(adminData);
+	}, []);
 
 	return (
 		<React.Fragment>
@@ -269,15 +274,23 @@ const AdminProfileDetails = ({ adminData, setAdminData, onEdit = false, type, er
 
 				<div className='col-12 col-md-1'></div>
 
-				<FormControl disabled={!onEdit || auth?.user?.member_role !== MEMBER_ROLES.MASTER} className='mt-4 col-12 col-md-5'>
-					<InputLabel error={errors.member_role ? true : false} id='member_role'>
-						Admin Level <AdminPanelSettingsTwoToneIcon sx={{ ml: 1, fontSize: 22 }} />
-					</InputLabel>
-					<Select labelId='member_role' id='member_role' value={member_role} name='member_role' label='level' onChange={handleChangeInput}>
-						<MenuItem value={MEMBER_ROLES.MANAGER}>Manager Admin</MenuItem>
-						<MenuItem value={MEMBER_ROLES.MASTER}>Master Admin</MenuItem>
-					</Select>
-				</FormControl>
+				{auth?.user?.member_role === MEMBER_ROLES.MASTER && (
+					<FormControl disabled={!onEdit || auth?.user?.member_role !== MEMBER_ROLES.MASTER} className='mt-4 col-12 col-md-5'>
+						<InputLabel error={errors.member_role ? true : false} id='member_role'>
+							Admin Level <AdminPanelSettingsTwoToneIcon sx={{ ml: 1, fontSize: 22 }} />
+						</InputLabel>
+						<Select
+							labelId='member_role'
+							id='member_role'
+							value={member_role}
+							name='member_role'
+							label='level'
+							onChange={handleChangeInput}>
+							<MenuItem value={MEMBER_ROLES.MANAGER}>Manager Admin</MenuItem>
+							<MenuItem value={MEMBER_ROLES.MASTER}>Master Admin</MenuItem>
+						</Select>
+					</FormControl>
+				)}
 			</div>
 		</React.Fragment>
 	);

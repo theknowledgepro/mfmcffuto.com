@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const { RESET_PASSWORD_TOKEN_SECRET, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env
 const ExpiresIn = {
     PasswordResetToken: {
-        jwtValue: '10m',
+        jwtValue: '10h',
         milliseconds: 10 * 60 * 1000,
         string: '10 minutes'
     },

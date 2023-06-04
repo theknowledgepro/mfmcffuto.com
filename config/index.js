@@ -32,6 +32,11 @@ export const APP_ROUTES = {
 	// ** ADMIN PANEL ROUTES
 	ADMIN_DASHBOARD: '/admin',
 	ADMIN_PROFILE: '/admin/my-profile',
+	PAGES_CUSTOMIZATION: '/admin/pages',
+	CONTACT_FORM_SUBMISSIONS: '/admin/contact-form-submissions',
+	MANAGE_ADMINS: '/admin/manage-admins',
+	SITE_SETTINGS: '/admin/site-settings',
+	ACTIVITY_LOGS: '/admin/activity-logs',
 
 	// ** USER AUTHENTICATED ROUTES
 	DASHBOARD: '/dashboard',
@@ -65,5 +70,10 @@ export const API_ROUTES = {
 
 	// ** ADMIN PANEL ACTIONS ROUTES
 	CREATE_ADMIN: 'admin/raw/create-admin',
+
+	GET_ALL_ADMINS: 'admin/get-all-admins',
 	EDIT_ADMIN_DETAILS: 'admin/raw/edit-admin',
+	
+	GET_CONTACT_FORM: `admin/get-contact-form-submissions`,
+	MARK_CONTACT_FORM_AS_READ: `admin/mark-contact-form-read`,
 };

@@ -28,40 +28,17 @@ const Login = ({ metatags, redirectProps, siteite }) => {
 	// ** PUSH 'redirectProps' TO REDIRECT STORE FOR AUTO NAVIGATION ON USER LOGIN SUCCESS ** SEE '/_persistlayout.js' and 'README.md' FOR IMPLEMENTATION AND CLARITY...
 	useEffect(() => {
 		if (!redirectProps) return;
-		const queryKeys = Object.keys(redirectProps);
-		const queryValues = Object.values(redirectProps);
-
-		const queryParamsKeys = queryKeys.filter((index) => index !== 'base' && index !== 'sub' && index !== 'view');
-		const queryParamsValues = queryValues.filter(
-			(index) => index !== redirectProps.base && index !== redirectProps.sub && index !== redirectProps.view
-		);
-		const url = `/${redirectProps.base ? redirectProps.base + '/' : ''}${redirectProps.sub ? redirectProps.sub : ''}${
-			redirectProps.view ? '/' + redirectProps.view : ''
-		}${queryParamsKeys.length > 0 ? '?' : ''}${queryParamsKeys
-			.map((elem, i) => {
-				return `${queryParamsKeys[i]}=${queryParamsValues[i]}${queryParamsKeys[i + 1] !== undefined ? '&' : ''}`;
-			})
-			.join('')}`;
-
-		Object.keys(redirectProps).includes('base') &&
+		Object.keys(redirectProps).includes('redirectUrl') &&
 			dispatch({
 				type: GLOBALTYPES.REDIRECT,
-				payload: { url: url.trim() },
+				payload: { url: redirectProps?.redirectUrl.trim() },
 			});
-		Object.keys(redirectProps).includes('base') &&
+		Object.keys(redirectProps).includes('redirectUrl') &&
 			dispatch({
 				type: GLOBALTYPES.TOAST,
 				payload: {
 					info: 'Please login to continue!',
 					title: 'Hey there!',
-				},
-			});
-		Object.keys(redirectProps).includes('error') &&
-			dispatch({
-				type: GLOBALTYPES.TOAST,
-				payload: {
-					error: redirectProps?.error,
-					title: 'Error!',
 				},
 			});
 	}, [redirectProps]);
@@ -171,11 +148,11 @@ export async function getServerSideProps({ req, res, query }) {
 	const verifyUserAuth = await AuthController.generateAccessToken(req, res);
 	if (verifyUserAuth?.user && verifyUserAuth?.access_token) {
 		return {
-			redirect: { destination: APP_ROUTES.DASHBOARD, permanent: false },
+			redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false },
 		};
 	}
 	//** GET SITE ite
-	const settings = await WebController.getSiteSettings(req, res);
+	const settings = await WebController.getSiteSettings(req, res, true);
 
 	return {
 		props: {

@@ -40,22 +40,6 @@ const deleteFileFromCloudStorage = async ({ publicId }) => {
 		.catch((_err) => console.log({ _err, message: `Could not delete file, please try again later.` }));
 };
 
-const getAssetInfo = async (publicId) => {
-	// Return colors in the response
-	const options = {
-		colors: true,
-	};
-
-	try {
-		// Get details about the asset
-		const result = await cloudinary.api.resource(publicId, options);
-		console.log(result);
-		return result;
-	} catch (error) {
-		console.error(error);
-	}
-};
-
 module.exports = {
 	uploadFileToCloudStorage,
 	deleteFileFromCloudStorage,

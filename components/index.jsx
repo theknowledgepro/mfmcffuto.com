@@ -7,6 +7,8 @@ export { default as AuthTopArea } from './admin/auth_top_area';
 export { default as AdminLayout } from './admin/admin_layout';
 export { default as CreateAdminModal } from './admin/create_admin_modal';
 export { default as AdminProfileDetails } from './admin/admin_profile_details';
+export { default as AdminDataCard } from './admin/admin_data_card';
+export { default as EditAdminModal } from './admin/edit_admin_modal';
 
 // ** WEB PAGES COMPONENTS
 export { default as WebLayout } from './web_layout';

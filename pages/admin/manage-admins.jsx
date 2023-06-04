@@ -1,26 +1,85 @@
 /** @format */
 
-import { AdminLayout } from '@/components';
-import { APP_ROUTES, MEMBER_ROLES, SITE_DATA } from '@/config';
-import React from 'react';
-import { Typography } from '@mui/material';
-import FlutterDashIcon from '@mui/icons-material/FlutterDash';
+import React, { useState } from 'react';
+import { AdminLayout, AdminDataCard, CreateAdminModal } from '@/components';
+import { API_ROUTES, APP_ROUTES, MEMBER_ROLES, SITE_DATA } from '@/config';
+import AdminPanelSettingsTwoToneIcon from '@mui/icons-material/AdminPanelSettingsTwoTone';
 import CheckAdminRestriction from '@/middlewares/check_admin_restriction';
 import { DispatchUserAuth } from '@/utils/misc_functions';
+import handleDataSort from '@/utils/handle_data_sort';
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, Divider } from '@mui/material';
+import PersonAdd from '@mui/icons-material/PersonAdd';
+import { useDispatch } from 'react-redux';
+import AdminController from '@/pages/api/admin/controller';
 import AuthController from '@/pages/api/auth/controller';
 
-const Dashboard = ({ userAuth }) => {
+const Dashboard = ({ userAuth, allAdmins }) => {
+	const dispatch = useDispatch();
+
 	// ** DISPATCH USER AUTH
 	DispatchUserAuth({ userAuth });
+
+	// ** PAGE DATA STORE
+	const [admins, setAdmins] = useState(allAdmins?.length ? allAdmins : []);
+
+	// ** ADMIN SORT FUNCTIONALITY
+	const { sortSelect, handleSort, sortLoading, sortLoadingError } = handleDataSort({
+		userAuth,
+		dispatch,
+		defaultSelectOption: 'ALL',
+		setDataStore: setAdmins,
+		setSortArgs: (event) => (event.target.value === 'ALL' ? '' : event.target.value),
+		fetchUrl: API_ROUTES.GET_ALL_ADMINS,
+		queryParam: 'member_role',
+	});
+
 	return (
-		<AdminLayout SeoData={{ meta_title: `Admin Dashboard | ${SITE_DATA.NAME}` }}>
-			<Typography
-				sx={{ fontWeight: '700', mt: 2, mb: 3, fontSize: { xs: '20px', sm: '22px', md: '30px' }, alignItems: 'center', display: 'flex' }}
-				className='color-primary'>
-				<FlutterDashIcon sx={{ fontSize: 'inherit', my: 'auto', mr: 1 }} className='text-muted' />
-				Admin Dashboard
-			</Typography>
-			Admin Dashbaord... Development in progress...
+		<AdminLayout
+			metatags={{ meta_title: `Manage Admins | ${SITE_DATA.NAME}` }}
+			pageIcon={<AdminPanelSettingsTwoToneIcon sx={{ fontSize: 'inherit', my: 'auto', mr: 1 }} className='text-muted' />}
+			pageTitle={'Manage Admins'}>
+			<Box
+				sx={{
+					display: 'flex',
+					alignItems: { md: 'center' },
+					flexFlow: { xs: 'column', sm: 'column', md: 'row' },
+					mb: 3,
+					width: '100%',
+					justifyContent: 'space-between',
+				}}>
+				<Box sx={{ display: 'flex' }}>
+					<CreateAdminModal adminsStore={admins} setAdminsStore={setAdmins}>
+						<Button className='text-decor-none btn-site' variant='contained'>
+							<PersonAdd fontSize='small' sx={{ mr: '5px' }} /> Create New Admin
+						</Button>
+					</CreateAdminModal>
+				</Box>
+				<Box sx={{ minWidth: 120, minHeight: 20, mt: { xs: 3, sm: 3, md: 0 } }}>
+					<FormControl fullWidth size='small'>
+						<InputLabel id='admin-level-select'>Sort By</InputLabel>
+						<Select labelId='admin-level-select' value={sortSelect} label='Sort By' onChange={handleSort}>
+							<MenuItem value={MEMBER_ROLES.MASTER}>Master Admins</MenuItem>
+							<MenuItem value={MEMBER_ROLES.MANAGER}>Manager Admins</MenuItem>
+							<MenuItem value={'ALL'}>All Admins</MenuItem>
+						</Select>
+					</FormControl>
+				</Box>
+			</Box>
+
+			<div className='w-100 row'>
+				{admins.map((admin, i) => (
+					<AdminDataCard adminsStore={admins} setAdminsStore={setAdmins} admin={admin} key={i} />
+				))}
+			</div>
+
+			<div className='flex flex-col items-center justify-center w-full mt-5 mb-3'>
+				{sortLoading && <CircularProgress style={{ color: 'var(--color-primary)', height: '40px', width: '40px' }} />}
+				{sortLoadingError && (
+					<div style={{ lineHeight: '1.5rem' }} className='text-gray-500 text-center text-sm mt-3'>
+						Ooops! There was a problem sorting admins. <br /> Please check your internet connection!
+					</div>
+				)}
+			</div>
 		</AdminLayout>
 	);
 };
@@ -38,12 +97,14 @@ export async function getServerSideProps({ req, res }) {
 
 	// REDIRECT TO DASHBOARD IF ADMIN IS RESTRICTED TO VIEW THIS PAGE
 	const isRestricted = await CheckAdminRestriction({ page: APP_ROUTES.DASHBOARD, adminId: verifyUserAuth?.user?._id });
-	console.log({ isRestricted });
-	// if (isRestricted) return { redirect: { destination: APP_ROUTES.DASHBOARD, permanent: false } };
+	if (isRestricted) return { redirect: { destination: APP_ROUTES.DASHBOARD, permanent: false } };
 
+	// ** GET PAGE DATA
+	const allAdmins = await AdminController.getAllAdmins(req, res, true);
 	return {
 		props: {
 			userAuth: verifyUserAuth?.user ? verifyUserAuth : {},
+			allAdmins: allAdmins?.data?.results,
 		},
 	};
 }

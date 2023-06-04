@@ -64,6 +64,10 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			default: 'Male',
 		},
+		otp_secret: {
+			type: String,
+			required: false,
+		},
 		member_role: {
 			type: String,
 			default: MEMBER_ROLES.USER,

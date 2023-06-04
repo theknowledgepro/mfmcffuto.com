@@ -8,6 +8,14 @@ const Users = require('@/models/user_model');
 const { createAccessToken, createRefreshToken, ExpiresIn } = require('@/middlewares/create_jwt_token');
 const activityLog = require('@/middlewares/activity_log');
 const { APP_ROUTES, SITE_DATA } = require('@/config');
+const { requestPasswordResetOTPEmail } = require('@/mails');
+const randomNumberGenerator = (length) => {
+	let numbers = '';
+	for (var i = 0; i < length; i++) {
+		numbers += Math.floor(Math.random() * length + 1);
+	}
+	return numbers;
+};
 
 const AuthController = {
 	login: async (req, res) => {
@@ -77,7 +85,7 @@ const AuthController = {
 		try {
 			await connectDB();
 			const redirectObject = {
-				redirect: { destination: APP_ROUTES.LOGIN, permanent: false },
+				redirect: { destination: `${APP_ROUTES.LOGIN}?redirectUrl=${req.url}`, permanent: false },
 			};
 
 			const rf_token = req.cookies?.refreshtoken;
@@ -96,14 +104,70 @@ const AuthController = {
 			return redirectObject;
 		}
 	},
-	requestPasswordResetToken: () => {
-		res.status(200).json({ name: 'John Doe' });
+	requestPasswordResetToken: async (req, res) => {
+		try {
+			const { email } = req.body;
+
+			const user = await Users.findOne({ email });
+			if (!user) return responseLogic({ req, res, status: 400, data: { message: 'This email does not exist in our records!' } });
+
+			// ** GENERATE OTP AND SEND EMAIL TO USER
+			const OTP = randomNumberGenerator(4);
+			await requestPasswordResetOTPEmail({ email, OTP, expiresIn: ExpiresIn.PasswordResetToken.string });
+
+			// ** SAVE A SIGNED OTP TO DB FOR VERIFICATION LATER ...
+			// ** I USED JWT SO AS TO HAVE A TIME LIMIT FOR EACH OTP...
+			const otp_secret = await jwt.sign({ OTP }, process.env.RESET_PASSWORD_TOKEN_SECRET, { expiresIn: ExpiresIn.PasswordResetToken.jwtValue });
+			await Users.findByIdAndUpdate(user?._id, { otp_secret });
+
+			return responseLogic({ req, res, status: 200, data: { message: "We've sent an OTP to your email address!" } });
+		} catch (err) {
+			return responseLogic({ res, catchError: err });
+		}
 	},
-	verifyPasswordResetToken: () => {
-		res.status(200).json({ name: 'John Doe' });
+	verifyPasswordResetToken: async (req, res) => {
+		try {
+			const { email, OTPValue } = req.body;
+
+			const user = await Users.findOne({ email });
+			if (!user) return responseLogic({ req, res, status: 400, data: { message: 'This email does not exist in our records!' } });
+
+			const otp_secret = user?.otp_secret;
+
+			const { err, result } = await new Promise((resolve, reject) => {
+				jwt.verify(otp_secret, process.env.RESET_PASSWORD_TOKEN_SECRET, async (err, result) => {
+					if (err) reject({ err }); // ** THE ONLY POSSIBLE ERROR WILL BE THAT OF EXPIRY SINCE OTP_SECRET WAS FETCHED FROM DB...
+					if (result?.OTP !== OTPValue) reject({ err: 'The value you entered is incorrect!' });
+					resolve({ result });
+				});
+			});
+
+			// console.log({ err, result });
+
+			if (err === 'The value you entered is incorrect!') {
+				return responseLogic({ req, res, status: 400, data: { message: 'The value you entered is incorrect!' } });
+			} else if (err?.exp) {
+				return responseLogic({ req, res, status: 400, data: { message: 'The OTP you entered is expired!' } });
+			} else {
+				return responseLogic({ req, res, status: 200, data: { message: 'Your OTP was verified succesfully!' } });
+			}
+		} catch (err) {
+			return responseLogic({ res, catchError: err });
+		}
 	},
-	resetAccountPassword: () => {
-		res.status(200).json({ name: 'John Doe' });
+	resetAccountPassword: async (req, res) => {
+		try {
+			const { email, OTPValue, password, confirmPassword } = req.body;
+			if (password !== confirmPassword)
+				return responseLogic({ req, res, status: 400, data: { message: 'Password and Confirm Password do not match!' } });
+
+			const passwordHash = await bcrypt.hash(password, 12);
+			await Users.findOneAndUpdate({ email }, { passwordHash, otp_secret: null });
+
+			return responseLogic({ req, res, status: 200, data: { message: 'Password reset succesfully!' } });
+		} catch (err) {
+			return responseLogic({ res, catchError: err });
+		}
 	},
 };
 

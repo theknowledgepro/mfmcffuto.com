@@ -12,10 +12,12 @@ import { LOADING } from '@/config';
 import { validate } from '@/utils/validate';
 import CircularProgress from '@mui/material/CircularProgress';
 import { GLOBALTYPES } from '@/redux/types';
+import { useRouter } from 'next/router';
 
 const CreateAdminModal = ({ openModal, setOpenModal, children, adminsStore, setAdminsStore }) => {
 	const { auth, loading: loadingStore } = useSelector((state) => state);
 	const dispatch = useDispatch();
+	const router = useRouter();
 	const { isMatchWidth } = UseMediaQuery({ vw: '500px' });
 
 	const [Open, setOpen] = React.useState(false);
@@ -72,7 +74,7 @@ const CreateAdminModal = ({ openModal, setOpenModal, children, adminsStore, setA
 			dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: { [LOADING.CREATE_ADMIN]: true } });
 			handleClose();
 			setNewAdminData({});
-			setAdminsStore && setAdminsStore([res?.data?.newAdmin, ...adminsStore]);
+			router.push(window.location.href);
 		}
 	};
 
@@ -99,7 +101,7 @@ const CreateAdminModal = ({ openModal, setOpenModal, children, adminsStore, setA
 				</DialogContent>
 
 				<DialogActions className='w-full flex justify-between items-center'>
-					<Button onClick={handleCreateAdmin} className='w-full mr-2 text-decor-none' variant='contained'>
+					<Button onClick={handleCreateAdmin} className='btn-site w-full mr-2 text-decor-none' variant='contained'>
 						{!isLoading(LOADING.CREATE_ADMIN, loadingStore) && (
 							<React.Fragment>
 								<PersonAdd fontSize='small' sx={{ mr: '5px' }} /> Create New Admin

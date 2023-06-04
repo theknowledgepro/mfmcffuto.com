@@ -49,7 +49,7 @@
 }
 
 .card.card-primary {
-	border-top: 2px solid var(--color-primary)
+	border-top: 2px solid var(--color-primary);
 }
 
 /* SHADOWS */
@@ -80,6 +80,9 @@
 	animation: rotate 0.7s ease-in-out both;
 }
 
+.btn-site {
+	background: var(--color-primary) !important;
+}
 /* SOCIAL ICONS */
 .facebook {
 	background: #426782;

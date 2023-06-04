@@ -35,7 +35,7 @@ const RawReqController = {
 			if (user) return responseLogic({ req, res, status: 400, data: { message: 'This Username already exist!' } });
 
 			const emailExists = await Users.findOne({ email });
-			if (emailExists) return responseLogic({ req, res, status: 400, data: { message: 'This Email is already used' } });
+			if (emailExists) return responseLogic({ req, res, status: 400, data: { message: 'This Email is already used!' } });
 
 			// ** AFTER ALL VALIDATIONS, STORE AVATAR TO CLOUD STORAGE
 			let avatar;
