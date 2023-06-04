@@ -80,8 +80,8 @@ const ForgotPassword = ({ metatags, settings }) => {
 						<div className={lgn_styse.auth_form_field}>
 							{!isSent && (
 								<React.Fragment>
-									<div className='flex place-items-end w-full'>
-										<EmailOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 0.5 }} />
+									<div className='flex items-center justify-end w-full'>
+										<EmailOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 'auto' }} />
 										<TextField
 											onChange={handleChangeInput}
 											value={email}
@@ -146,8 +146,8 @@ const ForgotPassword = ({ metatags, settings }) => {
 							)}
 							{isVerified && (
 								<React.Fragment>
-									<div className='flex place-items-end w-full'>
-										<EmailOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 0.5 }} />
+									<div className='flex items-center justify-left w-full'>
+										<EmailOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 'auto' }} />
 										<TextField
 											onChange={handleChangeInput}
 											disabled={true}
@@ -162,8 +162,8 @@ const ForgotPassword = ({ metatags, settings }) => {
 											error={errors.email ? true : false}
 										/>
 									</div>
-									<div className={`flex place-items-end w-full}`}>
-										<LockPersonOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 0.5 }} />
+									<div className={`flex items-center justify-left w-full}`}>
+										<LockPersonOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 'auto' }} />
 										<TextField
 											onChange={handleChangeInput}
 											defaultValue={password}
@@ -189,8 +189,8 @@ const ForgotPassword = ({ metatags, settings }) => {
 											}}
 										/>
 									</div>
-									<div className={`flex place-items-end w-full}`}>
-										<LockPersonOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 0.5 }} />
+									<div className={`flex items-center justify-left w-full}`}>
+										<LockPersonOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 'auto' }} />
 										<TextField
 											onChange={handleChangeInput}
 											defaultValue={confirmPassword}
