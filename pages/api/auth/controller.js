@@ -138,14 +138,15 @@ const AuthController = {
 			if (!user) return responseLogic({ req, res, status: 400, data: { message: 'This email does not exist in our records!' } });
 			const otp_secret = user?.otp_secret;
 
-			const { result } = await new Promise((resolve, reject) => {
+			const { err, result } = await new Promise((resolve, reject) => {
 				return jwt.verify(otp_secret, process.env.RESET_PASSWORD_TOKEN_SECRET, async (err, result) => {
-					if (err) reject(new Error('The OTP you entered is expired!')); // ** THE ONLY POSSIBLE ERROR WILL BE THAT OF EXPIRY SINCE OTP_SECRET WAS FETCHED FROM DB...
-					if (result?.OTP !== OTPValue) reject(new Error('The value you entered is incorrect!'));
+					if (err) resolve({ err: 'The OTP you entered is expired!' }); // ** THE ONLY POSSIBLE ERROR WILL BE THAT OF EXPIRY SINCE OTP_SECRET WAS FETCHED FROM DB...
+					if (result?.OTP !== OTPValue) return resolve({ err: 'The value you entered is incorrect!' });
 					resolve({ result });
 				});
 			});
 
+			if (err) return responseLogic({ req, res, status: 401, data: { message: err } });
 			return responseLogic({ req, res, status: 200, data: { message: 'Your OTP was verified succesfully!' } });
 		} catch (err) {
 			return responseLogic({ res, catchError: err });
