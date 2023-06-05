@@ -34,7 +34,10 @@ const mailHandler = async ({ from, to, subject, replacements, htmlTemplate, atta
 	});
 
 	const rootDir = path.join(process.cwd());
-    const source = await fs.readFile(rootDir + `/pages/api/mails/${htmlTemplate}`, 'utf8');
+	const source = await fs.readFile(rootDir + `/pages/api/mails/${htmlTemplate}`, 'utf8', (err, data) => {
+		if (err) throw err;
+		return data;
+	});
 	const template = handlebars.compile(source);
 	const htmlToSend = template(replacements);
 	const mailOptions = {
