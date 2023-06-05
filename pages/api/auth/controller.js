@@ -141,7 +141,8 @@ const AuthController = {
 
 			const { err, result } = await new Promise((resolve, reject) => {
 				return jwt.verify(otp_secret, process.env.RESET_PASSWORD_TOKEN_SECRET, async (err, result) => {
-					if (err) return resolve({ err: 'The OTP you entered is expired!' }); // ** THE ONLY POSSIBLE ERROR WILL BE THAT OF EXPIRY SINCE OTP_SECRET WAS FETCHED FROM DB...
+					if (err) return resolve({ err: 'Invalid OTP!<br /> Please retry again...' });
+					if (Date.now() >= result?.exp * 1000) return resolve({ err: 'The OTP you entered is expired!<br />Please request a new one!' });
 					if (result?.OTP !== OTPValue) return resolve({ err: 'The value you entered is incorrect!' });
 					resolve({ result });
 				});
