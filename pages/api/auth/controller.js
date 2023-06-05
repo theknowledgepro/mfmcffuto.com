@@ -8,7 +8,7 @@ const Users = require('@/models/user_model');
 const { createAccessToken, createRefreshToken, ExpiresIn } = require('@/middlewares/create_jwt_token');
 const activityLog = require('@/middlewares/activity_log');
 const { APP_ROUTES } = require('@/config');
-const { requestPasswordResetOTPEmail } = require('../mails');
+const { requestPasswordResetOTPEmail } = require('@/middlewares/send_mail');
 const randomNumberGenerator = (length) => {
 	let numbers = '';
 	for (var i = 0; i < length; i++) {
