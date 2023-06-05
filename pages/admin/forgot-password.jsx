@@ -75,7 +75,10 @@ const ForgotPassword = ({ metatags, settings }) => {
 			<section className={`${lgn_styse.parent} row`}>
 				<div className='px-2 pt-5 pb-2 col-12 flex flex-col items-center justify-center'>
 					<div className={`card card-primary ${lgn_styse.auth_box}`}>
-						<AuthTopArea settings={settings} title={!isSent ? 'Forgot Password?' : 'Please Enter OTP Below'} />
+						<AuthTopArea
+							settings={settings}
+							title={!isSent ? 'Forgot Password?' : !isVerified && isSent ? 'Please Enter OTP Below...' : isVerified ? 'Enter a new password for your account.' : ''}
+						/>
 
 						<div className={lgn_styse.auth_form_field}>
 							{!isSent && (

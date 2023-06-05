@@ -3,7 +3,7 @@
 export const validate = {
     containsSpecialChars: ({ string }) => {
         const specialChars = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-        const errMsg = (specialChars.test(string) && 'Special characters are not allowed!')
+        const errMsg = (specialChars.test(string.trim()) && 'Special characters are not allowed!')
         return { errMsg };
     },
     noEmptyString: ({ string }) => {

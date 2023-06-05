@@ -136,7 +136,8 @@ const AuthController = {
 
 			const user = await Users.findOne({ email });
 			if (!user) return responseLogic({ req, res, status: 400, data: { message: 'This email does not exist in our records!' } });
-			const otp_secret = user?.otp_secret;
+			const otp_secret =
+				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJPVFAiOiI0MTQzIiwiaWF0IjoxNjg2MDAzMjY5LCJleHAiOjE2ODYwMzkyNjl9.rFWcHA1Qvr_y7npTOepmffFFc4DtKJjWnLxr-JuRYFA';
 
 			const { err, result } = await new Promise((resolve, reject) => {
 				return jwt.verify(otp_secret, process.env.RESET_PASSWORD_TOKEN_SECRET, async (err, result) => {
