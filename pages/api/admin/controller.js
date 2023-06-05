@@ -30,7 +30,7 @@ const AdminController = {
 
 			const levelFilter = req.query?.member_role ? { member_role: req.query?.member_role } : {};
 			const filter = { ...levelFilter };
-			const results = await Users.find(filter).select('-password').sort({ createdAt: -1 });
+			const results = await Users.find(filter).select('-password -_id').sort({ createdAt: -1 });
 			return responseLogic({ SSG: SSG, req, res, status: 200, data: { results } });
 		} catch (err) {
 			return responseLogic({ SSG: SSG, res, catchError: err });

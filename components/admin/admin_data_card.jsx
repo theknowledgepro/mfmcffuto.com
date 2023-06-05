@@ -14,7 +14,7 @@ import { EditAdminModal } from '..';
 import { useSelector } from 'react-redux';
 import { APP_ROUTES, MEMBER_ROLES } from '@/config';
 
-const AdminDataCard = ({ admin }) => {
+const AdminDataCard = ({ admin, adminsStore, setAdminsStore }) => {
 	const { auth } = useSelector((state) => state);
 	const [expanded, setExpanded] = React.useState(false);
 	const handleToggle = () => (event, isExpanded) => setExpanded(isExpanded ? true : false);
@@ -74,7 +74,7 @@ const AdminDataCard = ({ admin }) => {
 					</div>
 					<Divider className='my-2' />
 					<div className='w-full flex items-center justify-between'>
-						<EditAdminModal admin={admin}>
+						<EditAdminModal adminUrl={admin.url} adminsStore={adminsStore} setAdminsStore={setAdminsStore}>
 							<Button variant='outlined' className='mr-2 text-decor-none py-2'>
 								<FaUserEdit style={{ fontSize: '20px' }} />
 							</Button>

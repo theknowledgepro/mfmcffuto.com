@@ -1,13 +1,13 @@
 /** @format */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AdminLayout, AdminDataCard, CreateAdminModal } from '@/components';
 import { API_ROUTES, APP_ROUTES, MEMBER_ROLES, SITE_DATA } from '@/config';
 import AdminPanelSettingsTwoToneIcon from '@mui/icons-material/AdminPanelSettingsTwoTone';
 import CheckAdminRestriction from '@/middlewares/check_admin_restriction';
 import { DispatchUserAuth } from '@/utils/misc_functions';
 import handleDataSort from '@/utils/handle_data_sort';
-import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select, Divider } from '@mui/material';
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import { useDispatch } from 'react-redux';
 import AdminController from '@/pages/api/admin/controller';
@@ -15,12 +15,11 @@ import AuthController from '@/pages/api/auth/controller';
 
 const Dashboard = ({ userAuth, allAdmins }) => {
 	const dispatch = useDispatch();
-
 	// ** DISPATCH USER AUTH
 	DispatchUserAuth({ userAuth });
 
 	// ** PAGE DATA STORE
-	const [admins, setAdmins] = useState(allAdmins?.length ? allAdmins : []);
+	const [admins, setAdmins] = useState(allAdmins);
 
 	// ** ADMIN SORT FUNCTIONALITY
 	const { sortSelect, handleSort, sortLoading, sortLoadingError } = handleDataSort({
@@ -70,6 +69,11 @@ const Dashboard = ({ userAuth, allAdmins }) => {
 				{admins.map((admin, i) => (
 					<AdminDataCard adminsStore={admins} setAdminsStore={setAdmins} admin={admin} key={i} />
 				))}
+				{admins.length === 0 && sortSelect !== 'ALL' && (
+					<div className='text-gray-600 md:text-2xl my-5 flex flex-col items-center justify-center w-full'>
+						No Admins found for this Admin Level
+					</div>
+				)}
 			</div>
 
 			<div className='flex flex-col items-center justify-center w-full mt-5 mb-3'>
@@ -95,9 +99,15 @@ export async function getServerSideProps({ req, res }) {
 			redirect: { destination: APP_ROUTES.NOT_FOUND, permanent: false },
 		};
 
-	// REDIRECT TO DASHBOARD IF ADMIN IS RESTRICTED TO VIEW THIS PAGE
+	// REDIRECT TO DASHBOARD PAGE IF ADMIN IS RESTRICTED TO VIEW THIS PAGE
 	const isRestricted = await CheckAdminRestriction({ page: APP_ROUTES.DASHBOARD, adminId: verifyUserAuth?.user?._id });
-	if (isRestricted) return { redirect: { destination: APP_ROUTES.DASHBOARD, permanent: false } };
+	if (isRestricted) return { redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false } };
+
+	// ** REDIRECT TO DASHBOARD PAGE IF NOT MASTER ADMIN
+	if (verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MASTER)
+		return {
+			redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false },
+		};
 
 	// ** GET PAGE DATA
 	const allAdmins = await AdminController.getAllAdmins(req, res, true);

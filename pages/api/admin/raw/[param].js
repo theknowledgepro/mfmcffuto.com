@@ -9,8 +9,8 @@ const RawRouter = async (incomingReqObj, incomingResObj) => {
 	switch (req.query.param) {
 		case 'create-admin':
 			return authenticate(req, res, RawReqController.createAdmin);
-		// case 'edit-admin':
-		// 	return authenticate(req, res, RawReqController.editAdmin);
+		case 'edit-admin':
+			return authenticate(req, res, RawReqController.editAdmin);
 		// // ** SITE SETTINGS ROUTES
 		// case 'update-site-settings':
 		// 	return authenticate(req, res, RawReqController.updateSiteSettings);

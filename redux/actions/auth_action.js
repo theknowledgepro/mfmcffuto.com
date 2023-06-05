@@ -9,7 +9,6 @@ const loginUser =
 	({ redirect, access_token, user, toast, loadingData }) =>
 	async (dispatch) => {
 		dispatch({ type: GLOBALTYPES.AUTH, payload: { token: access_token, user } });
-
 		// ** DISPATCH A REDIRECT IF NONE EXISTED FROM PAGE URL QUERY
 		// ** THIS WILL CAUSE THE HOOK IN THE _persist_layout FILE TO RUN...
 		!redirect &&
@@ -19,7 +18,7 @@ const loginUser =
 					url:
 						user.member_role === MEMBER_ROLES.MASTER || user.member_role === MEMBER_ROLES.MANAGER
 							? APP_ROUTES.ADMIN_DASHBOARD
-							: APP_ROUTES.DASHBOARD,
+							: APP_ROUTES.ADMIN_DASHBOARD,
 				},
 			});
 
@@ -34,7 +33,10 @@ export const createAdmin =
 			dispatch({ type: GLOBALTYPES.LOADING, payload: loadingData });
 
 			const res = await postFormDataAPI(API_ROUTES.CREATE_ADMIN, { ...newAdminData, avatar: avatarFile }, auth?.token);
-			if (res.status === 200) dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: loadingData });
+			if (res.status === 200) {
+				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res.data.message } });
+				dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: { [LOADING.CREATE_ADMIN]: true } });
+			}
 			return res;
 		} catch (err) {
 			return handleClientAPIRequestErrors({ err, dispatch, loadingData, returnData: true });
@@ -42,13 +44,18 @@ export const createAdmin =
 	};
 
 export const editAdminData =
-	({ auth, newAdminData, avatarFile, loadingData = { [LOADING.CREATE_ADMIN]: true } }) =>
+	({ auth, adminData, sameAsLoggedInUser, loadingData = { [LOADING.EDIT_ADMIN]: true } }) =>
 	async (dispatch) => {
 		try {
 			dispatch({ type: GLOBALTYPES.LOADING, payload: loadingData });
 
-			const res = await postFormDataAPI(API_ROUTES.CREATE_ADMIN, { ...newAdminData, avatar: avatarFile }, auth?.token);
-			if (res.status === 200) dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: loadingData });
+			const res = await postFormDataAPI(API_ROUTES.EDIT_ADMIN, { ...adminData, sameAsLoggedInUser }, auth?.token);
+			if (res.status === 200) {
+				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res.data.message } });
+				dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: { [LOADING.EDIT_ADMIN]: true } });
+			}
+			sameAsLoggedInUser && dispatch({ type: GLOBALTYPES.AUTH, payload: { token: auth?.token, user: res?.data?.adminData } });
+
 			return res;
 		} catch (err) {
 			return handleClientAPIRequestErrors({ err, dispatch, loadingData, returnData: true });

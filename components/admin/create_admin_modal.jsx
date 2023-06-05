@@ -12,12 +12,10 @@ import { LOADING } from '@/config';
 import { validate } from '@/utils/validate';
 import CircularProgress from '@mui/material/CircularProgress';
 import { GLOBALTYPES } from '@/redux/types';
-import { useRouter } from 'next/router';
 
 const CreateAdminModal = ({ openModal, setOpenModal, children, adminsStore, setAdminsStore }) => {
 	const { auth, loading: loadingStore } = useSelector((state) => state);
 	const dispatch = useDispatch();
-	const router = useRouter();
 	const { isMatchWidth } = UseMediaQuery({ vw: '500px' });
 
 	const [Open, setOpen] = React.useState(false);
@@ -43,10 +41,11 @@ const CreateAdminModal = ({ openModal, setOpenModal, children, adminsStore, setA
 			firstname: !firstname && "Please enter admin's firstname.",
 			secondname: !secondname && "Please enter admin's secondname.",
 			lastname: !lastname && "Please enter admin's surname.",
-			username: validate.username({ username }).errMsg
+			username: !username
 				? 'Please set a default username for this admin.'
-				: '' || validate.containsSpecialChars({ string: username }).errMsg,
-			email: !email ? 'Please enter admin\'s email address.' : validate.email({ email }).errMsg,
+				: (username.replace(/ /g, '').length < 5 && 'Username should be minimum of 5 characters.') ||
+				  validate.containsSpecialChars({ string: username }).errMsg,
+			email: !email ? "Please enter admin's email address." : validate.email({ email }).errMsg,
 			password:
 				(!password && 'Please set a default password for this admin.') || (password.length < 8 && 'Password must be at least 8 characters'),
 			gender: !gender && "Please enter admin's gender.",
@@ -57,7 +56,7 @@ const CreateAdminModal = ({ openModal, setOpenModal, children, adminsStore, setA
 			!firstname ||
 			!secondname ||
 			!lastname ||
-			validate.username({ username }).errMsg ||
+			!username || username.replace(/ /g, '').length < 5 ||
 			validate.containsSpecialChars({ string: username }).errMsg ||
 			validate.email({ email }).errMsg ||
 			!password ||
@@ -70,11 +69,9 @@ const CreateAdminModal = ({ openModal, setOpenModal, children, adminsStore, setA
 		if (isLoading(LOADING.CREATE_ADMIN, loadingStore)) return;
 		const res = await dispatch(createAdmin({ auth, newAdminData, avatarFile: file }));
 		if (res?.status === 200) {
-			dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res.data.message } });
-			dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: { [LOADING.CREATE_ADMIN]: true } });
 			handleClose();
 			setNewAdminData({});
-			router.push(window.location.href);
+			setAdminsStore && setAdminsStore([res?.data?.newAdmin, ...adminsStore]);
 		}
 	};
 

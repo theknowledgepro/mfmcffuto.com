@@ -19,6 +19,7 @@ export const MEMBER_ROLES = {
 
 export const ADMIN_PANEL_ACTIONS = {
 	CREATE_ADMIN: 'CREATE_ADMIN',
+	EDIT_ADMIN: 'EDIT_ADMIN',
 };
 
 export const APP_ROUTES = {
@@ -38,9 +39,6 @@ export const APP_ROUTES = {
 	SITE_SETTINGS: '/admin/site-settings',
 	ACTIVITY_LOGS: '/admin/activity-logs',
 
-	// ** USER AUTHENTICATED ROUTES
-	DASHBOARD: '/dashboard',
-
 	// ** AUTHENTICATION ROUTES (FOR USE IN PROJECTS WITH BOTH ADMIN AND USER AUTH)
 	LOGIN: SITE_DATA.TYPE === 'ADMIN_AND_USER_AUTH' ? '/login' : '/admin/login',
 	FORGOT_PASSWORD: SITE_DATA.TYPE === 'ADMIN_AND_USER_AUTH' ? '/forgot-password' : '/admin/forgot-password',
@@ -57,7 +55,7 @@ export const LOADING = {
 
 	// ** ADMIN PANEL ACTIONS LOADING
 	CREATE_ADMIN: 'CREATE_ADMIN',
-	EDIT_ADMIN_DETAILS: 'EDIT_ADMIN_DETAILS',
+	EDIT_ADMIN: 'EDIT_ADMIN',
 };
 
 export const API_ROUTES = {
@@ -72,7 +70,7 @@ export const API_ROUTES = {
 	CREATE_ADMIN: 'admin/raw/create-admin',
 
 	GET_ALL_ADMINS: 'admin/get-all-admins',
-	EDIT_ADMIN_DETAILS: 'admin/raw/edit-admin',
+	EDIT_ADMIN: 'admin/raw/edit-admin',
 	
 	GET_CONTACT_FORM: `admin/get-contact-form-submissions`,
 	MARK_CONTACT_FORM_AS_READ: `admin/mark-contact-form-read`,

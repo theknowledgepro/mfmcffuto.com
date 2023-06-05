@@ -24,11 +24,11 @@ const createPasswordResetToken = (payload) => {
 }
 
 const createAccessToken = (payload) => {
-    return jwt.sign({ _id: payload._id, level: payload.level, username: payload.username }, ACCESS_TOKEN_SECRET, { expiresIn: ExpiresIn.AccessToken.jwtValue });
+    return jwt.sign({ _id: payload._id, member_role: payload.member_role, url: payload.url }, ACCESS_TOKEN_SECRET, { expiresIn: ExpiresIn.AccessToken.jwtValue });
 }
 
 const createRefreshToken = (payload) => {
-    return jwt.sign({ _id: payload._id, level: payload.level, username: payload.username }, REFRESH_TOKEN_SECRET, { expiresIn: ExpiresIn.RefreshToken.jwtValue });
+    return jwt.sign({ _id: payload._id, member_role: payload.member_role, url: payload.url }, REFRESH_TOKEN_SECRET, { expiresIn: ExpiresIn.RefreshToken.jwtValue });
 }
 
 module.exports = {
