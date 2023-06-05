@@ -186,7 +186,7 @@ const AdminProfileDetails = ({ adminData, setAdminData, onEdit = false, type, er
 					<div className='color-primary'>Leave password field blank to retain old password.</div>
 				</div>
 			)}
-			{type === 'CREATEADMIN' || type === 'EDITMYPROFILE' && (
+			{(type === 'CREATEADMIN' || type === 'EDITMYPROFILE') && (
 				<React.Fragment>
 					<TextField
 						disabled={!onEdit}

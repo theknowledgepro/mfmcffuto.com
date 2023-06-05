@@ -23,7 +23,7 @@ export const ADMIN_PANEL_ACTIONS = {
 };
 
 export const APP_ROUTES = {
-	NOT_FOUND: '404',
+	NOT_FOUND: '/404',
 	HOME: '/',
 	CONTACT_US: '/contact-us',
 	ABOUT_US: '/about-us',
