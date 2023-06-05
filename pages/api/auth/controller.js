@@ -136,13 +136,13 @@ const AuthController = {
 
 			const user = await Users.findOne({ email });
 			if (!user) return responseLogic({ req, res, status: 400, data: { message: 'This email does not exist in our records!' } });
-			const otp_secret =
-				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJPVFAiOiI0MTQzIiwiaWF0IjoxNjg2MDAzMjY5LCJleHAiOjE2ODYwMzkyNjl9.rFWcHA1Qvr_y7npTOepmffFFc4DtKJjWnLxr-JuRYFA';
+			
+			const otp_secret = user?.otp_secret;
 
 			const { err, result } = await new Promise((resolve, reject) => {
 				return jwt.verify(otp_secret, process.env.RESET_PASSWORD_TOKEN_SECRET, async (err, result) => {
 					if (err) return resolve({ err: 'Invalid OTP!<br /> Please retry again...' });
-					if (Date.now() >= result?.exp * 1000) return resolve({ err: 'The OTP you entered is expired!<br />Please request a new one!' });
+					if (Date.now() >= result?.exp) return resolve({ err: 'The OTP you entered is expired!<br />Please request a new one!' });
 					if (result?.OTP !== OTPValue) return resolve({ err: 'The value you entered is incorrect!' });
 					resolve({ result });
 				});
