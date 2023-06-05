@@ -97,7 +97,7 @@ const ForgotPassword = ({ metatags, settings }) => {
 											value={email}
 											type={'email'}
 											color='primary'
-											className='mt-3 w-full my-auto'
+											className='mt-3 w-full my-auto pt-3'
 											name='email'
 											label='Email Address'
 											variant='standard'
@@ -170,7 +170,7 @@ const ForgotPassword = ({ metatags, settings }) => {
 										value={email}
 										type={'email'}
 										color='primary'
-										className='mt-3 w-full my-auto'
+										className='mt-3 w-full my-auto pt-3'
 										name='email'
 										label='Email Address'
 										variant='standard'
@@ -187,7 +187,7 @@ const ForgotPassword = ({ metatags, settings }) => {
 									<TextField
 										onChange={handleChangeInput}
 										defaultValue={password}
-										className='mt-3 w-full my-auto'
+										className='mt-3 w-full my-auto pt-3'
 										color='primary'
 										name='password'
 										label='Password'
@@ -214,7 +214,7 @@ const ForgotPassword = ({ metatags, settings }) => {
 									<TextField
 										onChange={handleChangeInput}
 										defaultValue={confirmPassword}
-										className='mt-3 w-full my-auto'
+										className='mt-3 w-full my-auto pt-3'
 										color='primary'
 										name='confirmPassword'
 										label='Confirm Password'

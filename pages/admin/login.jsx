@@ -79,7 +79,7 @@ const Login = ({ metatags, redirectProps, siteite }) => {
 								onChange={handleChangeInput}
 								defaultValue={username}
 								color='primary'
-								className='w-full'
+								className='w-full pt-3'
 								name='username'
 								label='Account Username'
 								variant='standard'
@@ -98,7 +98,7 @@ const Login = ({ metatags, redirectProps, siteite }) => {
 							<TextField
 								onChange={handleChangeInput}
 								defaultValue={password}
-								className='mt-6 w-full'
+								className='mt-6 w-full pt-3'
 								color='primary'
 								name='password'
 								label='Account Password'
