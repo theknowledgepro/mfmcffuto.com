@@ -75,45 +75,53 @@ const Login = ({ metatags, redirectProps, siteite }) => {
 						<AuthTopArea siteite={siteite} title={'Admin Login'} />
 
 						<div className={lgn_styse.auth_form_field}>
-							<div className='flex place-items-end w-full mt-4'>
-								<AccountCircleOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 0.5 }} />
-								<TextField
-									onChange={handleChangeInput}
-									defaultValue={username}
-									color='primary'
-									className='w-full'
-									name='username'
-									label='Username'
-									variant='standard'
-									helperText={errors.username}
-									error={errors.username ? true : false}
-								/>
-							</div>
+							<TextField
+								onChange={handleChangeInput}
+								defaultValue={username}
+								color='primary'
+								className='w-full'
+								name='username'
+								label='Account Username'
+								variant='standard'
+								helperText={errors.username}
+								error={errors.username ? true : false}
+								placeholder='Username'
+								InputProps={{
+									startAdornment: (
+										<InputAdornment position='start'>
+											<AccountCircleOutlined sx={{ color: SITE_DATA.THEME_COLOR }} />
+										</InputAdornment>
+									),
+								}}
+							/>
 
-							<div className={`flex place-items-end w-full}`}>
-								<LockPersonOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 0.5 }} />
-								<TextField
-									onChange={handleChangeInput}
-									defaultValue={password}
-									className='mt-3 w-full'
-									color='primary'
-									name='password'
-									label='Password'
-									variant='standard'
-									helperText={errors.password}
-									error={errors.password ? true : false}
-									type={typePass ? 'text' : 'password'}
-									InputProps={{
-										endAdornment: (
-											<InputAdornment position='end'>
-												<IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge='start'>
-													{typePass ? <VisibilityOff /> : <Visibility />}
-												</IconButton>
-											</InputAdornment>
-										),
-									}}
-								/>
-							</div>
+							<TextField
+								onChange={handleChangeInput}
+								defaultValue={password}
+								className='mt-6 w-full'
+								color='primary'
+								name='password'
+								label='Account Password'
+								variant='standard'
+								helperText={errors.password}
+								placeholder='Password'
+								error={errors.password ? true : false}
+								type={typePass ? 'text' : 'password'}
+								InputProps={{
+									startAdornment: (
+										<InputAdornment position='start'>
+											<LockPersonOutlined sx={{ color: SITE_DATA.THEME_COLOR }} />
+										</InputAdornment>
+									),
+									endAdornment: (
+										<InputAdornment position='end'>
+											<IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge='start'>
+												{typePass ? <VisibilityOff /> : <Visibility />}
+											</IconButton>
+										</InputAdornment>
+									),
+								}}
+							/>
 							<div className={lgn_styse.forgot_pass}>
 								<Link href={APP_ROUTES.FORGOT_PASSWORD} className={lgn_styse.forgot_pass_link}>
 									Forgot Password?

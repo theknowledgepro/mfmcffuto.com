@@ -77,28 +77,43 @@ const ForgotPassword = ({ metatags, settings }) => {
 					<div className={`card card-primary ${lgn_styse.auth_box}`}>
 						<AuthTopArea
 							settings={settings}
-							title={!isSent ? 'Forgot Password?' : !isVerified && isSent ? 'Please Enter OTP Below...' : isVerified ? 'Enter a new password for your account.' : ''}
+							title={
+								!isSent
+									? 'Forgot Password?'
+									: !isVerified && isSent
+									? 'Please Enter OTP Below...'
+									: isVerified
+									? 'Enter a new password for your account.'
+									: ''
+							}
 						/>
 
 						<div className={lgn_styse.auth_form_field}>
 							{!isSent && (
 								<React.Fragment>
 									<div className='flex items-center justify-end w-full'>
-										<EmailOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 'auto' }} />
 										<TextField
 											onChange={handleChangeInput}
 											value={email}
 											type={'email'}
 											color='primary'
-											className='mt-3 w-full'
+											className='mt-3 w-full my-auto'
 											name='email'
 											label='Email Address'
 											variant='standard'
 											helperText={errors.email}
+											placeholder='you@example.com'
 											error={errors.email ? true : false}
+											InputProps={{
+												startAdornment: (
+													<InputAdornment position='start'>
+														<EmailOutlined sx={{ color: SITE_DATA.THEME_COLOR }} />
+													</InputAdornment>
+												),
+											}}
 										/>
 									</div>
-									<div className='text-muted text-center mt-3 text-sm'>
+									<div className='text-gray-600 text-center mt-8 mb-3 text-sm'>
 										Kindly provide your email address to receive password reset instructions.
 									</div>
 
@@ -149,76 +164,80 @@ const ForgotPassword = ({ metatags, settings }) => {
 							)}
 							{isVerified && (
 								<React.Fragment>
-									<div className='flex items-center justify-left w-full'>
-										<EmailOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 'auto' }} />
-										<TextField
-											onChange={handleChangeInput}
-											disabled={true}
-											value={email}
-											type={'email'}
-											color='primary'
-											className='mt-3 w-full'
-											name='email'
-											label='Email Address'
-											variant='standard'
-											helperText={errors.email}
-											error={errors.email ? true : false}
-										/>
-									</div>
-									<div className={`flex items-center justify-left w-full}`}>
-										<LockPersonOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 'auto' }} />
-										<TextField
-											onChange={handleChangeInput}
-											defaultValue={password}
-											className='mt-3 w-full'
-											color='primary'
-											name='password'
-											label='Password'
-											variant='standard'
-											helperText={errors.password}
-											error={errors.password ? true : false}
-											type={typePass ? 'text' : 'password'}
-											InputProps={{
-												endAdornment: (
-													<InputAdornment position='end'>
-														<IconButton
-															onClick={handleClickShowPassword}
-															onMouseDown={handleMouseDownPassword}
-															edge='start'>
-															{typePass ? <VisibilityOff /> : <Visibility />}
-														</IconButton>
-													</InputAdornment>
-												),
-											}}
-										/>
-									</div>
-									<div className={`flex items-center justify-left w-full}`}>
-										<LockPersonOutlined sx={{ color: SITE_DATA.THEME_COLOR, mr: 1, my: 'auto' }} />
-										<TextField
-											onChange={handleChangeInput}
-											defaultValue={confirmPassword}
-											className='mt-3 w-full'
-											color='primary'
-											name='confirmPassword'
-											label='Confirm Password'
-											variant='standard'
-											helperText={errors.confirmPassword}
-											error={errors.confirmPassword ? true : false}
-											type={typePass ? 'text' : 'password'}
-											InputProps={{
-												endAdornment: (
-													<InputAdornment position='end'>
-														<IconButton
-															onClick={handleClickShowPassword}
-															onMouseDown={handleMouseDownPassword}
-															edge='start'>
-															{typePass ? <VisibilityOff /> : <Visibility />}
-														</IconButton>
-													</InputAdornment>
-												),
-											}}
-										/>
-									</div>
+									<TextField
+										onChange={handleChangeInput}
+										disabled={true}
+										value={email}
+										type={'email'}
+										color='primary'
+										className='mt-3 w-full my-auto'
+										name='email'
+										label='Email Address'
+										variant='standard'
+										helperText={errors.email}
+										error={errors.email ? true : false}
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position='start'>
+													<EmailOutlined sx={{ color: SITE_DATA.THEME_COLOR }} />
+												</InputAdornment>
+											),
+										}}
+									/>
+									<TextField
+										onChange={handleChangeInput}
+										defaultValue={password}
+										className='mt-3 w-full my-auto'
+										color='primary'
+										name='password'
+										label='Password'
+										variant='standard'
+										helperText={errors.password}
+										placeholder='New Password'
+										error={errors.password ? true : false}
+										type={typePass ? 'text' : 'password'}
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position='start'>
+													<LockPersonOutlined sx={{ color: SITE_DATA.THEME_COLOR }} />
+												</InputAdornment>
+											),
+											endAdornment: (
+												<InputAdornment position='end'>
+													<IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge='start'>
+														{typePass ? <VisibilityOff /> : <Visibility />}
+													</IconButton>
+												</InputAdornment>
+											),
+										}}
+									/>
+									<TextField
+										onChange={handleChangeInput}
+										defaultValue={confirmPassword}
+										className='mt-3 w-full my-auto'
+										color='primary'
+										name='confirmPassword'
+										label='Confirm Password'
+										variant='standard'
+										helperText={errors.confirmPassword}
+										placeholder='Confirm New Password'
+										error={errors.confirmPassword ? true : false}
+										type={typePass ? 'text' : 'password'}
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position='start'>
+													<LockPersonOutlined sx={{ color: SITE_DATA.THEME_COLOR }} />
+												</InputAdornment>
+											),
+											endAdornment: (
+												<InputAdornment position='end'>
+													<IconButton onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge='start'>
+														{typePass ? <VisibilityOff /> : <Visibility />}
+													</IconButton>
+												</InputAdornment>
+											),
+										}}
+									/>
 									<Button
 										variant='outlined'
 										onClick={handleResetPassword}
