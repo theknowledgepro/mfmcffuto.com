@@ -8,6 +8,8 @@ const AdminRouter = async (req, res) => {
 		// ** MANAGE ADMIN ROUTES
 		case 'get-all-admins':
 			return authenticate(req, res, AdminController.getAllAdmins);
+		case 'delete-admin':
+			return authenticate(req, res, AdminController.deleteAdmin);
 		// ** CONTACT FORM SUBMISSIONS ROUTES
 		case 'get-contact-form-submissions':
 			return authenticate(req, res, AdminController.getContactFormSubmissions);

@@ -65,7 +65,7 @@ const MyProfile = ({ userAuth }) => {
 		const res = await dispatch(
 			editAdminData({ auth, adminData: { ...adminData, adminId: userAuth?.user?._id, avatar: file }, sameAsLoggedInUser: true })
 		);
-		if(res?.status === 200) setEditDetails(!editDetails)
+		if (res?.status === 200) setEditDetails(!editDetails);
 	};
 
 	return (
@@ -116,6 +116,9 @@ export async function getServerSideProps({ req, res }) {
 	// ** REDIRECT TO LOGIN IF COOKIE NOT EXIST
 	const verifyUserAuth = await AuthController.generateAccessToken(req, res);
 	if (verifyUserAuth?.redirect) return verifyUserAuth;
+
+	// ** ASSIGN USER TO REQ OBJECT
+	req.user = verifyUserAuth?.user;
 
 	// ** REDIRECT TO 404 PAGE IF NOT ADMIN
 	if (verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MASTER && verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MANAGER)

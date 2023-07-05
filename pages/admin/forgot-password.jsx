@@ -125,7 +125,7 @@ const ForgotPassword = ({ metatags, settings }) => {
 										{isLoading(LOADING.REQUEST_PASSWORD_RESET_TOKEN, loadingStore) && (
 											<CircularProgress style={{ color: 'white', height: '20px', width: '20px' }} />
 										)}
-										{!isLoading(LOADING.REQUEST_PASSWORD_RESET_TOKEN, loadingStore) && 'Request for Password Reset!'}
+										{!isLoading(LOADING.REQUEST_PASSWORD_RESET_TOKEN, loadingStore) && 'Request for Password Reset'}
 									</Button>
 								</React.Fragment>
 							)}

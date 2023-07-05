@@ -56,7 +56,8 @@ const CreateAdminModal = ({ openModal, setOpenModal, children, adminsStore, setA
 			!firstname ||
 			!secondname ||
 			!lastname ||
-			!username || username.replace(/ /g, '').length < 5 ||
+			!username ||
+			username.replace(/ /g, '').length < 5 ||
 			validate.containsSpecialChars({ string: username }).errMsg ||
 			validate.email({ email }).errMsg ||
 			!password ||
@@ -67,7 +68,7 @@ const CreateAdminModal = ({ openModal, setOpenModal, children, adminsStore, setA
 		)
 			return;
 		if (isLoading(LOADING.CREATE_ADMIN, loadingStore)) return;
-		const res = await dispatch(createAdmin({ auth, newAdminData, avatarFile: file }));
+		const res = await dispatch(createAdmin({ auth, newAdminData: { ...newAdminData, avatar: file } }));
 		if (res?.status === 200) {
 			handleClose();
 			setNewAdminData({});

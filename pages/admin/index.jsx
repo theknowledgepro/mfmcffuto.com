@@ -12,13 +12,10 @@ const Dashboard = ({ userAuth }) => {
 	// ** DISPATCH USER AUTH
 	DispatchUserAuth({ userAuth });
 	return (
-		<AdminLayout metatags={{ meta_title: `Admin Dashboard | ${SITE_DATA.NAME}` }}>
-			<Typography
-				sx={{ fontWeight: '700', mt: 2, mb: 3, fontSize: { xs: '20px', sm: '22px', md: '30px' }, alignItems: 'center', display: 'flex' }}
-				className='color-primary'>
-				<FlutterDashIcon sx={{ fontSize: 'inherit', my: 'auto', mr: 1 }} className='text-muted' />
-				Admin Dashboard
-			</Typography>
+		<AdminLayout
+			metatags={{ meta_title: `Manage Admins | ${SITE_DATA.NAME}` }}
+			pageIcon={<FlutterDashIcon sx={{ fontSize: 'inherit', my: 'auto', mr: 1 }} className='text-muted' />}
+			pageTitle={'Admin Dashboard'}>
 			Admin Dashbaord... Development in progress...
 		</AdminLayout>
 	);

@@ -1,13 +1,13 @@
 /** @format */
 
-const { default: connectDB, ACTIVITY_TYPES } = require('@/middlewares/db_config');
+const { default: connectDB } = require('@/middlewares/db_config');
 const responseLogic = require('@/middlewares/server_response_logic');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Users = require('@/models/user_model');
 const { createAccessToken, createRefreshToken, ExpiresIn } = require('@/middlewares/create_jwt_token');
 const activityLog = require('@/middlewares/activity_log');
-const { APP_ROUTES } = require('@/config');
+const { APP_ROUTES, ACTIVITY_TYPES } = require('@/config');
 const { requestPasswordResetOTPEmail } = require('@/middlewares/send_mail');
 const randomNumberGenerator = (length) => {
 	let numbers = '';
@@ -66,13 +66,12 @@ const AuthController = {
 			if (!rf_token) {
 				handleLogOut();
 			} else {
-				// ** RECORD ACTION IN USER ACTIVITY_LOGS
 				return jwt.verify(rf_token, process.env.REFRESH_TOKEN_SECRET, async (err, result) => {
 					if (err) handleLogOut();
 
 					const user = await Users.findById(result._id);
 					if (!user) handleLogOut();
-
+					// ** RECORD ACTION IN USER ACTIVITY_LOGS
 					await activityLog({ deed: ACTIVITY_TYPES.LOGOUT.title, details: `${ACTIVITY_TYPES.LOGOUT.desc}`, user_id: user?._id });
 					return handleLogOut();
 				});
@@ -116,12 +115,25 @@ const AuthController = {
 
 			// ** GENERATE OTP AND SEND EMAIL TO USER
 			const OTP = randomNumberGenerator(4);
-			await requestPasswordResetOTPEmail({ email, OTP, expiresIn: ExpiresIn.PasswordResetToken.string });
-
+			const mail = await requestPasswordResetOTPEmail({ email, OTP, expiresIn: ExpiresIn.PasswordResetToken.string });
+			if (!mail?.messageId)
+			return responseLogic({
+				req,
+				res,
+				status: 400,
+				data: { message: 'We could not send an email to your address!<br />Please try again...' },
+			});
 			// ** SAVE A SIGNED OTP TO DB FOR VERIFICATION LATER ...
 			// ** I USED JWT SO AS TO HAVE A TIME LIMIT FOR EACH OTP...
 			const otp_secret = await jwt.sign({ OTP }, process.env.RESET_PASSWORD_TOKEN_SECRET, { expiresIn: ExpiresIn.PasswordResetToken.jwtValue });
 			await Users.findByIdAndUpdate(user?._id, { otp_secret });
+
+			// ** RECORD ACTION IN USER ACTIVITY_LOGS
+			await activityLog({
+				deed: ACTIVITY_TYPES.REQUEST_PASSWORD_RESET_TOKEN.title,
+				details: `${ACTIVITY_TYPES.REQUEST_PASSWORD_RESET_TOKEN.desc}`,
+				user_id: user?._id,
+			});
 
 			return responseLogic({ req, res, status: 200, data: { message: "We've sent an OTP to your email address!" } });
 		} catch (err) {
@@ -136,13 +148,12 @@ const AuthController = {
 
 			const user = await Users.findOne({ email });
 			if (!user) return responseLogic({ req, res, status: 400, data: { message: 'This email does not exist in our records!' } });
-			
 			const otp_secret = user?.otp_secret;
 
 			const { err, result } = await new Promise((resolve, reject) => {
 				return jwt.verify(otp_secret, process.env.RESET_PASSWORD_TOKEN_SECRET, async (err, result) => {
-					if (err) return resolve({ err: 'Invalid OTP!<br /> Please retry again...' });
-					if (Date.now() >= result?.exp) return resolve({ err: 'The OTP you entered is expired!<br />Please request a new one!' });
+					// ** THE ONLY POSSIBLE ERROR WILL BE THAT OF EXPIRY SINCE OTP_SECRET WAS FETCHED FROM DB...
+					if (err) return resolve({ err: 'The OTP you entered is expired!<br />Please request a new one!' });
 					if (result?.OTP !== OTPValue) return resolve({ err: 'The value you entered is incorrect!' });
 					resolve({ result });
 				});
@@ -163,7 +174,10 @@ const AuthController = {
 				return responseLogic({ req, res, status: 400, data: { message: 'Password and Confirm Password do not match!' } });
 
 			const passwordHash = await bcrypt.hash(password, 12);
-			await Users.findOneAndUpdate({ email }, { passwordHash, otp_secret: null });
+			const user = await Users.findOneAndUpdate({ email }, { password: passwordHash, otp_secret: null });
+
+			// ** RECORD ACTION IN USER ACTIVITY_LOGS
+			await activityLog({ deed: ACTIVITY_TYPES.RESET_PASSWORD.title, details: `${ACTIVITY_TYPES.RESET_PASSWORD.desc}`, user_id: user?._id });
 
 			return responseLogic({ req, res, status: 200, data: { message: 'Password reset succesfully!' } });
 		} catch (err) {

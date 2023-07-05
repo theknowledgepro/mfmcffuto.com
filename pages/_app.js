@@ -22,6 +22,8 @@ const theme = createTheme({
 	typography: { fontFamily: ['FSJoey'].join(',') },
 	palette: {
 		primary: { main: SITE_DATA.THEME_COLOR },
+		danger: { main: '#dc3545' },
+		info: { main: '#0495c7' },
 		white: { main: '#fff' },
 	},
 });

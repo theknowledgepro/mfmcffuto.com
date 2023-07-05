@@ -21,7 +21,7 @@ import { GLOBALTYPES } from '@/redux/types';
 import WebController from '@/pages/api/controller';
 import AuthController from '@/pages/api/auth/controller';
 
-const Login = ({ metatags, redirectProps, siteite }) => {
+const Login = ({ metatags, redirectProps, sitesettings }) => {
 	const { loading: loadingStore, redirect } = useSelector((state) => state);
 	const dispatch = useDispatch();
 
@@ -72,7 +72,7 @@ const Login = ({ metatags, redirectProps, siteite }) => {
 			<section className={`${lgn_styse.parent} row`}>
 				<div className='px-2 pt-5 pb-2 col-12 flex flex-col items-center justify-center'>
 					<div className={`card card-primary ${lgn_styse.auth_box}`}>
-						<AuthTopArea siteite={siteite} title={'Admin Login'} />
+						<AuthTopArea sitesettings={sitesettings} title={'Admin Login'} />
 
 						<div className={lgn_styse.auth_form_field}>
 							<TextField

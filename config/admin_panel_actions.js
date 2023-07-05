@@ -1,0 +1,9 @@
+/** @format */
+
+const ADMIN_PANEL_ACTIONS = {
+	CREATE_ADMIN: 'CREATE_ADMIN',
+	EDIT_ADMIN: 'EDIT_ADMIN',
+	DELETE_ADMIN: 'DELETE_ADMIN',
+};
+
+export default ADMIN_PANEL_ACTIONS;

@@ -286,11 +286,23 @@ const DrawerContent = ({ open }) => {
 		<React.Fragment>
 			<DrawerHeader
 				className={`color-primary prevent-select`}
-				sx={{ width: '100%', fontSize: '19px', fontWeight: '700', textShadow: '0 0 5px rgb(133 61 209 / 10%)' }}>
+				sx={{
+					width: open ? drawerWidth : '65px',
+					fontSize: '19px',
+					fontWeight: '700',
+					textShadow: '0 0 5px rgb(133 61 209 / 10%)',
+					position: 'fixed',
+					top: 0,
+					left: 0,
+					background: '#fff',
+					zIndex: 2000,
+					flexFlow: 'column',
+					height: '65px',
+					borderBottom: '1px solid var(--color-primary)',
+				}}>
 				{open && 'Advanced Admin Panel'}
 			</DrawerHeader>
-			<Divider />
-			<List>
+			<List className='w-full pt-5 mt-11'>
 				{AdminDashboardNavItems1.map((nav, index) => (
 					<React.Fragment key={index}>
 						{nav.children && <RenderDropdownNav nav={nav} open={open} />}
@@ -329,6 +341,7 @@ const DrawerContent = ({ open }) => {
 		</React.Fragment>
 	);
 };
+
 const UserMenu = () => {
 	const { auth } = useSelector((state) => state);
 	const dispatch = useDispatch();
@@ -441,6 +454,18 @@ const RenderChildTopLayout = ({ pageIcon, pageTitle }) => {
 	);
 };
 
+const RenderFooter = () => {
+	return (
+		<Box className='text-center w-full fs-8 text-secondary'>
+			<Divider className='bg-primary w-100 mb-2' />
+			&copy; Advanced Admin Panel Built By - {SITE_DATA.DEVELOPER_NAME}
+			<Link href={SITE_DATA.DEVELOPER_URL} target='_blank' className='ml-1 color-primary text-decor-none font-semibold'>
+				Contact Developer
+			</Link>
+		</Box>
+	);
+};
+
 const DesktopLayout = ({ children, pageIcon, pageTitle }) => {
 	const theme = useTheme();
 	const { isSideNavExpand, setIsSideNavExpand, isFullScreen, setIsFullScreen } = useAppContext();
@@ -479,7 +504,10 @@ const DesktopLayout = ({ children, pageIcon, pageTitle }) => {
 			<Box component='main' sx={{ flexGrow: 1, p: 2, width: '100%', height: '100%', position: 'relative' }}>
 				<DrawerHeader />
 				<RenderChildTopLayout pageIcon={pageIcon} pageTitle={pageTitle} />
-				{children}
+				<Box sx={{ display: 'flex', flexFlow: 'column', minHeight: '100vh', justifyContent: 'space-between' }}>
+					{children}
+					<RenderFooter />
+				</Box>
 			</Box>
 		</Box>
 	);
@@ -520,7 +548,10 @@ const ResponsiveLayout = ({ children, pageIcon, pageTitle }) => {
 			<Box component='main' sx={{ flexGrow: 1, p: 1, width: '100%', height: '100%', position: 'relative' }}>
 				<Toolbar />
 				<RenderChildTopLayout pageIcon={pageIcon} pageTitle={pageTitle} />
-				{children}
+				<Box sx={{ display: 'flex', flexFlow: 'column', minHeight: '100vh', justifyContent: 'space-between' }}>
+					{children}
+					<RenderFooter />
+				</Box>
 			</Box>
 		</Box>
 	);

@@ -1,5 +1,6 @@
 export { default as Toast } from './toast';
 export { default as ComingSoonPage } from './coming_soon';
+export { default as ConfirmActionDialog } from './confirm_action_dialog';
 
 // ** ADMIN COMPONENTS
 export { default as AuthLayout } from './admin/auth_layout';
@@ -14,3 +15,30 @@ export { default as EditAdminModal } from './admin/edit_admin_modal';
 export { default as WebLayout } from './web_layout';
 export { default as WebHeader } from './web_header';
 export { default as WebFooter } from './web_footer';
+export { default as WebBanner } from './web_banner';
+export { default as TypeWriterWebBanner } from './type_writer_web_banner';
+export { default as WebSectionBreadCrumb } from './web_section_bread_crumb';
+export { default as MuiXDataGridTable } from './mui_data_grid_table';
+export { default as MuiModal } from './modal';
+export { default as ReactEditor } from './react_editor';
+export { default as ContactUsForm } from './contact_us_form';
+export { default as SetUpPageSEO } from './set_page_seo';
+export { default as NoDataFound } from './no_data_found';
+export { default as ImageTag } from './image_tag';
+export { default as WithDrawer } from './with_drawer';
+export { default as SocialIcons } from './social_icons';
+
+// ** BLOG SECTION COMPONENTS
+export { default as CategoriesSection } from './blogs/categories_section';
+export { default as RecentBlogsSection } from './blogs/recent_blogs_section';
+export { default as CategoryCard } from './blogs/category_card';
+export { default as BlogThumb } from './blogs/blog_thumb';
+export { default as TagChip } from './blogs/tag_chip';
+export { default as CategoryChip } from './blogs/category_chip';
+export { default as BlogCard } from './blogs/blog_card';
+export { default as SocialShareModal } from './blogs/social_share_modal';
+export { default as SocialShareRowButtons } from './blogs/social_share_row_buttons';
+export { default as BlogCommentCard } from './blogs/blog_comment_card';
+export { default as SubscribeToBlogNotificationForm } from './blogs/subscribe_to_blog_notification_form';
+export { default as BlogSectionCommonFooter } from './blogs/common_footer';
+export { default as BlogContent } from './blogs/blog_content';

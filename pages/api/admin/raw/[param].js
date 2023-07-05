@@ -7,6 +7,7 @@ import useBodyParser from '@/middlewares/body_parser';
 const RawRouter = async (incomingReqObj, incomingResObj) => {
 	const { req, res } = await useBodyParser(incomingReqObj, incomingResObj);
 	switch (req.query.param) {
+		// ** MANAGE ADMINS ROUTES
 		case 'create-admin':
 			return authenticate(req, res, RawReqController.createAdmin);
 		case 'edit-admin':

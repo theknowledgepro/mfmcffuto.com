@@ -3,7 +3,7 @@
 import { API_ROUTES, APP_ROUTES, LOADING, MEMBER_ROLES } from '@/config';
 import { handleClientAPIRequestErrors } from '@/utils/errors';
 import { GLOBALTYPES } from '../types';
-import { postDataAPI, postFormDataAPI } from '@/utils/api_client_side';
+import { deleteDataAPI, postDataAPI, postFormDataAPI } from '@/utils/api_client_side';
 
 const loginUser =
 	({ redirect, access_token, user, toast, loadingData }) =>
@@ -27,12 +27,12 @@ const loginUser =
 	};
 
 export const createAdmin =
-	({ auth, newAdminData, avatarFile, loadingData = { [LOADING.CREATE_ADMIN]: true } }) =>
+	({ auth, newAdminData, loadingData = { [LOADING.CREATE_ADMIN]: true } }) =>
 	async (dispatch) => {
 		try {
 			dispatch({ type: GLOBALTYPES.LOADING, payload: loadingData });
 
-			const res = await postFormDataAPI(API_ROUTES.CREATE_ADMIN, { ...newAdminData, avatar: avatarFile }, auth?.token);
+			const res = await postFormDataAPI(API_ROUTES.CREATE_ADMIN, newAdminData, auth?.token);
 			if (res.status === 200) {
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res.data.message } });
 				dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: { [LOADING.CREATE_ADMIN]: true } });
@@ -56,6 +56,23 @@ export const editAdminData =
 			}
 			sameAsLoggedInUser && dispatch({ type: GLOBALTYPES.AUTH, payload: { token: auth?.token, user: res?.data?.adminData } });
 
+			return res;
+		} catch (err) {
+			return handleClientAPIRequestErrors({ err, dispatch, loadingData, returnData: true });
+		}
+	};
+
+export const deleteAdmin =
+	({ auth, adminUrl, loadingData = { [LOADING.DELETE_ADMIN]: true } }) =>
+	async (dispatch) => {
+		try {
+			dispatch({ type: GLOBALTYPES.LOADING, payload: loadingData });
+
+			const res = await deleteDataAPI(`${API_ROUTES.DELETE_ADMIN}?admin=${adminUrl}`, auth?.token);
+			if (res.status === 200) {
+				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res.data.message } });
+				dispatch({ type: GLOBALTYPES.FINISHEDLOADING, payload: { [LOADING.DELETE_ADMIN]: true } });
+			}
 			return res;
 		} catch (err) {
 			return handleClientAPIRequestErrors({ err, dispatch, loadingData, returnData: true });

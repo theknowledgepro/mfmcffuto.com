@@ -1,19 +1,5 @@
 /** @format */
 
-export const ACTIVITY_TYPES = {
-	LOGIN: { title: 'LOGIN', desc: 'Signed In with device ~~ ' },
-	LOGOUT: { title: 'LOGOUT', desc: 'Signed Out from account ~~ ' },
-
-	UPDATED_MY_PROFILE: { title: 'UPDATED_MY_PROFILE', desc: 'Updated your profile' },
-	UPDATED_ADMIN_PROFILE: { title: 'UPDATED_ADMIN_PROFILE', desc: 'Updated admin profile' },
-	CREATED_ADMIN: { title: 'CREATED_ADMIN', desc: 'Created a new admin' },
-
-	UPDATED_SITE_SETTINGS: { title: 'UPDATED_SITE_SETTINGS', desc: 'Updated site settings' },
-	CONFIGURED_SITE_SETTINGS: { title: 'CONFIGURED_SITE_SETTINGS', desc: 'Configured settings for this site' },
-
-	READ_CONTACT_FORM: { title: 'READ_CONTACT_FORM', desc: 'Read contact form - ID: ' },
-};
-
 /**
  * Source :
  * https://github.com/vercel/next.js/blob/canary/examples/with-mongodb-mongoose/utils/dbConnect.js

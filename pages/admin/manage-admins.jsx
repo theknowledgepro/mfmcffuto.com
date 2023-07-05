@@ -65,7 +65,7 @@ const Dashboard = ({ userAuth, allAdmins }) => {
 				</Box>
 			</Box>
 
-			<div className='w-100 row'>
+			<div className='w-full row'>
 				{admins.map((admin, i) => (
 					<AdminDataCard adminsStore={admins} setAdminsStore={setAdmins} admin={admin} key={i} />
 				))}
@@ -93,15 +93,14 @@ export async function getServerSideProps({ req, res }) {
 	const verifyUserAuth = await AuthController.generateAccessToken(req, res);
 	if (verifyUserAuth?.redirect) return verifyUserAuth;
 
+	// ** ASSIGN USER TO REQ OBJECT
+	req.user = verifyUserAuth?.user;
+
 	// ** REDIRECT TO 404 PAGE IF NOT ADMIN
 	if (verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MASTER && verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MANAGER)
 		return {
 			redirect: { destination: APP_ROUTES.NOT_FOUND, permanent: false },
 		};
-
-	// REDIRECT TO DASHBOARD PAGE IF ADMIN IS RESTRICTED TO VIEW THIS PAGE
-	const isRestricted = await CheckAdminRestriction({ page: APP_ROUTES.DASHBOARD, adminId: verifyUserAuth?.user?._id });
-	if (isRestricted) return { redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false } };
 
 	// ** REDIRECT TO DASHBOARD PAGE IF NOT MASTER ADMIN
 	if (verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MASTER)
@@ -109,12 +108,16 @@ export async function getServerSideProps({ req, res }) {
 			redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false },
 		};
 
+	// REDIRECT TO DASHBOARD PAGE IF ADMIN IS RESTRICTED TO VIEW THIS PAGE
+	const isRestricted = await CheckAdminRestriction({ page: APP_ROUTES.MANAGE_ADMINS, adminId: verifyUserAuth?.user?._id });
+	if (isRestricted) return { redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false } };
+
 	// ** GET PAGE DATA
 	const allAdmins = await AdminController.getAllAdmins(req, res, true);
 	return {
 		props: {
 			userAuth: verifyUserAuth?.user ? verifyUserAuth : {},
-			allAdmins: allAdmins?.data?.results,
+			allAdmins: allAdmins?.data?.results ? allAdmins?.data?.results : [],
 		},
 	};
 }

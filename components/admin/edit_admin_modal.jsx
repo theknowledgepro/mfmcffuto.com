@@ -44,7 +44,7 @@ const EditAdminModal = ({ children, adminUrl, adminsStore, setAdminsStore }) => 
 		});
 		if (!firstname || !secondname || !lastname || validate.email({ email }).errMsg || !gender || !mobile || !member_role) return;
 		if (isLoading(LOADING.EDIT_ADMIN, loadingStore)) return;
-		const res = await dispatch(editAdminData({ auth, adminData: { ...adminData, adminUrl: adminData.url }, avatarFile: file }));
+		const res = await dispatch(editAdminData({ auth, adminData: { ...adminData, adminUrl: adminData.url, avatar: file } }));
 		if (res?.status === 200) {
 			handleClose();
 			if (adminsStore && setAdminsStore) {

@@ -1,13 +1,13 @@
 /** @format */
 
+import { SITE_DATA } from '@/config';
 const mongoose = require('mongoose');
-const { SITE_DATA } = require('@/config');
 
-const adminsRestrictionsModel = new mongoose.Schema(
+const adminsRestrictionsModel = mongoose.Schema(
 	{
 		page: { type: String }, // ** ADMIN PANEL PAGE TO WHICH ADMINS IN THE ARRAY ARE RESTRICTED TO
 		action: { type: String }, // ** ADMIN PANEL ACTIONS WHICH ADMINS IN THE ARRAY ARE RESTRICTED TO
-		admins: [{ type: mongoose.Types.ObjectId, ref: 'User' }], // ** ARRAY OF ADMINS WITH RESTRICTIONS
+		admins: [{ type: mongoose.Types.ObjectId, ref: 'Admins' }], // ** ARRAY OF ADMINS WITH RESTRICTIONS
 	},
 	{ timestamps: true }
 );

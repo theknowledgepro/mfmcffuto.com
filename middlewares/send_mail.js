@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const handlebars = require('handlebars');
 const fs = require('fs');
 const path = require('path');
+const { SITE_DATA } = require('@/config');
 
 const priorityHeader = {
 	high: {
@@ -53,37 +54,18 @@ const mailHandler = async ({ from, to, subject, replacements, htmlTemplate, atta
 	return await smtpTransport.sendMail(mailOptions);
 };
 
-/** REQUEST OTP  */
+/** REQUEST PASSWORD RESET OTP  */
 const requestPasswordResetOTPEmail = ({ email, OTP, expiresIn }) => {
 	return mailHandler({
 		from: {
-			name: 'Backend Locals',
-			address: 'no-reply@officehotspot.com',
+			name: SITE_DATA.NAME,
+			address: `support${SITE_DATA.BUSINESS_EMAIL_HANDLE}`,
 		},
-		to: ['promisedera@officehotspot.com'],
+		to: [email],
 		subject: 'Password Reset OTP',
 		replacements: { email, OTP, expiresIn },
 		htmlTemplate: 'request_password_reset_otp.handlebars',
 	});
 };
 
-const welcomeEmail = ({ email }) => {
-	return mailHandler({
-		from: ADMIN_EMAIL,
-		to: email,
-		subject: 'Welcome on Board! @' + SITE_NAME,
-		htmlTemplate: './welcome_on_register.handlebars',
-	});
-};
-
-const passwordReset = ({ email, url }) => {
-	return mailHandler({
-		from: ADMIN_EMAIL,
-		to: email,
-		subject: 'Password Reset | ' + SITE_NAME,
-		replacements: { url },
-		htmlTemplate: './reset_password.handlebars',
-	});
-};
-
-module.exports = { requestPasswordResetOTPEmail, welcomeEmail, passwordReset };
+module.exports = { requestPasswordResetOTPEmail };
