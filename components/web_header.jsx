@@ -100,8 +100,9 @@ const WebHeader = ({ sitesettings }) => {
 	const NavItems = [
 		{ name: 'Home', href: '', icon: '' },
 		{ name: 'About Us', href: '', icon: '' },
+		{ name: 'Academics', href: '', icon: '' },
 		{
-			name: 'Academics',
+			name: 'Articles & Blogs',
 			href: '',
 			icon: '',
 			children: [
@@ -111,7 +112,6 @@ const WebHeader = ({ sitesettings }) => {
 				{ name: 'Browse By Tags', href: '', icon: '' },
 			],
 		},
-		{ name: 'Articles & Blogs', href: '', icon: '' },
 		{ name: 'Fellowship Groups', href: '', icon: '', children: [{ name: 'Bible Study Group', href: '', icon: '' }] },
 		{ name: 'Our Excos', href: '', icon: '' },
 		{ name: 'Gallery', href: '', icon: '' },
@@ -167,7 +167,7 @@ const WebHeader = ({ sitesettings }) => {
 				<div className='text-center mb-2 text-[12px] text-gray-700' style={{ fontFamily: 'cursive' }}>
 					...where champions are gathered!
 				</div>
-				<List className={`flex flex-col items-start justify-start overflow-y-auto overflow-x-hidden mb-[100px] pb-[50px]`}>
+				<List className={`flex flex-col items-start justify-start overflow-y-auto overflow-x-hidden mb-[100px] pb-[70px]`}>
 					{NavItems.map((nav, index) => (
 						<React.Fragment key={index}>
 							{nav.children && <RenderDropdownNav nav={nav} />}
