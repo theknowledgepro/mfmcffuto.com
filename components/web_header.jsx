@@ -86,8 +86,8 @@ const WebHeader = ({ sitesettings }) => {
 	ChangeClassNameAtPosition({ targetRef: mobileHeaderRef, position: 200, className: 'mobile-header-shadow' });
 	ChangeClassNameAtPosition({ targetRef: mobileHeaderRef, position: 200, className: 'mobile-header-bg-original' });
 	ChangeClassNameAtPosition({ targetRef: mobileHeaderRefNavIcon, position: 200, className: 'text-white' });
-	HideShowNavbarOnScroll({ targetRef: mobileHeaderRef, className: 'translateY-100', startPosition: 500 });
-	HideShowNavbarOnScroll({ targetRef: pcHeaderRef, className: 'translateY-100', startPosition: 500 });
+	// HideShowNavbarOnScroll({ targetRef: mobileHeaderRef, className: 'translateY-100', startPosition: 500 });
+	// HideShowNavbarOnScroll({ targetRef: pcHeaderRef, className: 'translateY-100', startPosition: 500 });
 
 	const handleOpenSideNav = () => {
 		mobileHeaderRef?.current?.classList.toggle('hide-modile-header');
@@ -100,7 +100,17 @@ const WebHeader = ({ sitesettings }) => {
 	const NavItems = [
 		{ name: 'Home', href: '', icon: '' },
 		{ name: 'About Us', href: '', icon: '' },
-		{ name: 'Academics', href: '', icon: '' },
+		{
+			name: 'Academics',
+			href: '',
+			icon: '',
+			children: [
+				{ name: 'Explore Articles & Blogs', href: '', icon: '' },
+				{ name: 'Featured Articles!', href: '', icon: '' },
+				{ name: 'Browse By Categories', href: '', icon: '' },
+				{ name: 'Browse By Tags', href: '', icon: '' },
+			],
+		},
 		{ name: 'Articles & Blogs', href: '', icon: '' },
 		{ name: 'Fellowship Groups', href: '', icon: '', children: [{ name: 'Bible Study Group', href: '', icon: '' }] },
 		{ name: 'Our Excos', href: '', icon: '' },
@@ -143,7 +153,7 @@ const WebHeader = ({ sitesettings }) => {
 			</div>
 			<div
 				ref={sideBarRef}
-				className='fixed overflow-hidden top-0 left-0 bg-[var(--app-bg)] border-r border-gray-200 shadow-md w-[94vw] h-[100vh] xs:flex md:hidden flex-col p-2 hide-side-nav transition-all ease-out duration-300'>
+				className='fixed overflow-hidden top-0 left-0 bg-[var(--app-bg)] border-r border-gray-200 shadow-md w-[100vw] h-[100vh] xs:flex md:hidden flex-col p-2 hide-side-nav transition-all ease-out duration-300'>
 				<IconButton className='absolute top-[15px] right-[10px]' onClick={handleOpenSideNav}>
 					<CancelIcon className='text-[var(--color-primary)] text-[28px]' />
 				</IconButton>
@@ -165,7 +175,7 @@ const WebHeader = ({ sitesettings }) => {
 						</React.Fragment>
 					))}
 				</List>
-				<div className='absolute bottom-0 left-0 w-full border-t border-[var(--color-primary)] bg-[var(--color-primary)]'>
+				<div className='fixed bottom-0 left-0 w-full border-t border-[var(--color-primary)] bg-[var(--color-primary)]'>
 					<div className='py-3 relative w-full h-full flex items-center justify-center flex-col'>
 						<div className={styles.footer_wave} id={styles.wave1}></div>
 						<div className={styles.footer_wave} id={styles.wave2}></div>
