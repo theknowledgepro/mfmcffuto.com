@@ -99,21 +99,15 @@ const WebHeader = ({ sitesettings }) => {
 
 	const NavItems = [
 		{ name: 'Home', href: '', icon: '' },
-		{ name: 'Groups', href: '', icon: '', children: [{ name: 'Bible Study Group', href: '', icon: '' }] },
-		{ name: 'Home', href: '', icon: '' },
-		{ name: 'Groups', href: '', icon: '', children: [{ name: 'Bible Study Group', href: '', icon: '' }] },
-		{ name: 'Home', href: '', icon: '' },
-		{ name: 'Groups', href: '', icon: '', children: [{ name: 'Bible Study Group', href: '', icon: '' }] },
-		{ name: 'Home', href: '', icon: '' },
-		{ name: 'Groups', href: '', icon: '', children: [{ name: 'Bible Study Group', href: '', icon: '' }] },
-		{ name: 'Home', href: '', icon: '' },
-		{ name: 'Groups', href: '', icon: '', children: [{ name: 'Bible Study Group', href: '', icon: '' }] },
-		{ name: 'Home', href: '', icon: '' },
-		{ name: 'Groups', href: '', icon: '', children: [{ name: 'Bible Study Group', href: '', icon: '' }] },
-		{ name: 'Home', href: '', icon: '' },
-		{ name: 'Groups', href: '', icon: '', children: [{ name: 'Bible Study Group', href: '', icon: '' }] },
-		{ name: 'Naza', href: '', icon: '' },
-		{ name: 'Dera', href: '', icon: '', children: [{ name: 'Bible Study Group', href: '', icon: '' }] },
+		{ name: 'About Us', href: '', icon: '' },
+		{ name: 'Academics', href: '', icon: '' },
+		{ name: 'Articles & Blogs', href: '', icon: '' },
+		{ name: 'Fellowship Groups', href: '', icon: '', children: [{ name: 'Bible Study Group', href: '', icon: '' }] },
+		{ name: 'Our Excos', href: '', icon: '' },
+		{ name: 'Gallery', href: '', icon: '' },
+		{ name: 'Sermons', href: '', icon: '' },
+		{ name: 'Tithes & Offerings', href: '', icon: '' },
+		{ name: 'Contact Us', href: '', icon: '' },
 	];
 
 	return (
@@ -129,7 +123,9 @@ const WebHeader = ({ sitesettings }) => {
 					/>
 				</div>
 			</div>
-			<div ref={pcHeaderRef} className='hidden border py-2 sm:pr-[30px] sm:pl-[25px] md:pr-[50px] md:pl-[30px] md:flex justify-between items-center transition-all ease-out duration-300'>
+			<div
+				ref={pcHeaderRef}
+				className='hidden border py-2 sm:pr-[30px] sm:pl-[25px] md:pr-[50px] md:pl-[30px] md:flex justify-between items-center transition-all ease-out duration-300'>
 				<ImageTag src={ASSETS.LOGO} style={{ width: '50px', height: '50px' }} className='bg-white p-[3px] rounded-[50%]' alt='logo' />
 				<div className='flex items-center justify-center'>
 					{NavItems.map((nav, i) => (
@@ -154,9 +150,13 @@ const WebHeader = ({ sitesettings }) => {
 				<ImageTag
 					src={ASSETS.LOGO}
 					style={{ width: '110px', height: '110px' }}
-					className='border border-gray-100 bg-white btn-animated rounded-[50%] mt-[30px] mx-auto mb-5 p-2 shadow-lg'
+					className='border border-gray-100 bg-white btn-animated rounded-[50%] mt-[20px] mx-auto mb-2 p-2 shadow-lg'
 					alt='logo'
 				/>
+				<div className='w-full text-center font-bold text-[var(--color-primary)]'>FUTO CHAPTER</div>
+				<div className='text-center mb-2 text-[12px] text-gray-700' style={{ fontFamily: 'cursive' }}>
+					...where champions are gathered!
+				</div>
 				<List className={`flex flex-col items-start justify-start overflow-y-auto overflow-x-hidden mb-[100px]`}>
 					{NavItems.map((nav, index) => (
 						<React.Fragment key={index}>
