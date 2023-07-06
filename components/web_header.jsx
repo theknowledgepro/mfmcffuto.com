@@ -167,7 +167,7 @@ const WebHeader = ({ sitesettings }) => {
 				<div className='text-center mb-2 text-[12px] text-gray-700' style={{ fontFamily: 'cursive' }}>
 					...where champions are gathered!
 				</div>
-				<List className={`flex flex-col items-start justify-start overflow-y-auto overflow-x-hidden mb-[100px]`}>
+				<List className={`flex flex-col items-start justify-start overflow-y-auto overflow-x-hidden mb-[100px] pb-[50px]`}>
 					{NavItems.map((nav, index) => (
 						<React.Fragment key={index}>
 							{nav.children && <RenderDropdownNav nav={nav} />}
