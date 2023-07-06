@@ -1,4 +1,14 @@
 /** @format */
+/** @format */
+const API_ROUTES = require('./api_routes');
+const APP_ROUTES = require('./app_routes');
+const LOADING = require('./loading_types');
+const ACTIVITY_TYPES = require('./activity_types');
+const ADMIN_PANEL_ACTIONS = require('./admin_panel_actions');
+const MEMBER_ROLES = require('./member_roles');
+const LIMITS = require('./limits');
+const CUSTOM_UI_TYPES = require('./ui_display_types');
+const ASSETS = require('./assets');
 
 export const SITE_DATA = {
 	URL: 'http://localhost:3000',
@@ -10,12 +20,21 @@ export const SITE_DATA = {
 	DEFAULT_MALE_AVATAR: 'https://res.cloudinary.com/dhdckmdzz/image/upload/v1683274544/avatars/male-avatar_x1ieml.jpg',
 	DEFAULT_FEMALE_AVATAR: '',
 	DEVELOPER_URL: '',
-	DEVELOPER_NAME:'Chidera Promise A.'
+	DEVELOPER_NAME: 'Chidera Promise A.',
 };
 
-export { default as API_ROUTES } from './api_routes';
-export { default as APP_ROUTES } from './app_routes';
-export { default as LOADING } from './loading_types';
-export { default as ACTIVITY_TYPES } from './activity_types';
-export { default as ADMIN_PANEL_ACTIONS } from './admin_panel_actions';
-export { default as MEMBER_ROLES } from './member_roles';
+const CLOUD_ASSET_BASEURL = 'http://res.cloudinary.com/derapromise/image/upload/v1687726350';
+
+module.exports = {
+	API_ROUTES,
+	APP_ROUTES,
+	LOADING,
+	ACTIVITY_TYPES,
+	ADMIN_PANEL_ACTIONS,
+	MEMBER_ROLES,
+	LIMITS,
+	SITE_DATA,
+	CLOUD_ASSET_BASEURL,
+	CUSTOM_UI_TYPES,
+	ASSETS,
+};

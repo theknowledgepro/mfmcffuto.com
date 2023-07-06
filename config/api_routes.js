@@ -1,5 +1,5 @@
 
-const API_ROUTES = {
+module.exports = {
 	// ** AUTHENTICATION ROUTES
 	LOGIN: 'auth/login',
 	LOGOUT: 'auth/logout',
@@ -18,4 +18,3 @@ const API_ROUTES = {
 	MARK_CONTACT_FORM_AS_READ: `admin/mark-contact-form-read`,
 };
 
-export default API_ROUTES

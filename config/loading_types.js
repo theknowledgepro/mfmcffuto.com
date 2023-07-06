@@ -1,6 +1,6 @@
 /** @format */
 
-const LOADING = {
+module.exports = {
 	// ** AUTHENTICATION LOADING
 	LOGIN: 'LOGIN',
 	LOGOUT: 'LOGOUT',
@@ -13,5 +13,3 @@ const LOADING = {
 	EDIT_ADMIN: 'EDIT_ADMIN',
 	DELETE_ADMIN: 'DELETE_ADMIN',
 };
-
-export default LOADING;

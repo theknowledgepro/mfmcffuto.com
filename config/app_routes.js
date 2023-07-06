@@ -1,6 +1,6 @@
 /** @format */
 
-const APP_ROUTES = {
+module.exports = {
 	NOT_FOUND: '/404',
 	HOME: '/',
 	CONTACT_US: '/contact-us',
@@ -27,5 +27,3 @@ const APP_ROUTES = {
 	FORGOT_PASSWORD: '/admin/forgot-password',
 	PASSWORD_RESET: '/admin/reset-password',
 };
-
-export default APP_ROUTES;

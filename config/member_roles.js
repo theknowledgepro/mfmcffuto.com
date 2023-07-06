@@ -1,9 +1,7 @@
 /** @format */
 
-const MEMBER_ROLES = {
+module.exports = {
 	USER: 'USER',
 	MASTER: 'MASTER',
 	MANAGER: 'MANAGER',
 };
-
-export default MEMBER_ROLES;

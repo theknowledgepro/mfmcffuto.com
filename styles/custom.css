@@ -8,14 +8,22 @@
 	.hide-side-nav {
 		@apply translate-x-[-100vw];
 	}
-	.hide-modile-header{
+	.hide-modile-header {
 		@apply translate-y-[-100vh];
+	}
+	.mobile-header-shadow {
+		@apply shadow-md;
+		border-bottom: 2px solid #eee;
+	}
+	.mobile-header-bg-original {
+		@apply bg-[var(--color-primary)];
 	}
 }
 
 .body-sticky {
 	overflow: hidden !important;
 }
+
 .translateY-100 {
 	transform: translateY(-100px) !important;
 }
