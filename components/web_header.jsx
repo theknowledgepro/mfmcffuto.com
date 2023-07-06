@@ -76,18 +76,23 @@ const RenderDropdownNav = ({ nav }) => {
 
 const WebHeader = ({ sitesettings }) => {
 	const preHeaderRef = useRef(null);
+	const pcHeaderRef = useRef(null);
 	const sideBarRef = useRef(null);
 	const mobileHeaderRef = useRef(null);
+	const mobileHeaderRefNavIcon = useRef(null);
 
 	ChangeClassNameAtPosition({ targetRef: preHeaderRef, position: 45, className: 'translateY-100' });
-	ChangeClassNameAtPosition({ targetRef: mobileHeaderRef, position: 500, className: 'mobile-header-shadow' });
-	ChangeClassNameAtPosition({ targetRef: mobileHeaderRef, position: 500, className: 'mobile-header-bg-original' });
+	ChangeClassNameAtPosition({ targetRef: pcHeaderRef, position: 45, className: 'header-original' });
+	ChangeClassNameAtPosition({ targetRef: mobileHeaderRef, position: 200, className: 'mobile-header-shadow' });
+	ChangeClassNameAtPosition({ targetRef: mobileHeaderRef, position: 200, className: 'mobile-header-bg-original' });
+	ChangeClassNameAtPosition({ targetRef: mobileHeaderRefNavIcon, position: 200, className: 'text-white' });
 	HideShowNavbarOnScroll({ targetRef: mobileHeaderRef, className: 'translateY-100', startPosition: 500 });
+	HideShowNavbarOnScroll({ targetRef: pcHeaderRef, className: 'translateY-100', startPosition: 500 });
 
 	const handleOpenSideNav = () => {
 		mobileHeaderRef?.current?.classList.toggle('hide-modile-header');
 		sideBarRef?.current?.classList.toggle('hide-side-nav');
-		document.body.classList.add('body-sticky');
+		document.body.classList.toggle('body-sticky');
 	};
 
 	const defaultURL = sitesettings && Object?.keys(sitesettings)?.length > 0 ? 'https://' : undefined;
@@ -117,17 +122,27 @@ const WebHeader = ({ sitesettings }) => {
 				ref={preHeaderRef}
 				className='w-full p-2 hidden md:flex items-center justify-between bg-inherit transition-all ease-out duration-300'>
 				<div className='px-2 w-full flex'></div>
-				<div className='px-2 flex'>
+				<div className='pr-5 flex'>
 					<SocialIcons
 						sitesettings={{ ...sitesettings, facebookUrl: '', instagramUrl: '', telegramUrl: '', whatsAppUrl: 'ddddd', youTubeUrl: '' }}
 						defaultURL={defaultURL}
 					/>
 				</div>
 			</div>
-			<div ref={mobileHeaderRef} className='w-full xs:flex md:hidden items-center justify-between p-2 transition-all ease-out duration-300'>
-				<ImageTag src={ASSETS.LOGO} style={{ width: '50px', height: '50px' }} alt='logo' />
+			<div ref={pcHeaderRef} className='hidden border py-2 sm:pr-[30px] sm:pl-[25px] md:pr-[50px] md:pl-[30px] md:flex justify-between items-center transition-all ease-out duration-300'>
+				<ImageTag src={ASSETS.LOGO} style={{ width: '50px', height: '50px' }} className='bg-white p-[3px] rounded-[50%]' alt='logo' />
+				<div className='flex items-center justify-center'>
+					{NavItems.map((nav, i) => (
+						<div key={i}>
+							<Link href={''}>{nav.name}</Link>
+						</div>
+					))}
+				</div>
+			</div>
+			<div ref={mobileHeaderRef} className='w-full flex md:hidden items-center justify-between p-2 transition-all ease-out duration-300'>
+				<ImageTag src={ASSETS.LOGO} style={{ width: '50px', height: '50px' }} className='bg-white p-[3px] rounded-[50%]' alt='logo' />
 				<IconButton onClick={handleOpenSideNav}>
-					<MenuIcon className='text-white text-[28px]' />
+					<MenuIcon ref={mobileHeaderRefNavIcon} className='text-[28px] text-[var(--color-primary)]' />
 				</IconButton>
 			</div>
 			<div
@@ -152,10 +167,10 @@ const WebHeader = ({ sitesettings }) => {
 				</List>
 				<div className='absolute bottom-0 left-0 w-full border-t border-[var(--color-primary)] bg-[var(--color-primary)]'>
 					<div className='py-3 relative w-full h-full flex items-center justify-center flex-col'>
-						<div className={styles.header_footer_wave} id={styles.wave1}></div>
-						<div className={styles.header_footer_wave} id={styles.wave2}></div>
-						<div className={styles.header_footer_wave} id={styles.wave3}></div>
-						<div className={styles.header_footer_wave} id={styles.wave4}></div>
+						<div className={styles.footer_wave} id={styles.wave1}></div>
+						<div className={styles.footer_wave} id={styles.wave2}></div>
+						<div className={styles.footer_wave} id={styles.wave3}></div>
+						<div className={styles.footer_wave} id={styles.wave4}></div>
 						<div className='w-full text-center text-white text-[12px] mb-2'>Connect with Us @</div>
 						<SocialIcons
 							sitesettings={{

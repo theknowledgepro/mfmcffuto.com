@@ -38,7 +38,7 @@
 
 /* WEB HEADER CSS */
 
-.header_footer_wave {
+.footer_wave {
 	position: absolute;
 	top: -50px;
 	left: 0;
@@ -48,50 +48,50 @@
 	background-size: 1000px 50px;
 }
 
-.header_footer_wave#wave1 {
+.footer_wave#wave1 {
 	z-index: 99;
-	opacity: .4;
+	opacity: 0.4;
 	bottom: 0;
 	animation: animateWave 4s linear infinite;
 }
 
-.header_footer_wave#wave2 {
+.footer_wave#wave2 {
 	z-index: 10;
-	opacity: .3;
+	opacity: 0.3;
 	bottom: 10px;
 	animation: animateWave_02 3s linear infinite;
 }
 
-.header_footer_wave#wave3 {
+.footer_wave#wave3 {
 	z-index: 99;
-	opacity: .6;
+	opacity: 0.6;
 	bottom: 15px;
 	animation: animateWave 3s linear infinite;
 }
 
-.header_footer_wave#wave4 {
+.footer_wave#wave4 {
 	z-index: 10;
-	opacity: .9;
+	opacity: 0.9;
 	bottom: 20px;
 	animation: animateWave_02 3s linear infinite;
 }
 
 @keyframes animateWave {
-    0% {
-        background-position-x: 1000px;
-    }
+	0% {
+		background-position-x: 1000px;
+	}
 
-    100% {
-        background-position-x: 0px;
-    }
+	100% {
+		background-position-x: 0px;
+	}
 }
 
 @keyframes animateWave_02 {
-    0% {
-        background-position-x: 0px;
-    }
+	0% {
+		background-position-x: 0px;
+	}
 
-    100% {
-        background-position-x: 1000px;
-    }
+	100% {
+		background-position-x: 1000px;
+	}
 }
