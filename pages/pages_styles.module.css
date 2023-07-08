@@ -89,7 +89,7 @@
 		margin-top: 62px;
 	}
 	.page_padding {
-		padding: 0px 4px;
+		padding: 0px 8px;
 	}
 }
 
@@ -172,7 +172,4 @@
 }
 
 /* HOME PAGE CSS */
-.home_last_content {
-	background: var(--fair-bg);
-	padding-bottom: 80px;
-}
+

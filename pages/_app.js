@@ -19,7 +19,7 @@ export const createEmotionCache = () => {
 const clientSideEmotionCache = createEmotionCache();
 
 const theme = createTheme({
-	typography: { fontFamily: ['FSJoey'].join(',') },
+	typography: { fontFamily: ['YsabeauInfant'].join(',') },
 	palette: {
 		primary: { main: SITE_DATA.THEME_COLOR },
 		danger: { main: '#dc3545' },

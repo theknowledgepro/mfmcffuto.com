@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { RouteChangeLinearProgress } from '@/components';
 
 const PersistLayout = ({ children }) => {
 	const { auth, toast, redirect } = useSelector((state) => state);
@@ -20,25 +21,9 @@ const PersistLayout = ({ children }) => {
 		}
 	}, [auth.token, redirect?.url]);
 
-	useEffect(() => {
-		const handleRouteChange = (url, { shallow }) => {
-			console.log(`App is changing to ${url} ${shallow ? 'with' : 'without'} shallow routing`);
-		};
-		const handleRouteChangeError = (err, url) => {
-			if (err.cancelled) {
-				console.log(`Route to ${url} was cancelled!`);
-			}
-		};
-
-		router.events.on('routeChangeStart', handleRouteChange);
-		router.events.on('routeChangeError', handleRouteChangeError);
-		return () => {
-			router.events.off('routeChangeStart', handleRouteChange);
-			router.events.on('routeChangeError', handleRouteChangeError);
-		};
-	}, [router]);
 	return (
 		<React.Fragment>
+			<RouteChangeLinearProgress />
 			{(toast.success || toast.info || toast.error || toast.warning) && <Toast />}
 			{children}
 		</React.Fragment>

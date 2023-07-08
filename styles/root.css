@@ -1,18 +1,23 @@
+/** @format */
 
 :root {
-    --app-bg: #fbf3fd;
-    --app-text-color: #0000005d;
-    --color-primary: rgb(166, 53, 144);
-    --color-success: #50bd46; 
-    --color-blue: #2f39a0;
-    --color-white: #fff;
-    --color-yellow: rgb(254 241 10);
-    --color-info: #0495c7;
-    --color-warning: #ffc107;
-    --color-danger: #dc3545;
-    --color-user-select: rgba(166, 53, 144, 0.8);
-    --border-color: #eee;
-    --border-radius: 5px;
-    --navbar-side-hover-bg: #a635901a;
-    --navbar-side-hover-color: rgb(166, 53, 144);;
+	--font-family: YsabeauInfant;
+	--font-family-medium: YsabeauInfant-Medium;
+	--app-bg: #fff;
+	--mobile-header-bg: #fbf3fd;
+	--bg-fair-one: #fbf3fd;
+	--app-text-color: #0000005d;
+	--color-primary: rgb(166, 53, 144);
+	--color-success: #50bd46;
+	--color-blue: #2f39a0;
+	--color-white: #fff;
+	--color-yellow: rgb(254 241 10);
+	--color-info: #0495c7;
+	--color-warning: #ffc107;
+	--color-danger: #dc3545;
+	--color-user-select: rgba(166, 53, 144, 0.8);
+	--border-color: #eee;
+	--border-radius: 5px;
+	--navbar-side-hover-bg: #a635901a;
+	--navbar-side-hover-color: rgb(166, 53, 144);
 }

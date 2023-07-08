@@ -1,3 +1,5 @@
+/** @format */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -15,54 +17,89 @@
 @import url(./animations.css);
 
 @font-face {
-    font-family: 'FSJoey';
-    src: url('./fonts/ABeeZee-Regular.ttf');
-    font-weight: 500;
+	font-family: 'YsabeauInfant-Thin';
+	src: url('./fonts/YsabeauInfant-Thin.ttf');
+	font-weight: 400;
+}
+@font-face {
+	font-family: 'YsabeauInfant-Thin';
+	src: url('./fonts/YsabeauInfant-ThinItalic.ttf');
+	font-weight: 400;
+    font-style: italic;
 }
 
+@font-face {
+	font-family: 'YsabeauInfant';
+	src: url('./fonts/YsabeauInfant.ttf');
+	font-weight: 500;
+}
+@font-face {
+	font-family: 'YsabeauInfant-Medium';
+	src: url('./fonts/YsabeauInfant-SemiBold.ttf');
+	font-weight: 600;
+}
 * {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
 }
 
 body {
-    font-family: FSJoey;
-    min-width: 100vw !important;
-    min-height: 100vh !important;
-    height: 100% !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow-x: hidden !important;
-    background: var(--app-bg) !important;
+	font-family: YsabeauInfant !important;
+	min-width: 100vw !important;
+	min-height: 100vh !important;
+	height: 100% !important;
+	width: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	overflow-x: hidden !important;
+	background: var(--app-bg) !important;
 }
 
 *::selection {
-    color: #000;
-    background: var(--color-user-select)
+	color: #000;
+	background: var(--color-user-select);
 }
 
 code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 figure {
-    margin: 0 0 1rem;
+	margin: 0 0 1rem;
 }
 
 img,
 svg {
-    vertical-align: middle;
+	vertical-align: middle;
 }
-
+blockquote {
+	background: #f9f9f9;
+	border-left: 8px solid #ccc;
+	margin: 9px 0 0;
+	padding: 0.5em 10px;
+	quotes: '\201C''\201D''\2018''\2019';
+	padding: 20px 10px 15px 20px;
+	border-radius: 10px;
+}
+blockquote:before {
+	color: #ccc;
+	content: open-quote;
+	font-size: 4em;
+	line-height: 0.1em;
+	margin-right: 0.25em;
+	vertical-align: -0.4em;
+}
+blockquote p {
+	display: inline;
+}
 table {
-    caption-side: bottom;
-    border-collapse: collapse;
+	caption-side: bottom;
+	border-collapse: collapse;
 }
 
 button:focus:not(:focus-visible) {
-    outline: 0;
+	outline: 0;
 }
 
 input,
@@ -70,46 +107,44 @@ button,
 select,
 optgroup,
 textarea {
-    margin: 0;
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
+	margin: 0;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
 }
 
+@media only screen and (max-width: 767.98px) {
+	body {
+		font-size: 15px;
+	}
 
+	h1,
+	.h1 {
+		font-size: 28px;
+	}
 
-@media only screen and (max-width:767.98px) {
-    body {
-        font-size: 15px
-    }
+	h2,
+	.h2 {
+		font-size: 26px;
+	}
 
-    h1,
-    .h1 {
-        font-size: 28px
-    }
+	h3,
+	.h3 {
+		font-size: 20px;
+	}
 
-    h2,
-    .h2 {
-        font-size: 26px
-    }
+	h4,
+	.h4 {
+		font-size: 18px;
+	}
 
-    h3,
-    .h3 {
-        font-size: 20px
-    }
+	h5,
+	.h5 {
+		font-size: 15px;
+	}
 
-    h4,
-    .h4 {
-        font-size: 18px
-    }
-
-    h5,
-    .h5 {
-        font-size: 15px
-    }
-
-    h6,
-    .h6 {
-        font-size: 16px
-    }
+	h6,
+	.h6 {
+		font-size: 16px;
+	}
 }

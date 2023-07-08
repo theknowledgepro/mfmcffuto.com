@@ -28,16 +28,20 @@ const RenderNavigation = ({ nav }) => {
 		<Link className='text-decor-none' href={nav.href !== undefined ? nav.href : ''} style={{ color: 'inherit', width: '100%' }}>
 			<ListItem
 				disablePadding
-				className='rounded-sm bg-[var(--app-bg)]'
+				className='rounded-sm bg-[var(--mobile-header-bg)]'
 				sx={{
 					display: 'block',
 					background: getAbsoluteUrl() === nav.href && 'var(--navbar-side-hover-bg)',
 					color: getAbsoluteUrl() === nav.href ? 'var(--navbar-side-hover-color)' : '#000',
 					'&:hover': { background: 'var(--navbar-side-hover-bg)' },
 				}}>
-				<ListItemButton sx={{ minHeight: 48, justifyContent: 'initial', px: 1.5 }}>
+				<ListItemButton sx={{ minHeight: 48, justifyContent: 'initial', px: 1.5, fontFamily: 'inherit' }}>
 					<ListItemIcon sx={{ minWidth: 0, mr: 1, ml: 'auto', justifyContent: 'center', color: '#000' }}>{nav.icon}</ListItemIcon>
-					<ListItemText primary={nav.name} className='text-[15px]' sx={{ opacity: 1 }} />
+					<ListItemText
+						primary={<span style={{ fontFamily: 'var(--font-family)' }}>{nav.name}</span>}
+						className='text-[15px]'
+						sx={{ opacity: 1 }}
+					/>
 				</ListItemButton>
 			</ListItem>
 		</Link>
@@ -49,7 +53,7 @@ const RenderDropdownNav = ({ nav }) => {
 		<div className='w-full'>
 			<Accordion disableGutters elevation={0} expanded={nav.children.find((index) => index.href === getAbsoluteUrl())}>
 				<AccordionSummary
-					className='rounded-sm bg-[var(--app-bg)]'
+					className='rounded-sm bg-[var(--mobile-header-bg)]'
 					sx={{
 						padding: '0px auto',
 						borderRadius: '0px',
@@ -121,7 +125,7 @@ const WebHeader = ({ sitesettings }) => {
 	];
 
 	return (
-		<div className={`fixed top-0 left-0 right-0 w-[100vw] h-[max-content] p-0 m-0`}>
+		<div className={`z-[1000] fixed top-0 left-0 right-0 w-[100vw] h-[max-content] p-0 m-0`}>
 			<div
 				ref={preHeaderRef}
 				className='w-full p-2 hidden md:flex items-center justify-between bg-inherit transition-all ease-out duration-300'>
@@ -135,30 +139,44 @@ const WebHeader = ({ sitesettings }) => {
 			</div>
 			<div
 				ref={pcHeaderRef}
-				className='hidden border py-2 sm:pr-[30px] sm:pl-[25px] md:pr-[50px] md:pl-[30px] md:flex justify-between items-center transition-all ease-out duration-300'>
-				<ImageTag src={ASSETS.LOGO} style={{ width: '50px', height: '50px' }} className='bg-white p-[3px] rounded-[50%]' alt='logo' />
+				className='hidden border-b border-t py-2 sm:pr-[30px] sm:pl-[25px] md:pr-[50px] md:pl-[30px] md:flex justify-between items-center transition-all ease-out duration-300'>
+				<ImageTag
+					src={sitesettings?.logoUrl ? sitesettings?.logoUrl : ASSETS.LOGO}
+					style={{ width: '50px', height: '50px' }}
+					className='bg-white p-[3px] rounded-[50%]'
+					alt='logo'
+				/>
 				<div className='flex items-center justify-center'>
 					{NavItems.map((nav, i) => (
-						<div key={i}>
-							<Link href={''}>{nav.name}</Link>
+						<div className='mx-2' key={i}>
+							<Link href={nav?.href ?? ''} className=''>
+								{nav.name}
+							</Link>
 						</div>
 					))}
 				</div>
 			</div>
-			<div ref={mobileHeaderRef} className='w-full flex md:hidden items-center justify-between p-2 transition-all ease-out duration-300'>
-				<ImageTag src={ASSETS.LOGO} style={{ width: '50px', height: '50px' }} className='bg-white p-[3px] rounded-[50%]' alt='logo' />
+			<div
+				ref={mobileHeaderRef}
+				className='w-full flex md:hidden items-center justify-between p-2 border-b border-zinc-300 transition-all ease-out duration-300'>
+				<ImageTag
+					src={sitesettings?.logoUrl ? sitesettings?.logoUrl : ASSETS.LOGO}
+					style={{ width: '50px', height: '50px' }}
+					className='bg-white p-[3px] rounded-[50%]'
+					alt='logo'
+				/>
 				<IconButton onClick={handleOpenSideNav}>
 					<MenuIcon ref={mobileHeaderRefNavIcon} className='text-[28px] text-[var(--color-primary)]' />
 				</IconButton>
 			</div>
 			<div
 				ref={sideBarRef}
-				className='fixed overflow-hidden top-0 left-0 bg-[var(--app-bg)] border-r border-gray-200 shadow-md w-[100vw] h-[100vh] xs:flex md:hidden flex-col p-2 hide-side-nav transition-all ease-out duration-300'>
+				className='fixed overflow-hidden top-0 left-0 bg-[var(--mobile-header-bg)] border-r border-gray-200 shadow-md w-[100vw] h-[100vh] xs:flex md:hidden flex-col p-2 hide-side-nav transition-all ease-out duration-300'>
 				<IconButton className='absolute top-[15px] right-[10px]' onClick={handleOpenSideNav}>
 					<CancelIcon className='text-[var(--color-primary)] text-[28px]' />
 				</IconButton>
 				<ImageTag
-					src={ASSETS.LOGO}
+					src={sitesettings?.logoUrl ? sitesettings?.logoUrl : ASSETS.LOGO}
 					style={{ width: '110px', height: '110px' }}
 					className='border border-gray-100 bg-white btn-animated rounded-[50%] mt-[20px] mx-auto mb-2 p-2 shadow-lg'
 					alt='logo'

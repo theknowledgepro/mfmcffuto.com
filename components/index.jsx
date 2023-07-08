@@ -27,6 +27,8 @@ export { default as NoDataFound } from './no_data_found';
 export { default as ImageTag } from './image_tag';
 export { default as WithDrawer } from './with_drawer';
 export { default as SocialIcons } from './social_icons';
+export { default as RouteChangeLinearProgress } from './route_change_linear_progress';
+export { default as AboutUsIntro } from './about_us_intro';
 
 // ** BLOG SECTION COMPONENTS
 export { default as CategoriesSection } from './blogs/categories_section';

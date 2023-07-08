@@ -21,7 +21,7 @@
 	}
 	.mobile-header-shadow {
 		@apply shadow-md;
-		border-bottom: 2px solid #eee;
+		border-bottom: 1px solid #eee;
 	}
 	.mobile-header-bg-original {
 		@apply bg-[var(--color-primary)];
