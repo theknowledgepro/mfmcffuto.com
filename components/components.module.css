@@ -346,85 +346,185 @@
 
 /* FLIP CARD CSS */
 .flip_card {
-    margin: 15px 20px;
-    /* height: 450px; */
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    perspective: 1000px;
+	margin: 15px 20px;
+	/* height: 450px; */
+	background: transparent;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	perspective: 1000px;
 }
 
 /* This container is needed to position the front and back side */
 .flip_card_content {
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-    border-top: 2px solid var(--color-primary);
-    box-shadow: 0 0 10px rgb(0 0 0 / 16%);
-    border-radius: 10px;
-    position: relative;
-    border-radius: 10px;
-    transition: transform .9s;
-    transform-style: preserve-3d;
+	cursor: pointer;
+	width: 100%;
+	height: 100%;
+	border-top: 2px solid var(--color-primary);
+	box-shadow: 0 0 10px rgb(0 0 0 / 16%);
+	border-radius: 10px;
+	position: relative;
+	border-radius: 10px;
+	transition: transform 0.9s;
+	transform-style: preserve-3d;
 }
 
 /* Do an horizontal flip when you move the mouse over the flip card container */
 
 /* show only on mouse devices */
-@media (hover: hover),
-(-moz-touch-enabled: 0),
-(pointer:fine) {
-    .flip_card:hover .flip_card_content {
-        transform: rotateY(180deg);
-    }
+@media (hover: hover), (-moz-touch-enabled: 0), (pointer: fine) {
+	.flip_card:hover .flip_card_content {
+		transform: rotateY(180deg);
+	}
 }
 
 /* show only on touch devices */
-@media (hover: none),
-(hover: on-demand),
-(-moz-touch-enabled: 1),
-(pointer:coarse) {}
+@media (hover: none), (hover: on-demand), (-moz-touch-enabled: 1), (pointer: coarse) {
+}
 
 /* Position the front and back side */
 .flip_card_front,
 .flip_card_back {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    border-radius: inherit;
-    width: 100%;
-    height: 100%;
-    -webkit-backface-visibility: hidden;
-    /* Safari */
-    backface-visibility: hidden;
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	border-radius: inherit;
+	width: 100%;
+	height: 100%;
+	-webkit-backface-visibility: hidden;
+	/* Safari */
+	backface-visibility: hidden;
 }
 
 /* Style the front side (fallback if image is missing) */
 .flip_card_front {
-    background-color: #fff;
-    color: black;
+	background-color: #fff;
+	color: black;
 }
 
 /* Style the back side */
 .flip_card_back {
-    background-color: #fff;
-    color: #000;
-    transform: rotateY(180deg);
+	background-color: #fff;
+	color: #000;
+	transform: rotateY(180deg);
 }
 
 .flip_card_header {
-    height: auto;
-    flex-wrap: wrap;
-    border-bottom: 1px solid #ddd;
-    width: 100%;
-    padding: 10px;
-    font-weight: 600;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	height: auto;
+	flex-wrap: wrap;
+	border-bottom: 1px solid #ddd;
+	width: 100%;
+	padding: 10px;
+	font-weight: 600;
+	font-size: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* CONTACT FORM CSS */
+.contact_form_wrapper {
+	width: 100%;
+	padding: 20px 40px;
+	box-shadow: 0 0.46875rem 2.1875rem rgb(90 97 105 / 10%), 0 0.9375rem 1.40625rem rgb(90 97 105 / 10%), 0 0.25rem 0.53125rem rgb(90 97 105 / 12%),
+		0 0.125rem 0.1875rem rgb(90 97 105 / 10%);
+	background: rgb(255 255 255 / 70%);
+	border-radius: 10px;
+	border-top: 2px solid var(--color-primary);
+	height: max-content;
+}
+
+.contact_form_header {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	align-items: center;
+	flex-wrap: wrap;
+	width: 100%;
+}
+
+.contact_form_wrapper .title {
+	font-size: 35px;
+	font-weight: 700;
+}
+
+.contact_form {
+	padding: 30px 0px 0px 0px;
+}
+
+.contact_form input,
+.contact_form textarea {
+	width: 100%;
+	border-radius: 5px;
+	height: 50px;
+	border: none;
+	outline: none;
+	box-shadow: 0px 0 3px rgb(0 0 0 / 30%);
+	margin: 10px 0px 20px 0;
+	padding: 10px 20px;
+	font-size: 15px;
+	transition: all 0.3s ease;
+}
+
+.contact_form textarea {
+	min-height: 100px;
+	resize: vertical;
+}
+
+.contact_form input:focus,
+.contact_form textarea:focus {
+	box-shadow: 0px 0 8px var(--color-primary);
+}
+
+.contact_form .label {
+	font-weight: 600;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.contact_form_logo {
+	height: 300px !important;
+	width: 100% !important;
+}
+
+@media screen and (max-width: 768px) {
+	.contact_form_logo {
+		display: none !important;
+	}
+
+	.contact_form {
+		padding: 30px 0px 0px;
+	}
+}
+
+@media screen and (max-width: 510px) {
+	.contact_form_wrapper {
+		padding: 20px 30px;
+	}
+
+	.contact_form_header {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.contact_form_wrapper .title {
+		text-align: center;
+		margin-bottom: 10px;
+		font-size: 28px;
+	}
+}
+
+@media screen and (max-width: 410px) {
+	.contact_form_wrapper {
+		padding: 20px 15px;
+	}
+
+	.contact_form_wrapper .title {
+		font-size: 22px;
+	}
 }

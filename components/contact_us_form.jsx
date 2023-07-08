@@ -4,18 +4,16 @@ import React from 'react';
 import comp_styles from './components.module.css';
 import { Button, CircularProgress, TextField } from '@mui/material';
 import { useState } from 'react';
-import { API_ROUTES, SITE_DATA } from '@/config';
+import { API_ROUTES, ASSETS } from '@/config';
 import Link from 'next/link';
-import { SvgIcons } from './icons';
 import { postDataAPI } from '@/utils/api_client_side';
 import { GLOBALTYPES } from '@/redux/types';
 import { useDispatch } from 'react-redux';
 import { handleClientAPIRequestErrors } from '@/utils/errors';
 import { validate } from '@/utils/validate';
-import Image from 'next/image';
-import headerLogo from '@/assets/logo.png';
+import { SocialIcons, ImageTag } from '.';
 
-const ContactUsForm = ({ hideLogo, SiteSettings }) => {
+const ContactUsForm = ({ hideLogo, sitesettings }) => {
 	const dispatch = useDispatch();
 	const [data, setData] = useState({ name: '', email: '', phone: '', details: '' });
 	const { name, email, phone, details } = data;
@@ -42,90 +40,89 @@ const ContactUsForm = ({ hideLogo, SiteSettings }) => {
 			setLoading(false);
 		}
 	};
-	const defaultURL = 'https://';
+	const defaultURL = sitesettings && Object?.keys(sitesettings)?.length > 0 ? 'https://' : undefined;
 
 	return (
-		<section className='px-1 w-100 d-flex flex-column align-items-center justify-content-center mb-5'>
-			<h2 className={comp_styles.section_title}>Get In Touch With Us</h2>
+		<section className='w-full flex flex-col items-center justify-center mb-5'>
+			<h2
+				style={{ fontFamily: 'var(--font-family-medium)' }}
+				className={`font-semibold text-[30px] text-[var(--color-primary)] text-center w-full my-[20px]`}>
+				Get In Touch With Us
+			</h2>
+			<div className='text-center w-full text-gray-600 mb-2'>We would love to hear from you. Feel free to reach out to us!</div>
+			<div className='text-center w-full mb-4'>
+				Reach out to Us via email at{' '}
+				<Link href={`mailto:${sitesettings?.contact_us_email}`} className='color-primary fw-bold'>
+					{sitesettings?.contact_us_email}
+				</Link>
+			</div>
 
-			<div className='text-center w-100 text-dark mb-2'>We would love to hear from you. Feel free to reach out to us!</div>
-			<div className='text-center w-100 mb-4'>Reach out to Us via email at <Link href={`mailto:${SiteSettings?.contact_us_email}`} className='color-primary fw-bold'>{SiteSettings?.contact_us_email}</Link></div>
-
-			<div className={`row w-100 ${comp_styles.contact_form_wrapper}`}>
-				<div className={`${comp_styles.contact_form_header} border-bottom pb-2`}>
+			<div className={`w-full ${comp_styles.contact_form_wrapper}`}>
+				<div className={`${comp_styles.contact_form_header} border-b border-zinc-300 pb-2`}>
 					<h2 className={comp_styles.title}>
 						Contact <span className='color-primary'>Us!</span>
 					</h2>
 
-					<div className={`${comp_styles.social_icons}`}>
-						{SiteSettings?.facebookUrl !== defaultURL && SiteSettings && (
-							<Link target='_blank' href={SiteSettings?.facebookUrl} className={`${comp_styles.icon} facebook`}>
-								<SvgIcons.FaFacebookF />
-							</Link>
-						)}
-						{SiteSettings?.instagramUrl !== defaultURL && SiteSettings && (
-							<Link target='_blank' href={SiteSettings?.instagramUrl} className={`${comp_styles.icon} instagram`}>
-								<SvgIcons.FaInstagram />
-							</Link>
-						)}
-						{SiteSettings?.telegramUrl !== defaultURL && SiteSettings && (
-							<Link target='_blank' href={SiteSettings?.telegramUrl} className={`${comp_styles.icon} telegram`}>
-								<SvgIcons.FaTelegramPlane />
-							</Link>
-						)}
-						{SiteSettings?.whatsAppUrl && (
-							<Link
-								target='_blank'
-								href={`https://wa.me/${SiteSettings?.whatsAppUrl}?text=Hello,%20Eunikings,%20My%20name%20is%20"`}
-								className={`${comp_styles.icon} whatsapp`}>
-								<SvgIcons.FaWhatsapp />
-							</Link>
-						)}
-						{SiteSettings?.youTubeUrl !== defaultURL && SiteSettings && (
-							<Link target='_blank' href={SiteSettings?.youTubeUrl} className={`${comp_styles.icon} youtube`}>
-								<SvgIcons.FaYoutube />
-							</Link>
-						)}
-					</div>
-				</div>
-				<div className={`${hideLogo ? 'col-12' : 'col-md-8'} ${comp_styles.contact_form}`}>
-					<label htmlFor='nameenter'>Your name</label>
-					<input id='nameenter' type='text' name='name' onChange={handleChangeInput} value={name} placeholder='Tell us your name' />
-
-					<label htmlFor='emailenter'>Email Address</label>
-					<input
-						id='emailenter'
-						type='email'
-						name='email'
-						onChange={handleChangeInput}
-						value={email}
-						placeholder='Enter your email address'
+					<SocialIcons
+						sitesettings={{
+							...sitesettings,
+							facebookUrl: '',
+							instagramUrl: '',
+							telegramUrl: '',
+							whatsAppUrl: 'ddddd',
+							youTubeUrl: '',
+						}}
+						defaultURL={defaultURL}
 					/>
-
-					<label htmlFor='numberenter'>
-						Phone number <span className='text-muted'>(Optional)</span>
-					</label>
-					<input
-						id='numberenter'
-						type='number'
-						name='phone'
-						onChange={handleChangeInput}
-						value={phone}
-						placeholder='Enter your mobile number'
-					/>
-
-					<label htmlFor='detailsenter'>Details</label>
-					<textarea onChange={handleChangeInput} value={details} name='details' id='detailsenter'></textarea>
-					<Button onClick={handleSubmit} variant='contained' className={`w-100 mt-2 text-none fs-15 text-bold btn-animated text-white`}>
-						{loading && <CircularProgress style={{ color: 'white', height: '20px', width: '20px', marginRight: '5px' }} />}
-						{!loading && 'Submit'}
-					</Button>
 				</div>
-				{!hideLogo && (
-					<div className='m-auto border-end col-md-4 h-100 d-flex align-items-center justify-content-center'>
-						<Image alt='logo' className={`${comp_styles.contact_form_logo} m-auto`} src={headerLogo} />
+				<div className='w-full grid xss:grid-cols-1 md:grid-cols-12 '>
+					<div className={`xss:col-span-1 md:col-span-8 ${comp_styles.contact_form}`}>
+						<label htmlFor='nameenter'>Your name</label>
+						<input id='nameenter' type='text' name='name' onChange={handleChangeInput} value={name} placeholder='Tell us your name' />
+
+						<label htmlFor='emailenter'>Email Address</label>
+						<input
+							id='emailenter'
+							type='email'
+							name='email'
+							onChange={handleChangeInput}
+							value={email}
+							placeholder='Enter your email address'
+						/>
+
+						<label htmlFor='numberenter'>
+							Phone number <span className='text-muted'>(Optional)</span>
+						</label>
+						<input
+							id='numberenter'
+							type='number'
+							name='phone'
+							onChange={handleChangeInput}
+							value={phone}
+							placeholder='Enter your mobile number'
+						/>
+
+						<label htmlFor='detailsenter'>Details</label>
+						<textarea onChange={handleChangeInput} value={details} name='details' id='detailsenter'></textarea>
+						<Button
+							onClick={handleSubmit}
+							variant='contained'
+							sx={{ '&:hover': { background: 'var(--color-primary)', color: '#fff' } }}
+							className='font-medium-custom w-full rounded-md normal-case text-lg bg-[var(--color-primary)] text-white font-bold btn-animated'>
+							{loading && <CircularProgress style={{ color: 'white', height: '20px', width: '20px', marginRight: '5px' }} />}
+							{!loading && 'Submit'}
+						</Button>
 					</div>
-				)}
+					{!hideLogo && (
+						<div className='m-auto xss:col-span-1 md:col-span-4 h-full flex items-center justify-center'>
+							<ImageTag
+								alt='logo'
+								className={`${comp_styles.contact_form_logo} m-auto`}
+								src={sitesettings?.logoUrl ? sitesettings?.logoUrl : ASSETS?.LOGO}
+							/>
+						</div>
+					)}
+				</div>
 			</div>
 		</section>
 	);

@@ -1,6 +1,6 @@
 /** @format */
 
-import { AboutUsIntro, ImageTag, WebLayout, WorshipDays, FromthePresidentsDesk } from '@/components';
+import { AboutUsIntro, ImageTag, WebLayout, WorshipDays, FromthePresidentsDesk, ContactUsForm } from '@/components';
 import Slider from 'react-slick';
 import styles from '@/pages/pages_styles.module.css';
 import Link from 'next/link';
@@ -111,7 +111,7 @@ const HomePage = ({ metatags, settings }) => {
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
-				<WorshipDays />
+				<ContactUsForm />
 			</div>
 
 
