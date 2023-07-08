@@ -25,7 +25,7 @@ export async function getServerSideProps({ req, res }) {
 	// ** REDIRECT TO LOGIN IF COOKIE NOT EXIST
 	const verifyUserAuth = await AuthController.generateAccessToken(req, res);
 	if (verifyUserAuth?.redirect) return verifyUserAuth;
-	console.log({ user: verifyUserAuth?.user });
+
 	// ** REDIRECT TO 404 PAGE IF NOT ADMIN
 	if (verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MASTER && verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MANAGER)
 		return {

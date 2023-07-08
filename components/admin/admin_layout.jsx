@@ -52,6 +52,13 @@ import { logout } from '@/redux/actions/auth_action';
 import { CreateAdminModal } from '..';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import WebStoriesIcon from '@mui/icons-material/WebStories';
+import BookOutlinedIcon from '@mui/icons-material/BookOutlined';
+import TagOutlinedIcon from '@mui/icons-material/TagOutlined';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
+import ContactMailSharpIcon from '@mui/icons-material/ContactMailSharp';
+import AttachEmailSharpIcon from '@mui/icons-material/AttachEmailSharp';
+import SendSharpIcon from '@mui/icons-material/SendSharp';
 
 const AdminDashboardNavItems1 = [
 	{ name: 'Dashboard', icon: <FlutterDashIcon className={admin_comp_styles.nav_icon} />, href: APP_ROUTES.ADMIN_DASHBOARD, id: 'dashboardlink' },
@@ -61,6 +68,7 @@ const AdminDashboardNavItems1 = [
 		href: APP_ROUTES.ADMIN_PROFILE,
 		id: 'accountsettingslink',
 	},
+
 	{
 		name: 'Customize Pages',
 		icon: <SettingsSuggestTwoToneIcon className={admin_comp_styles.nav_icon} />,
@@ -85,25 +93,39 @@ const AdminDashboardNavItems1 = [
 				href: `${APP_ROUTES.PAGES_CUSTOMIZATION}/contact-us`,
 				id: 'contactuspage',
 			},
-			{
-				name: 'Services',
-				icon: <EngineeringOutlinedIcon className={admin_comp_styles.nav_icon} />,
-				href: `${APP_ROUTES.PAGES_CUSTOMIZATION}/services`,
-				id: 'servicespage',
-			},
-			{
-				name: 'Projects',
-				icon: <InventoryTwoToneIcon className={admin_comp_styles.nav_icon} />,
-				href: `${APP_ROUTES.PAGES_CUSTOMIZATION}/projects`,
-				id: 'projectspage',
-			},
 		],
 	},
 	{
-		name: 'Our Projects',
-		icon: <InventoryTwoToneIcon className={admin_comp_styles.nav_icon} />,
-		href: APP_ROUTES.MANAGE_PROJECTS,
-		id: 'manageprojects',
+		name: 'Articles & Blogs',
+		icon: <BookOutlinedIcon className={admin_comp_styles.nav_icon} />,
+		href: '/#',
+		id: 'blogsectionlink',
+		children: [
+			{
+				name: 'Tags',
+				icon: <TagOutlinedIcon className={admin_comp_styles.nav_icon} />,
+				href: `${APP_ROUTES.MANAGE_BLOG_TAGS}`,
+				id: 'tags',
+			},
+			{
+				name: 'Categories',
+				icon: <CategoryOutlinedIcon className={admin_comp_styles.nav_icon} />,
+				href: `${APP_ROUTES.MANAGE_BLOG_CATEGORIES}`,
+				id: 'categories',
+			},
+			{
+				name: 'Manage Articles & Blog',
+				icon: <MenuBookOutlinedIcon className={admin_comp_styles.nav_icon} />,
+				href: `${APP_ROUTES.MANAGE_BLOGS}`,
+				id: 'blogsmanagae',
+			},
+			{
+				name: 'Articles & Blog Settings',
+				icon: <SettingsTwoToneIcon className={admin_comp_styles.nav_icon} />,
+				href: `${APP_ROUTES.MANAGE_BLOGS_SETTINGS}`,
+				id: 'blogsmanagae',
+			},
+		],
 	},
 	{
 		name: 'Upcoming Events',
@@ -116,18 +138,6 @@ const AdminDashboardNavItems1 = [
 		icon: <PermContactCalendarTwoToneIcon className={admin_comp_styles.nav_icon} />,
 		href: APP_ROUTES.CONTACT_FORM_SUBMISSIONS,
 		id: 'contactformslink',
-	},
-	{
-		name: 'Volunteer Requests',
-		icon: <Diversity3TwoToneIcon className={admin_comp_styles.nav_icon} />,
-		href: APP_ROUTES.MANAGE_VOLUNTEERING,
-		id: 'volunteerrequestslink',
-	},
-	{
-		name: 'Manage Testimonials',
-		icon: <SentimentSatisfiedAltIcon className={admin_comp_styles.nav_icon} />,
-		href: APP_ROUTES.MANAGE_TESTIMONIALS,
-		id: 'managetestimonials',
 	},
 ];
 
@@ -147,7 +157,7 @@ const AdminDashboardNavItems2 = [
 	{ name: 'Activity Logs', icon: <WebStoriesIcon className={admin_comp_styles.nav_icon} />, href: APP_ROUTES.ACTIVITY_LOGS, id: 'activitylog' },
 ];
 
-const drawerWidth = 240;
+const drawerWidth = 270;
 
 const DrawerHeader = styled('div')(({ theme }) => ({
 	display: 'flex',
@@ -242,6 +252,7 @@ const RenderNavigation = ({ nav, open }) => {
 						display: 'block',
 						background: router.pathname === nav.href && 'var(--navbar-side-hover-bg)',
 						color: router.pathname === nav.href && 'var(--navbar-side-hover-color)',
+						fontSize: '17px',
 					}}>
 					<ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5 }}>
 						<ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>{nav.icon}</ListItemIcon>
@@ -257,26 +268,28 @@ const RenderDropdownNav = ({ nav, open }) => {
 	const router = useRouter();
 
 	return (
-		<Accordion disableGutters elevation={0} expanded={nav.children.find((index) => index.href === router.pathname) && true}>
-			<Tooltip classes={{ tooltip: admin_comp_styles.tooltip }} title={open ? null : nav.name} arrow placement='right'>
-				<AccordionSummary
-					sx={{
-						padding: '0px auto',
-						display: 'flex',
-						background: nav.children.find((index) => index.href === router.pathname) && 'var(--navbar-side-hover-bg)',
-						color: router.pathname === nav.href && 'var(--navbar-side-hover-color)',
-					}}
-					expandIcon={<ExpandMoreIcon />}>
-					<Box sx={{ minWidth: 0, ml: 0.5, mr: open ? 3 : 'auto', justifyContent: 'center' }}>{nav.icon}</Box>
-					<Box sx={{ opacity: open ? 1 : 0, width: open ? 'auto' : 0 }}>{nav.name}</Box>
-				</AccordionSummary>
-			</Tooltip>
-			<AccordionDetails sx={{ padding: '0 0', width: '100%' }}>
-				{nav.children.map((child, index) => (
-					<RenderNavigation nav={child} open={open} key={index} />
-				))}
-			</AccordionDetails>
-		</Accordion>
+		<div className='w-full'>
+			<Accordion disableGutters elevation={0} expanded={nav.children.find((index) => index.href === router.pathname) && true}>
+				<Tooltip classes={{ tooltip: admin_comp_styles.tooltip }} title={open ? null : nav.name} arrow placement='right'>
+					<AccordionSummary
+						sx={{
+							padding: '0px auto',
+							display: 'flex',
+							background: nav.children.find((index) => index.href === router.pathname) && 'var(--navbar-side-hover-bg)',
+							color: router.pathname === nav.href && 'var(--navbar-side-hover-color)',
+						}}
+						expandIcon={<ExpandMoreIcon />}>
+						<Box sx={{ minWidth: 0, ml: 0.5, mr: open ? 3 : 'auto', justifyContent: 'center' }}>{nav.icon}</Box>
+						<Box sx={{ opacity: open ? 1 : 0, width: open ? 'auto' : 0, fontSize: '16px' }}>{nav.name}</Box>
+					</AccordionSummary>
+				</Tooltip>
+				<AccordionDetails sx={{ padding: '0 0', width: '100%' }}>
+					{nav.children.map((child, index) => (
+						<RenderNavigation nav={child} open={open} key={index} />
+					))}
+				</AccordionDetails>
+			</Accordion>
+		</div>
 	);
 };
 
@@ -285,7 +298,7 @@ const DrawerContent = ({ open }) => {
 	return (
 		<React.Fragment>
 			<DrawerHeader
-				className={`color-primary prevent-select`}
+				className={`color-primary border prevent-select`}
 				sx={{
 					width: open ? drawerWidth : '65px',
 					fontSize: '19px',
@@ -297,10 +310,22 @@ const DrawerContent = ({ open }) => {
 					background: '#fff',
 					zIndex: 2000,
 					flexFlow: 'column',
-					height: '65px',
-					borderBottom: '1px solid var(--color-primary)',
+					height: '68px',
+					marginTop: { xs: -0.5, md: 0 },
+					padding: 0,
 				}}>
-				{open && 'Advanced Admin Panel'}
+				<div className='shadow w-full flex p-2'>
+					<Avatar src={auth?.user?.avatar} alt={auth?.user?.firstname} className={`${!open && 'mx-auto'} shadow`} />
+					<div className={`my-auto ml-2 ${!open && 'hidden'}`}>
+						<div className='font-medium-custom text-[15px] text-dark w-full text-center'>{`${
+							auth?.user?.lastname ? auth?.user?.lastname : ''
+						} ${auth?.user?.firstname ? auth?.user?.firstname : ''} ${auth?.user?.secondname ? auth?.user?.secondname : ''}`}</div>
+						<div className='font-medium-custom text-[14px] color-primary w-full mt-1'>
+							{auth?.user?.member_role === MEMBER_ROLES.MASTER && 'Master Admin'}
+							{auth?.user?.member_role === MEMBER_ROLES.MANAGER && 'Manager Admin'}
+						</div>
+					</div>
+				</div>
 			</DrawerHeader>
 			<List className='w-full pt-5 mt-11'>
 				{AdminDashboardNavItems1.map((nav, index) => (
@@ -411,7 +436,7 @@ const UserMenu = () => {
 				}}
 				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-				<Link className='text-decor-none text-black w-100' href={APP_ROUTES.ADMIN_PROFILE}>
+				<Link className='text-decor-none text-black w-full' href={APP_ROUTES.ADMIN_PROFILE}>
 					<MenuItem onClick={handleCloseMenu}>
 						<Avatar src={auth?.user?.avatar} /> My Profile
 					</MenuItem>
@@ -457,7 +482,7 @@ const RenderChildTopLayout = ({ pageIcon, pageTitle }) => {
 const RenderFooter = () => {
 	return (
 		<Box className='text-center w-full fs-8 text-secondary'>
-			<Divider className='bg-primary w-100 mb-2' />
+			<Divider className='bg-primary w-full mb-2' />
 			&copy; Advanced Admin Panel Built By - {SITE_DATA.DEVELOPER_NAME}
 			<Link href={SITE_DATA.DEVELOPER_URL} target='_blank' className='ml-1 color-primary text-decor-none font-semibold'>
 				Contact Developer
@@ -505,7 +530,7 @@ const DesktopLayout = ({ children, pageIcon, pageTitle }) => {
 				<DrawerHeader />
 				<RenderChildTopLayout pageIcon={pageIcon} pageTitle={pageTitle} />
 				<Box sx={{ display: 'flex', flexFlow: 'column', minHeight: '100vh', justifyContent: 'space-between' }}>
-					{children}
+					<div className='w-full h-full'>{children}</div>
 					<RenderFooter />
 				</Box>
 			</Box>

@@ -142,7 +142,7 @@ const Login = ({ metatags, redirectProps, sitesettings }) => {
 							</div>
 						</div>
 					</div>
-					<div className='text-center text-sm text-gray-500 font-semibold'>
+					<div className='text-center text-sm text-gray-500 font-medium-custom'>
 						&copy; {new Date().getFullYear()} {SITE_DATA.OFFICIAL_NAME}
 					</div>
 				</div>

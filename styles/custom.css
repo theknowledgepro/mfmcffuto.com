@@ -41,7 +41,7 @@
 }
 /* Fonts */
 .font-medium-custom {
-	font-weight: 600;
+	font-weight: 600 !important;
 	font-family: var(--font-family-medium);
 }
 /* FLIP CARD CSS */

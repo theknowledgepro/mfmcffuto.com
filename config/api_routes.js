@@ -1,3 +1,4 @@
+/** @format */
 
 module.exports = {
 	// ** AUTHENTICATION ROUTES
@@ -12,9 +13,19 @@ module.exports = {
 	EDIT_ADMIN: 'admin/raw/edit-admin',
 	DELETE_ADMIN: 'admin/delete-admin',
 
-	GET_ALL_ADMINS: 'admin/get-all-admins',
+	// ** BLOGS ACTIONS ROUTES
+	MANAGE_BLOG_TAGS: 'admin/raw/blogtag',
+	MANAGE_BLOG_CATEGORIES: 'admin/raw/blogcategory',
+	MANAGE_BLOGS: 'admin/raw/blog',
+	MANAGE_BLOGS_SETTINGS: `admin/blog-settings`,
+	GET_BLOG_CONTENT: 'admin/blog-content',
+
+	GET_ALL_ADMINS: 'admin/all-admins',
+	GET_ACTIVITY_LOGS: 'admin/activity-logs',
 
 	GET_CONTACT_FORM: `admin/get-contact-form-submissions`,
 	MARK_CONTACT_FORM_AS_READ: `admin/mark-contact-form-read`,
-};
 
+	// ** MANAGE PAGE SEO
+	MANAGE_PAGE_SEO: 'admin/seo-settings',
+};

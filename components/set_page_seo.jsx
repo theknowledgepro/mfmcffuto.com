@@ -16,14 +16,12 @@ const SetUpPageSEO = ({ fromPage, pageName, pageSeoData, pageSlug, session }) =>
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const [openModal, setOpenModal] = useState(false);
-	const initialState = pageSeoData
-		? pageSeoData
-		: {
-				page_slug: pageSlug,
-				meta_description: '',
-				meta_keywords: '',
-				...pageSeoData,
-		  };
+	const initialState = {
+		page_slug: pageSlug,
+		meta_description: '',
+		meta_keywords: '',
+		...pageSeoData,
+	};
 	const [seoData, setSeoData] = useState(initialState);
 	const { page_slug, meta_description, meta_keywords } = seoData;
 
@@ -46,7 +44,8 @@ const SetUpPageSEO = ({ fromPage, pageName, pageSeoData, pageSlug, session }) =>
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
-			const res = await postDataAPI(API_ROUTES.MANAGE_PAGE_SEO, { ...seoData, page_name: pageName });
+			console.log({ ...seoData, pageSeoData, page_name: pageName });
+			const res = await postDataAPI(API_ROUTES.MANAGE_PAGE_SEO, { ...seoData, page_name: pageName }, session?.token);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
@@ -64,12 +63,12 @@ const SetUpPageSEO = ({ fromPage, pageName, pageSeoData, pageSlug, session }) =>
 			openModal={openModal}
 			setOpenModal={setOpenModal}
 			modalTitle={
-				<div className='w-100 d-flex align-items-center justify-content-between'>
-					<div className='w-100 d-flex'>
+				<div className='w-full flex items-center justify-between'>
+					<div className='w-full flex'>
 						<QueryStatsOutlinedIcon fontSize='small' sx={{ mr: '5px' }} />{' '}
-						<span className='my-auto fs-6 fw-medium'>{pageName} Page SEO </span>
+						<span className='my-auto text-[16px] font-medium-custom'>{pageName} Page SEO </span>
 					</div>
-					<Avatar src={session?.user?.avatar} alt={session?.user?.firstname} className={`mild-shadow`} />
+					<Avatar src={session?.user?.avatar} alt={session?.user?.firstname} className={`shadow-sm`} />
 				</div>
 			}
 			modalBody={
@@ -78,7 +77,7 @@ const SetUpPageSEO = ({ fromPage, pageName, pageSeoData, pageSlug, session }) =>
 						onChange={handleChangeInput}
 						value={meta_description}
 						color='primary'
-						className='w-100 mt-4'
+						className='w-full mt-4'
 						name='meta_description'
 						label='Meta Description'
 						placeholder='e.g the best blog in the city for readers...'
@@ -103,7 +102,7 @@ const SetUpPageSEO = ({ fromPage, pageName, pageSeoData, pageSlug, session }) =>
 						onChange={handleChangeInput}
 						value={meta_keywords}
 						color='primary'
-						className='w-100 mt-4'
+						className='w-full mt-4'
 						name='meta_keywords'
 						label='Meta Keywords'
 						placeholder='Separate each words with a comma...'
@@ -120,7 +119,7 @@ const SetUpPageSEO = ({ fromPage, pageName, pageSeoData, pageSlug, session }) =>
 							),
 						}}
 					/>
-					<div className='my-2 color-primary fs-9'>
+					<div className='my-2 color-primary text-[12px]'>
 						{meta_keywords?.length} / {LIMITS.META_KEYWORDS_LIMIT} characters allowed.
 					</div>
 				</React.Fragment>
@@ -129,7 +128,7 @@ const SetUpPageSEO = ({ fromPage, pageName, pageSeoData, pageSlug, session }) =>
 				<React.Fragment>
 					{!isSubmitting && (
 						<React.Fragment>
-							<Button onClick={handleUpdate} className='w-100 text-decor-none btn-site' variant='contained'>
+							<Button onClick={handleUpdate} className='w-full text-decor-none btn-site' variant='contained'>
 								<QueryStatsOutlinedIcon fontSize='small' sx={{ mr: '5px' }} /> Update SEO Data
 							</Button>
 							<Button onClick={() => setOpenModal(false)} className='text-decor-none' color='white' variant='contained'>
@@ -140,7 +139,7 @@ const SetUpPageSEO = ({ fromPage, pageName, pageSeoData, pageSlug, session }) =>
 					{isSubmitting && <CircularProgress style={{ color: 'var(--color-primary)', margin: 'auto', height: '40px', width: '40px' }} />}
 				</React.Fragment>
 			}>
-			<Button className='text-decor-none' color='white' variant='contained'>
+			<Button className='text-decor-none bg-white' color='white' variant='contained'>
 				<QueryStatsOutlinedIcon fontSize='small' sx={{ mr: '5px' }} /> {pageName} Page SEO
 			</Button>
 		</MuiModal>
