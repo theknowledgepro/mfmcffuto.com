@@ -39,6 +39,15 @@
 .bg-primary {
 	background: var(--color-primary) !important;
 }
+/* Fonts */
+.font-medium-custom {
+	font-weight: 600;
+	font-family: var(--font-family-medium);
+}
+/* FLIP CARD CSS */
+.rotate-flip {
+	transform: rotateY(180deg);
+}
 
 .translateY-100 {
 	transform: translateY(-100px) !important;

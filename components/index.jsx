@@ -1,6 +1,8 @@
+/** @format */
+
 export { default as Toast } from './toast';
-export { default as ComingSoonPage } from './coming_soon';
 export { default as ConfirmActionDialog } from './confirm_action_dialog';
+export { default as FlipCard } from './flip_card';
 
 // ** ADMIN COMPONENTS
 export { default as AuthLayout } from './admin/auth_layout';
@@ -29,6 +31,8 @@ export { default as WithDrawer } from './with_drawer';
 export { default as SocialIcons } from './social_icons';
 export { default as RouteChangeLinearProgress } from './route_change_linear_progress';
 export { default as AboutUsIntro } from './about_us_intro';
+export { default as WorshipDays } from './worship_days';
+export { default as FromthePresidentsDesk } from './from_president_desk';
 
 // ** BLOG SECTION COMPONENTS
 export { default as CategoriesSection } from './blogs/categories_section';
