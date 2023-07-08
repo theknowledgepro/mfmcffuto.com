@@ -1,9 +1,23 @@
 /** @format */
 
-import { AboutUsIntro, ImageTag, WebLayout, WorshipDays, FromthePresidentsDesk, ContactUsForm } from '@/components';
+import {
+	AboutUsIntro,
+	ImageTag,
+	WebLayout,
+	WorshipDays,
+	FromthePresidentsDesk,
+	GalleryPreviewSection,
+	RecentlyPublishedArticles,
+	ContactUsForm,
+	MeetCurrentExecutives,
+	UpcomingEvents,
+	MeetAcadTeamSection,
+	GiveTithesAndOfferingsSection,
+	SermonsPreviewSection,
+	FellowshipGroupsPreview
+} from '@/components';
 import Slider from 'react-slick';
 import styles from '@/pages/pages_styles.module.css';
-import Link from 'next/link';
 import Typewriter from 'typewriter-effect';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -12,7 +26,6 @@ import React, { useRef } from 'react';
 import image1 from '@/assets/demo/1.jpg';
 import image2 from '@/assets/demo/2.jpg';
 import image3 from '@/assets/demo/3.jpg';
-import { Divider } from '@mui/material';
 
 const HomePage = ({ metatags, settings }) => {
 	const carouselSettings = {
@@ -106,15 +119,45 @@ const HomePage = ({ metatags, settings }) => {
 				<WorshipDays />
 			</div>
 
+			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-two)]`}>
+				<UpcomingEvents />
+			</div>
+
 			<div className={`${styles.page_padding} py-[40px] w-full`}>
 				<FromthePresidentsDesk />
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
-				<ContactUsForm />
+				<MeetAcadTeamSection />
 			</div>
 
+			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-two)]`}>
+				<MeetCurrentExecutives />
+			</div>
 
+			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
+				<RecentlyPublishedArticles />
+			</div>
+
+			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-two)]`}>
+				<SermonsPreviewSection />
+			</div>
+
+			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
+				<FellowshipGroupsPreview />
+			</div>
+
+			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-two)]`}>
+				<GiveTithesAndOfferingsSection />
+			</div>
+
+			<div className={`${styles.page_padding} py-[40px] w-full`}>
+				<GalleryPreviewSection />
+			</div>
+
+			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
+				<ContactUsForm />
+			</div>
 		</WebLayout>
 	);
 };
