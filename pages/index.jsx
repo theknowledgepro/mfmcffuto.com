@@ -110,7 +110,11 @@ const HomePage = ({ metatags, settings }) => {
 				<FromthePresidentsDesk />
 			</div>
 
-			<div style={{ height: '1000px' }}></div>
+			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
+				<WorshipDays />
+			</div>
+
+
 		</WebLayout>
 	);
 };

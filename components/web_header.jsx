@@ -90,7 +90,7 @@ const WebHeader = ({ sitesettings }) => {
 	ChangeClassNameAtPosition({ targetRef: mobileHeaderRef, position: 200, className: 'mobile-header-shadow' });
 	ChangeClassNameAtPosition({ targetRef: mobileHeaderRef, position: 200, className: 'mobile-header-bg-original' });
 	ChangeClassNameAtPosition({ targetRef: mobileHeaderRefNavIcon, position: 200, className: 'text-white' });
-	// HideShowNavbarOnScroll({ targetRef: mobileHeaderRef, className: 'translateY-100', startPosition: 500 });
+	HideShowNavbarOnScroll({ targetRef: mobileHeaderRef, className: 'translateY-100', startPosition: 500 });
 	// HideShowNavbarOnScroll({ targetRef: pcHeaderRef, className: 'translateY-100', startPosition: 500 });
 
 	const handleOpenSideNav = () => {

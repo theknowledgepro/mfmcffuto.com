@@ -9,7 +9,7 @@ const FromthePresidentsDesk = () => {
 	return (
 		<section className='w-full flex flex-col items-center justify-center mb-5'>
 			<h2 style={{ fontFamily: 'var(--font-family-medium)' }} className={`font-semibold text-[30px] text-center w-full my-[20px]`}>
-				From the<span className='text-[var(--color-primary)] mx-2'>Presidents's Desk...</span>
+				From the<span className='text-[var(--color-primary)] mx-2'>Presidents's</span>Desk...
 			</h2>
 			<div className={`items-center justify-center grid xss:grid-cols-1 md:grid-cols-2`}>
 				<div className={`col-span-1 mb-5`}>
