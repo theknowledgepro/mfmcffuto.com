@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 const WebSectionBreadCrumb = ({ sections = [], activePageColor, sectionsColor }) => {
 	return (
-		<div className='w-100 d-flex flex-wrap fs-7'>
+		<div className='w-full flex flex-wrap text-[16px]'>
 			{sections?.map((section, i) => (
 				<div className={styles.web_section_bread_crumb} key={i}>
 					{i + 1 !== sections?.length && (

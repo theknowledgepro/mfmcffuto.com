@@ -43,17 +43,17 @@ const RenderCommentsSection = ({ blogData, dividerBgColor }) => {
 	const [errors, setErrors] = React.useState({});
 	const handleSubmitComment = () => {};
 	return (
-		<div style={{ zIndex: '4' }} className={`${styles.sticky_card_from_md_up} overflow-hidden w-100 py-2`}>
-			<Paper className='w-100 pt-2 mb-2 bg-inherit border position-relative'>
-				<div className='w-100 px-2'>
+		<div style={{ zIndex: '4' }} className={`${styles.sticky_card_from_md_up} overflow-hidden w-full py-2`}>
+			<Paper className='w-full pt-2 mb-2 bg-inherit border position-relative'>
+				<div className='w-full px-2'>
 					<div className={`fs-8 ${comp_styles.category_title}`}>Comments</div>
-					<Divider className='mt-3 w-100' sx={{ background: dividerBgColor }} />
+					<Divider className='mt-3 w-full' sx={{ background: dividerBgColor }} />
 				</div>
 				<div className={`${styles.comment_section} scroll-design`}>
-					<div className={`${blogData?.comments?.length === 0 ? 'h-100' : ''} px-2 pb-5 mb-5 w-100`}>
+					<div className={`${blogData?.comments?.length === 0 ? 'h-full' : ''} px-2 pb-5 mb-5 w-full`}>
 						{blogData?.comments?.length === 0 && (
-							<div className='d-flex flex-column align-content-center justify-content-center h-100 w-100'>
-								<div className='m-auto d-flex flex-column text-center'>
+							<div className='flex flex-col items-center justify-content-center h-full w-full'>
+								<div className='m-auto flex flex-col text-center'>
 									<ForumOutlinedIcon className='mx-auto blog-text-theme' />
 									<div className='fs-8'>
 										No comments yet!
@@ -67,11 +67,11 @@ const RenderCommentsSection = ({ blogData, dividerBgColor }) => {
 							<BlogCommentCard key={i} comment={comment} />
 						))}
 					</div>
-					<div className='px-2 pb-2 bg-inherit w-100 position-absolute bottom-0'>
+					<div className='px-2 pb-2 bg-inherit w-full position-absolute bottom-0'>
 						<TextField
 							onChange={handleChangeInput}
 							defaultValue={inputData?.comment}
-							className='w-100'
+							className='w-full'
 							color='primary'
 							name='comment'
 							variant='standard'
@@ -133,287 +133,278 @@ const BlogPage = ({
 
 	return (
 		<WebLayout
-			withDrawer={true}
 			headerOriginalBgColor={true}
 			metatags={{ meta_title: `${blogData?.title} | ${SITE_DATA.OFFICIAL_NAME}`, ...metatags }}
 			sitesettings={settings}>
-			<div className={``} style={{ background: 'var(--blog-section-bg)' }}>
-				<WithDrawer
-					useWidth='240px'
-					sitesettings={settings}
-					main={
-						<div className={`px-2 ${styles.blog_data_space_right} ${styles.page_top_margin_with_drawer} h-100`}>
-							<Grid spacing={1} columns={{ xs: 12, sm: 12, md: 12 }} container={true} className='pb-4'>
-								<Grid xs={12} sm={12} md={8} item={true} className=''>
-									<Paper ref={divRef} elevation={0} className='p-2 w-100 border bg-inherit'>
-										<WebSectionBreadCrumb sectionsColor={'var(--blog-section-color)'} sections={sections} />
-										<div className={`${comp_styles.category_title} ${styles.blog_data_title} blog-text-theme mb-4`}>
-											{blogData?.title}
+			<div className={`${styles.page_padding}`} style={{ background: 'var(--blog-section-bg)' }}>
+				<div className={`px-2 ${styles.blog_data_space_right} ${styles.page_top_margin} h-full`}>
+					<Grid spacing={1} columns={{ xs: 12, sm: 12, md: 12 }} container={true} className='pb-4'>
+						<Grid xs={12} sm={12} md={8} item={true} className=''>
+							<Paper ref={divRef} elevation={2} className='p-2 w-full border border-zinc-300 bg-inherit'>
+								<WebSectionBreadCrumb sectionsColor={'var(--blog-section-color)'} sections={sections} />
+								<div className={`${comp_styles.category_title} ${styles.blog_data_title} blog-text-theme mb-4`}>
+									{blogData?.title}
+								</div>
+								<div className='flex w-full flex-wrap'>
+									{blogData?.tags?.map((tag, i) => (
+										<TagChip hideLink={false} tag={tag} key={i} />
+									))}
+								</div>
+								<Divider className='w-full my-3' sx={{ background: dividerBgColor }} />
+								<div className='flex w-full items-center justify-between'>
+									<div className='flex'>
+										<Avatar src={blogData?.author?.avatar} sx={{ my: 'auto', mr: 1, bgcolor: stringToColor(blogData?.title) }}>
+											{blogData?.author?.lastname?.charAt(0)?.toUpperCase()}
+										</Avatar>
+										<div className='flex flex-col'>
+											<div className='text-[13px] my-auto blog-text-theme fw-bold'>Author - {authorName}</div>
+											<div className='mt-1 text-[13px] blog-text-theme flex flex-wrap'>
+												{blogsettings?.show_views && (
+													<div className='my-auto mr-1'>
+														<RemoveRedEyeTwoToneIcon className='text-[15px] blog-text-theme mr-1' />
+														<span className='text-[13px] my-auto'>{blogData?.views?.length} views |</span>
+													</div>
+												)}
+												{blogsettings?.show_comments && (
+													<div className='my-auto mr-1'>
+														<ForumOutlinedIcon className='text-[15px] blog-text-theme mr-1' />
+														<span className='text-[13px] my-auto'>{blogData?.comments?.length} |</span>
+													</div>
+												)}
+												<span className='text-[13px] my-auto'>
+													<span className='ml-1'>
+														<Moment className='text-[13px]' format='MMMM'>
+															{blogData?.createdAt}
+														</Moment>
+													</span>
+													<span className='ml-1'>
+														<Moment className='text-[13px]' format='DD'>
+															{blogData?.createdAt}
+														</Moment>
+														,
+													</span>
+													<span className='ml-1'>
+														<Moment className='text-[13px]' format='YYYY'>
+															{blogData?.createdAt}
+														</Moment>
+													</span>
+												</span>
+											</div>
 										</div>
-										<div className='d-flex w-100 flex-wrap'>
+									</div>
+									<SocialShareModal url={blogData?.slug}>
+										<ShareIcon className='blog-text-theme' />
+									</SocialShareModal>
+								</div>
+								<Divider className='w-full my-3' sx={{ background: dividerBgColor }} />
+								<div className='w-full flex flex-col align-items-center justify-content-center'>
+									<BlogContent divRef={divRef} content={blogData?.body} />
+									<Divider className='w-full my-3' sx={{ background: dividerBgColor }} />
+									<div className='w-full'>
+										<div className='fs-5 fw-bold blog-text-theme'>
+											@ Blog Categor{blogData?.categories?.length > 1 ? 'ies' : 'y'}
+										</div>
+										<div className='flex mt-2 w-full flex-wrap'>
+											{blogData?.categories?.map((category, i) => (
+												<CategoryChip hideLink={false} category={category} key={i} />
+											))}
+										</div>
+										<div className='w-full'>
+											<Link href={APP_ROUTES.BLOGS_CATEGORIES} className='fw-bold text-decor-none color-primary fs-8'>
+												Explore Articles & Blogs Categories
+											</Link>
+										</div>
+									</div>
+									<Divider className='w-full my-2' sx={{ background: dividerBgColor }} />
+									<div className='w-full'>
+										<div className='fs-5 fw-bold blog-text-theme'># Blog Tags</div>
+										<div className='flex mt-2 w-full flex-wrap'>
 											{blogData?.tags?.map((tag, i) => (
 												<TagChip hideLink={false} tag={tag} key={i} />
 											))}
 										</div>
-										<Divider className='w-100 my-3' sx={{ background: dividerBgColor }} />
-										<div className='d-flex w-100 align-content-center justify-content-between'>
-											<div className='d-flex'>
-												<Avatar src={blogData?.author?.avatar} sx={{ mr: 1, bgcolor: stringToColor(blogData?.title) }}>
-													{blogData?.author?.lastname?.charAt(0)?.toUpperCase()}
-												</Avatar>
-												<div className='d-flex flex-column'>
-													<div className='fs-9 my-auto blog-text-theme fw-bold'>Author - {authorName}</div>
-													<div className='mt-1 fs-9 blog-text-theme d-flex flex-wrap'>
-														{blogsettings?.show_views && (
-															<div className='my-auto me-1'>
-																<RemoveRedEyeTwoToneIcon className='fs-6 blog-text-theme me-1' />
-																<span className='fs-9 my-auto'>{blogData?.views?.length} views |</span>
-															</div>
-														)}
-														{blogsettings?.show_comments && (
-															<div className='my-auto me-1'>
-																<ForumOutlinedIcon className='fs-6 blog-text-theme me-1' />
-																<span className='fs-9 my-auto'>{blogData?.comments?.length} |</span>
-															</div>
-														)}
-														<span className='my-auto'>
-															<span className='ms-1'>
-																<Moment format='MMMM'>{blogData?.createdAt}</Moment>
-															</span>
-															<span className='ms-1'>
-																<Moment format='DD'>{blogData?.createdAt}</Moment>,
-															</span>
-															<span className='ms-1'>
-																<Moment format='YYYY'>{blogData?.createdAt}</Moment>
-															</span>
-														</span>
-													</div>
-												</div>
-											</div>
+										<div className='w-full'>
+											<Link href={APP_ROUTES.BLOGS_TAGS} className='fw-bold text-decor-none color-primary fs-8'>
+												Explore Articles & Blogs Tags
+											</Link>
+										</div>
+									</div>
+									<Divider className='w-full my-2' sx={{ background: dividerBgColor }} />
+									<div className='w-full'>
+										<div className='w-full flex flex-wrap'>
 											<SocialShareModal url={blogData?.slug}>
-												<ShareIcon className='blog-text-theme' />
+												<div className='text-[15px] blog-text-theme'>
+													<ShareIcon className='blog-text-theme' /> Share
+												</div>
 											</SocialShareModal>
 										</div>
-										<Divider className='w-100 my-3' sx={{ background: dividerBgColor }} />
-										<div className='w-100 d-flex flex-column align-items-center justify-content-center'>
-											<BlogContent divRef={divRef} content={blogData?.body} />
-											<Divider className='w-100 my-3' sx={{ background: dividerBgColor }} />
-											<div className='w-100'>
-												<div className='fs-5 fw-bold blog-text-theme'>
-													@ Blog Categor{blogData?.categories?.length > 1 ? 'ies' : 'y'}
-												</div>
-												<div className='d-flex mt-2 w-100 flex-wrap'>
-													{blogData?.categories?.map((category, i) => (
-														<CategoryChip hideLink={false} category={category} key={i} />
-													))}
-												</div>
-												<div className='w-100'>
-													<Link href={APP_ROUTES.BLOGS_CATEGORIES} className='fw-bold text-decor-none color-primary fs-8'>
-														Explore Articles & Blogs Categories
-													</Link>
-												</div>
-											</div>
-											<Divider className='w-100 my-2' sx={{ background: dividerBgColor }} />
-											<div className='w-100'>
-												<div className='fs-5 fw-bold blog-text-theme'># Blog Tags</div>
-												<div className='d-flex mt-2 w-100 flex-wrap'>
-													{blogData?.tags?.map((tag, i) => (
-														<TagChip hideLink={false} tag={tag} key={i} />
-													))}
-												</div>
-												<div className='w-100'>
-													<Link href={APP_ROUTES.BLOGS_TAGS} className='fw-bold text-decor-none color-primary fs-8'>
-														Explore Articles & Blogs Tags
-													</Link>
-												</div>
-											</div>
-											<Divider className='w-100 my-2' sx={{ background: dividerBgColor }} />
-											<div className='w-100'>
-												<div className='w-100 d-flex flex-wrap'>
-													<SocialShareModal url={blogData?.slug}>
-														<div className='fs-6 blog-text-theme'>
-															<ShareIcon className='blog-text-theme' /> Share
-														</div>
-													</SocialShareModal>
-												</div>
-											</div>
-											<Divider className='w-100 my-2' sx={{ background: dividerBgColor }} />
-											<div className='w-100 d-flex align-content-center justify-content-between'>
-												{previousBlogSlug?.slug && (
-													<Link
-														href={`${APP_ROUTES.BLOGS}/${previousBlogSlug?.slug}`}
-														className='text-decor-none color-primary fs-8'>
-														{'<'} Previous
-													</Link>
-												)}
-												{nextBlogSlug?.slug && (
-													<Link
-														href={`${APP_ROUTES.BLOGS}/${nextBlogSlug?.slug}`}
-														className='text-decor-none color-primary fs-8'>
-														Next {'>'}
-													</Link>
-												)}
-											</div>
-										</div>
-									</Paper>
-									<Paper className='p-2 mt-2 w-100 border bg-inherit'>
-										<div className='fs-5 fw-bold blog-text-theme'> Meet the Author</div>
-										<Divider className='w-100 my-2' sx={{ background: dividerBgColor }} />
-										<div className='d-flex justify-between w-100 flex-column flex-md-row gap-3'>
-											<Avatar
-												src={blogData?.author?.avatar}
-												className='m-auto'
-												sx={{ mr: 1, bgcolor: stringToColor(blogData?.title), height: '60px', width: '60px' }}>
-												{blogData?.author?.lastname?.charAt(0)?.toUpperCase()}
-											</Avatar>
-											<div className='w-100 d-flex flex-column align-items-center justify-content-center align-items-md-start justify-content-md-start'>
-												<div className='fs-9 my-auto fw-bold blog-text-theme'>{authorName}</div>
-												<div className='w-100 my-2 fs-7 blog-text-theme'>{blogData?.author?.about}</div>
-												<div className='mb-1 fs-9 blog-text-theme d-flex flex-wrap'>
-													{blogsettings?.show_views && (
-														<div className='my-auto me-1'>
-															<CollectionsBookmarkTwoToneIcon className='fs-6 blog-text-theme me-1' />
-															<span className='fs-9 my-auto border-bottom blog-text-theme'>
-																{blogData?.author?.articles?.length} Published Articles{' '}
-																<DoneAllTwoToneIcon className='my-auto fs-6 text-success' />
-															</span>
-														</div>
-													)}
-												</div>
-												<div className={`my-2 ${comp_styles.social_icons}`}>
-													{blogData?.author?.social_handles?.facebook_url && (
-														<Link
-															target='_blank'
-															href={blogData?.author?.social_handles?.facebook_url}
-															className={`${comp_styles.icon} facebook`}>
-															<SvgIcons.FaFacebookF />
-														</Link>
-													)}
-													{blogData?.author?.social_handles?.instagram_url && (
-														<Link
-															target='_blank'
-															href={blogData?.author?.social_handles?.instagram_url}
-															className={`${comp_styles.icon} instagram`}>
-															<SvgIcons.FaInstagram />
-														</Link>
-													)}
-													{blogData?.author?.social_handles?.telegram_url && (
-														<Link
-															target='_blank'
-															href={blogData?.author?.social_handles?.telegram_url}
-															className={`${comp_styles.icon} telegram`}>
-															<SvgIcons.FaTelegramPlane />
-														</Link>
-													)}
-													{blogData?.author?.social_handles?.whatsApp_url && (
-														<Link
-															target='_blank'
-															href={`https://wa.me/${blogData?.author?.social_handles?.whatsApp_url}?text=Hello,%20${authorName},%20My%20name%20is%20"`}
-															className={`${comp_styles.icon} whatsapp`}>
-															<SvgIcons.FaWhatsapp />
-														</Link>
-													)}
-													{blogData?.author?.social_handles?.youTube_url && (
-														<Link
-															target='_blank'
-															href={blogData?.author?.social_handles?.youTube_url}
-															className={`${comp_styles.icon} youtube`}>
-															<SvgIcons.FaYoutube />
-														</Link>
-													)}
-												</div>
-											</div>
-										</div>
-									</Paper>
-								</Grid>
-								<Grid
-									xs={12}
-									sm={12}
-									md={4}
-									item={true}
-									className='pb-2 d-flex flex-column flex-column-reverse flex-md-column align-items-start position-relative'>
-									<div className='w-100'>
-										{blogsRelatedByCategories?.length > 0 && (
-											<Paper className='border w-100 p-2 my-2 bg-inherit'>
-												<div className='w-100'>
-													<div className={`fs-8 ${comp_styles.category_title} blog-text-theme`}>
-														Related Posts By Category
-													</div>
-													<Divider className='my-3 w-100' sx={{ background: dividerBgColor }} />
-													<div className='w-100 my-2'>
-														{blogsRelatedByCategories?.map((blog, i) => (
-															<BlogThumb
-																textColorClassName='blog-text-theme'
-																isCategory={true}
-																blogsettings={blogsettings}
-																key={i}
-																blog={blog}
-															/>
-														))}
-													</div>
-												</div>
-											</Paper>
-										)}
-
-										{blogsRelatedByTags?.length > 0 && (
-											<Paper className='border w-100 p-2 my-2 bg-inherit'>
-												<div className='w-100'>
-													<div className={`fs-8 ${comp_styles.category_title} blog-text-theme`}>Related Posts By Tags</div>
-													<Divider className='my-3 w-100' sx={{ background: dividerBgColor }} />
-													<div className='w-100 my-2'>
-														{blogsRelatedByTags?.map((blog, i) => (
-															<BlogThumb
-																textColorClassName='blog-text-theme'
-																blogsettings={blogsettings}
-																key={i}
-																blog={blog}
-															/>
-														))}
-													</div>
-												</div>
-											</Paper>
-										)}
-										<SubscribeToBlogNotificationForm />
 									</div>
-									<RenderCommentsSection dividerBgColor={dividerBgColor} blogData={blogData} />
-								</Grid>
-							</Grid>
+									<Divider className='w-full my-2' sx={{ background: dividerBgColor }} />
+									<div className='w-full flex items-center justify-between'>
+										{previousBlogSlug?.slug && (
+											<Link
+												href={`${APP_ROUTES.BLOGS}/${previousBlogSlug?.slug}`}
+												className='text-decor-none color-primary fs-8'>
+												{'<'} Previous
+											</Link>
+										)}
+										{nextBlogSlug?.slug && (
+											<Link href={`${APP_ROUTES.BLOGS}/${nextBlogSlug?.slug}`} className='text-decor-none color-primary fs-8'>
+												Next {'>'}
+											</Link>
+										)}
+									</div>
+								</div>
+							</Paper>
+							<Paper className='p-2 mt-2 w-full border bg-inherit'>
+								<div className='fs-5 fw-bold blog-text-theme'> Meet the Author</div>
+								<Divider className='w-full my-2' sx={{ background: dividerBgColor }} />
+								<div className='flex justify-between w-full flex-col flex-md-row gap-3'>
+									<Avatar
+										src={blogData?.author?.avatar}
+										className='m-auto'
+										sx={{ mr: 1, bgcolor: stringToColor(blogData?.title), height: '60px', width: '60px' }}>
+										{blogData?.author?.lastname?.charAt(0)?.toUpperCase()}
+									</Avatar>
+									<div className='w-full flex flex-col align-items-center justify-content-center align-items-md-start justify-content-md-start'>
+										<div className='text-[13px] my-auto fw-bold blog-text-theme'>{authorName}</div>
+										<div className='w-full my-2 fs-7 blog-text-theme'>{blogData?.author?.about}</div>
+										<div className='mb-1 text-[13px] blog-text-theme flex flex-wrap'>
+											{blogsettings?.show_views && (
+												<div className='my-auto mr-1'>
+													<CollectionsBookmarkTwoToneIcon className='text-[15px] blog-text-theme mr-1' />
+													<span className='text-[13px] my-auto border-bottom blog-text-theme'>
+														{blogData?.author?.articles?.length} Published Articles{' '}
+														<DoneAllTwoToneIcon className='my-auto text-[15px] text-success' />
+													</span>
+												</div>
+											)}
+										</div>
+										<div className={`my-2 ${comp_styles.social_icons}`}>
+											{blogData?.author?.social_handles?.facebook_url && (
+												<Link
+													target='_blank'
+													href={blogData?.author?.social_handles?.facebook_url}
+													className={`${comp_styles.icon} facebook`}>
+													<SvgIcons.FaFacebookF />
+												</Link>
+											)}
+											{blogData?.author?.social_handles?.instagram_url && (
+												<Link
+													target='_blank'
+													href={blogData?.author?.social_handles?.instagram_url}
+													className={`${comp_styles.icon} instagram`}>
+													<SvgIcons.FaInstagram />
+												</Link>
+											)}
+											{blogData?.author?.social_handles?.telegram_url && (
+												<Link
+													target='_blank'
+													href={blogData?.author?.social_handles?.telegram_url}
+													className={`${comp_styles.icon} telegram`}>
+													<SvgIcons.FaTelegramPlane />
+												</Link>
+											)}
+											{blogData?.author?.social_handles?.whatsApp_url && (
+												<Link
+													target='_blank'
+													href={`https://wa.me/${blogData?.author?.social_handles?.whatsApp_url}?text=Hello,%20${authorName},%20My%20name%20is%20"`}
+													className={`${comp_styles.icon} whatsapp`}>
+													<SvgIcons.FaWhatsapp />
+												</Link>
+											)}
+											{blogData?.author?.social_handles?.youTube_url && (
+												<Link
+													target='_blank'
+													href={blogData?.author?.social_handles?.youTube_url}
+													className={`${comp_styles.icon} youtube`}>
+													<SvgIcons.FaYoutube />
+												</Link>
+											)}
+										</div>
+									</div>
+								</div>
+							</Paper>
+						</Grid>
+						<Grid
+							xs={12}
+							sm={12}
+							md={4}
+							item={true}
+							className='pb-2 flex flex-col flex-col-reverse flex-md-column align-items-start position-relative'>
+							<div className='w-full'>
+								{blogsRelatedByCategories?.length > 0 && (
+									<Paper className='border w-full p-2 my-2 bg-inherit'>
+										<div className='w-full'>
+											<div className={`fs-8 ${comp_styles.category_title} blog-text-theme`}>Related Posts By Category</div>
+											<Divider className='my-3 w-full' sx={{ background: dividerBgColor }} />
+											<div className='w-full my-2'>
+												{blogsRelatedByCategories?.map((blog, i) => (
+													<BlogThumb
+														textColorClassName='blog-text-theme'
+														isCategory={true}
+														blogsettings={blogsettings}
+														key={i}
+														blog={blog}
+													/>
+												))}
+											</div>
+										</div>
+									</Paper>
+								)}
 
-							<div className='w-100 pb-5 mb-5'>
-								<h1 className={`${comp_styles.section_title} blog-text-theme`}>You May Also Like...</h1>
-								<Divider className='w-100 mt-2 mb-5' sx={{ background: dividerBgColor }} />
-								<Grid
-									spacing={0}
-									columns={{ xs: 12, sm: 8, md: 12 }}
-									container={true}
-									className='w-100 d-flex align-items-center justify-content-center'>
-									{youMayAlsoLike.map((blog, i) => (
-										<BlogCard
-											responsiveSizes={{ xs: 12, sm: 4, md: 4 }}
-											responsiveHeight={{
-												xs:
-													!blogsettings?.blog_preview_card_custom_display ||
-													blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1
-														? '238px'
-														: '420px',
-												sm:
-													!blogsettings?.blog_preview_card_custom_display ||
-													blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1
-														? '268px'
-														: '420px',
-											}}
-											blog={blog}
-											size={'LARGE'}
-											blogsettings={blogsettings}
-											key={i}
-										/>
-									))}
-								</Grid>
+								{blogsRelatedByTags?.length > 0 && (
+									<Paper className='border w-full p-2 my-2 bg-inherit'>
+										<div className='w-full'>
+											<div className={`fs-8 ${comp_styles.category_title} blog-text-theme`}>Related Posts By Tags</div>
+											<Divider className='my-3 w-full' sx={{ background: dividerBgColor }} />
+											<div className='w-full my-2'>
+												{blogsRelatedByTags?.map((blog, i) => (
+													<BlogThumb textColorClassName='blog-text-theme' blogsettings={blogsettings} key={i} blog={blog} />
+												))}
+											</div>
+										</div>
+									</Paper>
+								)}
+								<SubscribeToBlogNotificationForm />
 							</div>
-							<BlogSectionCommonFooter />
-						</div>
-					}
-				/>
+							<RenderCommentsSection dividerBgColor={dividerBgColor} blogData={blogData} />
+						</Grid>
+					</Grid>
+
+					<div className='w-full pb-5 mb-5'>
+						<h1 className={`${comp_styles.section_title} blog-text-theme`}>You May Also Like...</h1>
+						<Divider className='w-full mt-2 mb-5' sx={{ background: dividerBgColor }} />
+						<Grid
+							spacing={0}
+							columns={{ xs: 12, sm: 8, md: 12 }}
+							container={true}
+							className='w-full flex align-items-center justify-content-center'>
+							{youMayAlsoLike.map((blog, i) => (
+								<BlogCard
+									responsiveSizes={{ xs: 12, sm: 4, md: 4 }}
+									responsiveHeight={{
+										xs:
+											!blogsettings?.blog_preview_card_custom_display ||
+											blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1
+												? '238px'
+												: '420px',
+										sm:
+											!blogsettings?.blog_preview_card_custom_display ||
+											blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1
+												? '268px'
+												: '420px',
+									}}
+									blog={blog}
+									size={'LARGE'}
+									blogsettings={blogsettings}
+									key={i}
+								/>
+							))}
+						</Grid>
+					</div>
+					<BlogSectionCommonFooter />
+				</div>
 			</div>
 		</WebLayout>
 	);

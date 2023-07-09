@@ -78,7 +78,7 @@ const RenderDropdownNav = ({ nav }) => {
 	);
 };
 
-const WebHeader = ({ sitesettings }) => {
+const WebHeader = ({ sitesettings, headerOriginalBgColor }) => {
 	const preHeaderRef = useRef(null);
 	const pcHeaderRef = useRef(null);
 	const sideBarRef = useRef(null);
@@ -128,7 +128,9 @@ const WebHeader = ({ sitesettings }) => {
 		<div className={`z-[1000] fixed top-0 left-0 right-0 w-[100vw] h-[max-content] p-0 m-0`}>
 			<div
 				ref={preHeaderRef}
-				className='w-full p-2 hidden md:flex items-center justify-between bg-inherit transition-all ease-out duration-300'>
+				className={`w-full p-2 hidden md:flex items-center justify-between ${
+					headerOriginalBgColor ? 'bg-[var(--color-primary)]' : 'bg-inherit'
+				} transition-all ease-out duration-300`}>
 				<div className='px-2 w-full flex'></div>
 				<div className='pr-5 flex'>
 					<SocialIcons
@@ -139,7 +141,9 @@ const WebHeader = ({ sitesettings }) => {
 			</div>
 			<div
 				ref={pcHeaderRef}
-				className='hidden border-b border-t py-2 sm:pr-[30px] sm:pl-[25px] md:pr-[50px] md:pl-[30px] md:flex justify-between items-center transition-all ease-out duration-300'>
+				className={`${
+					headerOriginalBgColor ? 'bg-[var(--color-primary)]' : 'bg-inherit'
+				} hidden border-b border-t border-zinc-300 py-2 sm:pr-[30px] sm:pl-[25px] md:pr-[50px] md:pl-[30px] md:flex justify-between items-center transition-all ease-out duration-300`}>
 				<ImageTag
 					src={sitesettings?.logoUrl ? sitesettings?.logoUrl : ASSETS.LOGO}
 					style={{ width: '50px', height: '50px' }}
@@ -158,7 +162,9 @@ const WebHeader = ({ sitesettings }) => {
 			</div>
 			<div
 				ref={mobileHeaderRef}
-				className='w-full flex md:hidden items-center justify-between p-2 border-b border-zinc-300 transition-all ease-out duration-300'>
+				className={`${
+					headerOriginalBgColor ? 'bg-[var(--color-primary)]' : 'bg-inherit'
+				} w-full flex md:hidden items-center justify-between p-2 border-b border-zinc-300 transition-all ease-out duration-300`}>
 				<ImageTag
 					src={sitesettings?.logoUrl ? sitesettings?.logoUrl : ASSETS.LOGO}
 					style={{ width: '50px', height: '50px' }}
@@ -166,7 +172,10 @@ const WebHeader = ({ sitesettings }) => {
 					alt='logo'
 				/>
 				<IconButton onClick={handleOpenSideNav}>
-					<MenuIcon ref={mobileHeaderRefNavIcon} className='text-[28px] text-[var(--color-primary)]' />
+					<MenuIcon
+						ref={mobileHeaderRefNavIcon}
+						className={`text-[28px] ${headerOriginalBgColor ? 'text-white' : 'text-[var(--color-primary)]'}`}
+					/>
 				</IconButton>
 			</div>
 			<div

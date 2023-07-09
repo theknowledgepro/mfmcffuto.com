@@ -1,46 +1,78 @@
 /** @format */
 
-const cloudinary = require('cloudinary');
+const AWS = require('aws-sdk');
+const fs = require('fs');
+const path = require('path');
 
-cloudinary.config({
-	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-	api_key: process.env.CLOUDINARY_API_KEY,
-	api_secret: process.env.CLOUDINARY_API_SECRET,
-	secure: true,
+const s3 = new AWS.S3({
+	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+	region: process.env.AWS_S3_REGION,
 });
 
-const uploadFileToCloudStorage = async ({ filePath, folder }) => {
-	const options = {
-		use_filename: false,
-		unique_filename: true,
-		overwrite: true,
-		folder: folder,
-	};
+// const randomFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
+const fileHostName = 'https://dvlye389i9odw.cloudfront.net/';
 
-	const { fileUrl, filePublicId } = await new Promise((resolve, reject) => {
-		cloudinary.v2.uploader
-			.upload(filePath, options, function (error, result) {
-				if (error) reject(error);
-				resolve({ fileUrl: result?.url, filePublicId: result?.public_id });
-			})
-			.then()
-			.catch((_err) => console.log({ _err, message: `Could not upload file, please try again later.` }));
+const uploadFile = async ({ file, S3Folder, fileKeyNameToReplace, appendFileExtensionToFileKeyName }) => {
+	if (!file) return {};
+	const fileSize = file?.size;
+	const filePath = file.filepath;
+	const mimeType = file?.mimetype;
+	const fileExt = path.extname(file.originalFilename.toLowerCase());
+
+	const fileKeyName = fileKeyNameToReplace
+		? fileKeyNameToReplace
+		: `${S3Folder ? `${S3Folder}/` : ''}${Date.now().toString()}${appendFileExtensionToFileKeyName ? fileExt : ''}`;
+	console.log({ fileKeyName });
+
+	const { fileData } = await new Promise((resolve, reject) => {
+		const fileStream = fs.createReadStream(filePath);
+		s3.upload(
+			{
+				Bucket: process.env.AWS_S3_BUCKET_NAME,
+				Key: fileKeyName.trim(),
+				ContentType: mimeType,
+				Body: fileStream,
+			},
+			(s3Err, s3Data) => {
+				if (s3Err) throw s3Err;
+				fs.unlink(filePath, function (unlinkErr) {
+					if (unlinkErr) if (unlinkErr) throw unlinkErr;
+				});
+				console.log(`File uploaded successfully at ${s3Data?.Location}`);
+				resolve({ fileData: s3Data });
+			}
+		);
 	});
 
-	return { fileUrl, filePublicId };
+	return { fileData };
 };
 
-const deleteFileFromCloudStorage = async ({ publicId }) => {
-	cloudinary.v2.uploader
-		.destroy(publicId, function (error, result) {
-			if (error) throw error;
-			console.log(result);
-		})
-		.then((resp) => console.log(resp))
-		.catch((_err) => console.log({ _err, message: `Could not delete file, please try again later.` }));
+const deleteFile = async ({ keyName }) => {
+	const isDeleted = await new Promise((resolve, reject) => {
+		s3.deleteObject(
+			{
+				Bucket: process.env.AWS_S3_BUCKET_NAME,
+				Key: keyName,
+			},
+			(err, data) => {
+				if (err) throw err;
+				console.log('File deleted successfully!');
+				resolve(true);
+			}
+		);
+	});
+	return isDeleted;
 };
 
-module.exports = {
-	uploadFileToCloudStorage,
-	deleteFileFromCloudStorage,
-};
+module.exports = { uploadFile, deleteFile, fileHostName };
+
+// ** UPLOAD CATEGORY THUMBNAIL BY REWRITING TO THE EXISTING FILE IN STORAGE
+// await uploadFile({ file: req?.files?.thumbnail, fileKeyNameToReplace: updatedCategoryData?.thumbnail }).catch((err) => {
+// 	throw err;
+// });
+
+// ** DELETE CATEGORY FILE FROM CLOUD STORAGE
+// await deleteFile({ keyName: categoryData?.thumbnail }).catch((err) => {
+// 	throw err;
+// });

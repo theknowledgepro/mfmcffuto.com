@@ -14,7 +14,7 @@ const RenderTagsBlock = ({ tag, blogsettings }) => {
 	if (tag?.blogs?.length === 0) return;
 	return (
 		<div id={`${tag?.slug}`} className='pt-5'>
-			<div className={`${comp_styles.category_title} ${styles.blog_data_title} ms-2 mb-4`}>
+			<div className={`${comp_styles.category_title} ${styles.blog_data_title} ml-2 mb-4`}>
 				<span className='color-primary'>#</span> {tag?.title}
 			</div>
 			<Grid spacing={0} columns={{ xs: 12, sm: 8, md: 12 }} container={true} className=''>
@@ -47,7 +47,7 @@ const RenderTagsBlock = ({ tag, blogsettings }) => {
 const RenderTagsLink = ({ tag }) => {
 	if (tag?.blogs?.length === 0) return;
 	return (
-		<div className='w-100 py-2'>
+		<div className='w-full py-2'>
 			<Link className={`${comp_styles.category_title} text-decor-none text-dark pb-1`} href={`#${tag?.slug}`}>
 				<span className='color-primary'>#</span> {tag?.title}
 			</Link>
@@ -60,7 +60,7 @@ const BlogTags = ({ metatags, settings, blogsettings, tags }) => {
 	return (
 		<WebLayout headerOriginalBgColor={true} metatags={metatags} sitesettings={settings}>
 			<div className={`${styles.page_padding} ${styles.page_top_margin} `}>
-				<div className='w-100 px-2 pt-2'>
+				<div className='w-full px-2 pt-2'>
 					<WebSectionBreadCrumb sections={sections} />
 				</div>
 				{tags?.length === 0 && <NoDataFound sorryText='Ooops! We could not find any blog tags at this time!' />}
@@ -72,13 +72,13 @@ const BlogTags = ({ metatags, settings, blogsettings, tags }) => {
 							))}
 						</Grid>
 						<Grid xs={12} sm={12} md={2.5} item={true} className={`${styles.sticky_card_from_md_up} overflow-hidden p-2`}>
-							<Divider className='bg-primary my-2 w-100' />
-							<div className='w-100 h-100'>
+							<Divider className='bg-primary my-2 w-full' />
+							<div className='w-full h-100'>
 								{tags?.map((tag, index) => (
 									<RenderTagsLink key={index} tag={tag} />
 								))}
 							</div>
-							<Divider className='bg-primary mt-3 w-100' />
+							<Divider className='bg-primary mt-3 w-full' />
 						</Grid>
 					</Grid>
 				)}

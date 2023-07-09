@@ -26,7 +26,7 @@ const WorshipEvent = ({ event }) => {
 			ref={cardRef}
 			onClick={handleFlip}
 			cardWrapperClassName={'col-span-1'}
-			cardWrapperHeight={'350px'}
+			cardWrapperHeight={'390px'}
 			frontContent={
 				<div className='w-full h-full relative'>
 					<div className='absolute bottom-0 left-0 right-0 w-full'>

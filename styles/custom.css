@@ -36,6 +36,9 @@
 .color-primary {
 	color: var(--color-primary) !important;
 }
+.text-white {
+	color: #fff !important;
+}
 .bg-primary {
 	background: var(--color-primary) !important;
 }

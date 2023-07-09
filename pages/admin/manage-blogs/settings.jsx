@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
 import { AdminLayout } from '@/components';
-import { API_ROUTES, APP_ROUTES, CUSTOM_UI_TYPES, SITE_DATA } from '@/config';
-import { Box, Button, CircularProgress, Divider, Paper, Switch, TextField } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { MEMBER_ROLES, API_ROUTES, APP_ROUTES, CUSTOM_UI_TYPES, SITE_DATA } from '@/config';
+import { Button, CircularProgress, Divider, Paper, Switch, TextField } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { postDataAPI } from '@/utils/api_client_side';
 import { useRouter } from 'next/router';
 import WebController from '@/pages/api/controller';
@@ -17,8 +17,14 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import AuthController from '@/pages/api/auth/controller';
+import CheckAdminRestriction from '@/middlewares/check_admin_restriction';
+import { DispatchUserAuth } from '@/utils/misc_functions';
 
-const BlogSectionSettings = ({ settings }) => {
+const BlogSectionSettings = ({ settings, userAuth }) => {
+	// ** DISPATCH USER AUTH
+	DispatchUserAuth({ userAuth });
+	const session = useSelector((state) => state.auth);
 	const dispatch = useDispatch();
 	const router = useRouter();
 
@@ -57,7 +63,7 @@ const BlogSectionSettings = ({ settings }) => {
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
-			const res = await postDataAPI(API_ROUTES.MANAGE_BLOGS_SETTINGS, { ...blogSettings });
+			const res = await postDataAPI(API_ROUTES.MANAGE_BLOGS_SETTINGS, { ...blogSettings }, session?.token);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
@@ -74,14 +80,14 @@ const BlogSectionSettings = ({ settings }) => {
 			metatags={{ meta_title: `Articles & Blogs Settings | ${SITE_DATA.OFFICIAL_NAME}` }}
 			pageIcon={<SettingsTwoToneIcon sx={{ fontSize: 'inherit', my: 'auto', mr: 1 }} className='text-muted' />}
 			pageTitle={'Articles & Blogs Settings'}>
-			<div className='w-100 h-100 d-flex align-items-center justify-content-center'>
-				<Paper className='p-2 w-100' sx={{ maxWidth: '450px' }}>
-					<div className='my-4 w-100'>
+			<div className='w-full h-full flex items-center justify-center'>
+				<Paper className='p-2 w-full' sx={{ maxWidth: '450px' }}>
+					<div className='my-4 w-full'>
 						<FormControl>
 							<FormLabel id='blog_preview_card_custom_display'>
-								<div className='d-flex text-dark'>
-									<BsDot className='color-primary fs-2 my-auto' />
-									<span className='my-auto fs-6'>Select Blog Preview Card Theme</span>
+								<div className='flex text-dark'>
+									<BsDot className='color-primary text-[40px] my-auto' />
+									<span className='my-auto text-[16px]'>Select Blog Preview Card Theme</span>
 								</div>
 							</FormLabel>
 							<RadioGroup
@@ -95,39 +101,39 @@ const BlogSectionSettings = ({ settings }) => {
 							</RadioGroup>
 						</FormControl>
 					</div>
-					<Divider className='w-100 bg-primary mb-2' />
-					<div className='my-4 w-100'>
-						<div className='d-flex'>
-							<BsDot className='color-primary fs-2 my-auto' />
-							<span className='my-auto fs-6'>Show Comments Count on Blogs</span>
+					<Divider className='w-full bg-primary mb-2' />
+					<div className='my-4 w-full'>
+						<div className='flex'>
+							<BsDot className='color-primary text-[40px] my-auto' />
+							<span className='my-auto text-[16px]'>Show Comments Count on Blogs</span>
 						</div>
-						<div className='d-flex'>
+						<div className='flex'>
 							<Switch checked={Boolean(show_comments)} onChange={handleChangeInput} name='show_comments' />
 							<span className={`${show_comments ? 'color-primary' : 'text-secondary'} fw-bold my-auto`}>
 								{show_comments ? 'Show' : 'Hide'}
 							</span>
 						</div>
 					</div>
-					<Divider className='w-100 bg-primary my-2' />
-					<div className='my-4 w-100'>
-						<div className='d-flex'>
-							<BsDot className='color-primary fs-2 my-auto' />
-							<span className='my-auto fs-6'>Show Views Count on Blogs</span>
+					<Divider className='w-full bg-primary my-2' />
+					<div className='my-4 w-full'>
+						<div className='flex'>
+							<BsDot className='color-primary text-[40px] my-auto' />
+							<span className='my-auto text-[16px]'>Show Views Count on Blogs</span>
 						</div>
-						<div className='d-flex'>
+						<div className='flex'>
 							<Switch checked={Boolean(show_views)} onChange={handleChangeInput} name='show_views' />
 							<span className={`${show_views ? 'color-primary' : 'text-secondary'} fw-bold my-auto`}>
 								{show_views ? 'Show' : 'Hide'}
 							</span>
 						</div>
 					</div>
-					<Divider className='w-100 bg-primary my-2' />
-					<div className='my-4 w-100'>
-						<div className='d-flex'>
-							<BsDot className='color-primary fs-2 my-auto' />
-							<span className='my-auto fs-6'>Number of Preview Articles on Category Card</span>
+					<Divider className='w-full bg-primary my-2' />
+					<div className='my-4 w-full'>
+						<div className='flex'>
+							<BsDot className='color-primary text-[40px] my-auto' />
+							<span className='my-auto text-[16px]'>Number of Preview Articles on Category Card</span>
 						</div>
-						<div className='w-100 d-flex align-items-center justify-content-center'>
+						<div className='w-full flex items-center justify-center'>
 							<TextField
 								size='small'
 								className='mt-2'
@@ -151,10 +157,10 @@ const BlogSectionSettings = ({ settings }) => {
 						</div>
 					</div>
 
-					<Divider className='w-100 bg-primary my-2' />
-					<div className='w-100 d-flex align-items-center justify-content-center'>
+					<Divider className='w-full bg-primary my-2' />
+					<div className='w-full flex items-center justify-center'>
 						{!isSubmitting && (
-							<Button onClick={handleUpdate} className='w-100 text-decor-none btn-site' variant='contained'>
+							<Button onClick={handleUpdate} className='w-full text-decor-none btn-site' variant='contained'>
 								<SettingsTwoToneIcon fontSize='small' sx={{ mr: '5px' }} /> Update Blog Settings
 							</Button>
 						)}
@@ -169,10 +175,28 @@ const BlogSectionSettings = ({ settings }) => {
 };
 
 export async function getServerSideProps({ req, res }) {
+	// ** REDIRECT TO LOGIN IF COOKIE NOT EXIST
+	const verifyUserAuth = await AuthController.generateAccessToken(req, res);
+	if (verifyUserAuth?.redirect) return verifyUserAuth;
+
+	// ** ASSIGN USER TO REQ OBJECT
+	req.user = verifyUserAuth?.user;
+
+	// ** REDIRECT TO 404 PAGE IF NOT ADMIN
+	if (verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MASTER && verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MANAGER)
+		return {
+			redirect: { destination: APP_ROUTES.NOT_FOUND, permanent: false },
+		};
+
+	// REDIRECT TO DASHBOARD PAGE IF ADMIN IS RESTRICTED TO VIEW THIS PAGE
+	const isRestricted = await CheckAdminRestriction({ page: APP_ROUTES.ACTIVITY_LOGS, adminId: verifyUserAuth?.user?._id });
+	if (isRestricted) return { redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false } };
+
 	// ** GET BLOG SETTINGS
 	const blogSettings = await WebController.getBlogSettings(req, res, true);
 	return {
 		props: {
+			userAuth: verifyUserAuth?.user ? verifyUserAuth : {},
 			settings: blogSettings,
 		},
 	};

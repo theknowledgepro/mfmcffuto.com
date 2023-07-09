@@ -17,31 +17,20 @@
 @import url(./animations.css);
 
 @font-face {
-	font-family: 'YsabeauInfant-Thin';
-	src: url('./fonts/YsabeauInfant-Thin.ttf');
-	font-weight: 400;
-}
-@font-face {
-	font-family: 'YsabeauInfant-Thin';
-	src: url('./fonts/YsabeauInfant-ThinItalic.ttf');
-	font-weight: 400;
-    font-style: italic;
-}
-
-@font-face {
 	font-family: 'YsabeauInfant';
-	src: url('./fonts/YsabeauInfant.ttf');
+	src: url('./fonts/ABeeZee-Regular.ttf');
 	font-weight: 500;
 }
 @font-face {
 	font-family: 'YsabeauInfant-Medium';
-	src: url('./fonts/YsabeauInfant-SemiBold.ttf');
+	src: url('./fonts/ABeeZee-Medium.ttf');
 	font-weight: 600;
 }
 * {
 	box-sizing: border-box;
 	padding: 0;
 	margin: 0;
+	font-size: 17px;
 }
 
 body {
@@ -115,7 +104,7 @@ textarea {
 
 @media only screen and (max-width: 767.98px) {
 	body {
-		font-size: 15px;
+		font-size: 17px;
 	}
 
 	h1,

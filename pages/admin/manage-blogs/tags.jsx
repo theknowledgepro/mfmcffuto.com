@@ -193,7 +193,7 @@ const CreateTagFunctionality = ({ session, allTags, tag, isEdit }) => {
 
 					<div className='my-4 w-full'>
 						<div className='flex'>
-							<BsDot className='color-primary text-[15px] my-auto' />
+							<BsDot className='color-primary text-[40px] my-auto' />
 							<span className='my-auto'>Tag Status</span>
 						</div>
 						<div className='flex'>
@@ -259,7 +259,7 @@ const ViewTagDetailsModal = ({ tag, session, allTags }) => {
 	const RenderTitle = ({ title }) => {
 		return (
 			<div className='flex' style={{ marginLeft: '-10px' }}>
-				<BsDot className='color-primary text-[15px] my-auto' />
+				<BsDot className='color-primary text-[40px] my-auto' />
 				<span className='my-auto font-medium-custom'>{title}</span>
 			</div>
 		);

@@ -5,9 +5,6 @@ import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import { AdminLayout, BlogThumb, MuiModal, MuiXDataGridTable, SetUpPageSEO } from '@/components';
 import { API_ROUTES, APP_ROUTES, CLOUD_ASSET_BASEURL, LIMITS, MEMBER_ROLES, SITE_DATA } from '@/config';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { useSession } from 'next-auth/react';
 import CheckAdminRestriction from '@/middlewares/check_admin_restriction';
 import { Box, Button, CircularProgress, TextField, InputAdornment, Switch, Avatar, IconButton } from '@mui/material';
 import { BsDot } from 'react-icons/bs';
@@ -17,7 +14,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { deleteDataAPI, patchFormDataAPI, postFormDataAPI } from '@/utils/api_client_side';
 import { handleClientAPIRequestErrors } from '@/utils/errors';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { GLOBALTYPES } from '@/redux/types';
 import { useRouter } from 'next/router';
 import AdminController from '@/pages/api/admin/controller';
@@ -26,13 +23,15 @@ import Moment from 'react-moment';
 import comp_styles from '@/components/components.module.css';
 import { validate } from '@/utils/validate';
 import WebController from '@/pages/api/controller';
+import AuthController from '@/pages/api/auth/controller';
+import { DispatchUserAuth } from '@/utils/misc_functions';
 
 const RenderCategoryStatusChip = ({ category }) => {
 	return (
 		<div
 			style={{ width: 'max-content' }}
-			className={`d-flex align-items-center justify-content-center rounded-pill px-3 py-1 text-white fs-8 mild-shadow ${
-				Boolean(category?.published) ? 'bg-success' : 'bg-secondary'
+			className={`flex items-center justify-center rounded-[30px] px-3 py-1 text-white text-[14px] mild-shadow ${
+				Boolean(category?.published) ? 'bg-green-500' : 'bg-gray-400'
 			}`}>
 			{Boolean(category?.published) ? 'Published' : 'Hidden'}
 		</div>
@@ -121,15 +120,19 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
-			const res = await postFormDataAPI(API_ROUTES.MANAGE_BLOG_CATEGORIES, {
-				...categoryData,
-				thumbnail: file,
-				type_writer_strings: categoryTypeWriterTexts
-					?.filter((index) => index.toString()?.trim()?.length)
-					?.map((text, i) => {
-						return text?.toString()?.trim();
-					}),
-			});
+			const res = await postFormDataAPI(
+				API_ROUTES.MANAGE_BLOG_CATEGORIES,
+				{
+					...categoryData,
+					thumbnail: file,
+					type_writer_strings: categoryTypeWriterTexts
+						?.filter((index) => index.toString()?.trim()?.length)
+						?.map((text, i) => {
+							return text?.toString()?.trim();
+						}),
+				},
+				session?.token
+			);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
@@ -162,15 +165,19 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
-			const res = await patchFormDataAPI(API_ROUTES.MANAGE_BLOG_CATEGORIES, {
-				...categoryData,
-				thumbnail: file ? file : thumbnail,
-				type_writer_strings: categoryTypeWriterTexts
-					?.filter((index) => index.toString()?.trim()?.length)
-					?.map((text, i) => {
-						return text?.toString()?.trim();
-					}),
-			});
+			const res = await patchFormDataAPI(
+				API_ROUTES.MANAGE_BLOG_CATEGORIES,
+				{
+					...categoryData,
+					thumbnail: file ? file : thumbnail,
+					type_writer_strings: categoryTypeWriterTexts
+						?.filter((index) => index.toString()?.trim()?.length)
+						?.map((text, i) => {
+							return text?.toString()?.trim();
+						}),
+				},
+				session?.token
+			);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
@@ -191,8 +198,8 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 			setOpenModal={setOpenModal}
 			modalSize={'sm'}
 			modalTitle={
-				<div className='w-100 d-flex align-items-center justify-content-between'>
-					<Button className='text-decor-none btn-site' variant='contained'>
+				<div className='w-full flex items-center justify-between'>
+					<Button className='normal-case btn-site' variant='contained'>
 						{isEdit && <EditIcon fontSize='small' sx={{ mr: '5px' }} />}
 						{!isEdit && <CategoryOutlinedIcon fontSize='small' sx={{ mr: '5px' }} />}
 						{isEdit ? `${category?.title}` : 'Create Blog Category'}
@@ -201,12 +208,12 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 				</div>
 			}
 			modalBody={
-				<div className='w-100'>
+				<div className='w-full'>
 					<TextField
 						onChange={handleChangeInput}
 						value={title}
 						color='primary'
-						className='w-100 mt-4'
+						className='w-full mt-4'
 						name='title'
 						placeholder='e.g thebestblogs'
 						label='Category Title'
@@ -225,7 +232,7 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 						onChange={handleChangeInput}
 						value={description}
 						color='primary'
-						className='w-100 mt-4'
+						className='w-full mt-4'
 						name='description'
 						label='Category Description'
 						placeholder='e.g the best blog in the city for readers...'
@@ -242,7 +249,7 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 							),
 						}}
 					/>
-					<div className='my-2 color-primary fs-9'>
+					<div className='my-2 color-primary text-[13px]'>
 						{description?.length} / {LIMITS.CATEGORIES_DESCRIPTION_CHARACTERS_LIMIT} characters allowed.
 					</div>
 
@@ -250,7 +257,7 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 						onChange={handleChangeInput}
 						value={slug}
 						color='primary'
-						className='w-100 mt-4'
+						className='w-full mt-4'
 						name='slug'
 						label='Category Slug'
 						variant='standard'
@@ -266,14 +273,14 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 						}}
 					/>
 
-					<div className='w-100 my-4'>
+					<div className='w-full my-4'>
 						{categoryTypeWriterTexts.map((text, index) => (
-							<div key={index} className='w-100 d-flex align-items-center justify-content-center'>
+							<div key={index} className='w-full flex items-center justify-center'>
 								<TextField
 									onChange={(e) => handleTypeWriterTextInputs(index, e)}
 									value={categoryTypeWriterTexts[index]}
 									color='primary'
-									className='w-100 mt-4'
+									className='w-full mt-4'
 									size='small'
 									label={`TypeWriter Text ${index + 1}`}
 									variant='outlined'
@@ -291,12 +298,12 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 								</IconButton>
 							</div>
 						))}
-						<Button className='py-1 text-decor-none mt-4 btn-site text-white btn-animated' onClick={handleAddTypeWriterTextInputs}>
+						<Button className='py-1 normal-case mt-4 btn-site text-white btn-animated' onClick={handleAddTypeWriterTextInputs}>
 							<AddIcon fontSize='small' sx={{ mr: '5px' }} /> Add More Fields
 						</Button>
 					</div>
 
-					<div className={`${comp_styles.img_input} mild-shadow mt-4 d-flex flex-column align-items-center justify-content-center`}>
+					<div className={`${comp_styles.img_input} rounded-[5px] mild-shadow mt-4 flex flex-col items-center justify-center`}>
 						{thumbnail && (
 							<img
 								alt='Select Category Thumbnail'
@@ -305,17 +312,18 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 								src={thumbnail}
 							/>
 						)}
+						{!thumbnail && <div className='font-medium-custom color-primary'>Click to Upload Category Thumbnail</div>}
 						<input onChange={handleThumbnailUpload} type='file' name='thumbnail' id={`${comp_styles.avatar_input}`} accept='image/*' />
 					</div>
 
-					<div className='w-100 border-bottom fw-bold border-info rounded-1 p-1 fs-9 color-primary text-center mt-4'>
+					<div className='w-full border-b font-medium-custom border-zinc-300 rounded-1 p-1 text-[13px] color-primary text-center mt-4'>
 						Set Up SEO for this category.
 					</div>
 					<TextField
 						onChange={handleChangeInput}
 						value={meta_description}
 						color='primary'
-						className='w-100 mt-4'
+						className='w-full mt-4'
 						name='meta_description'
 						label='Meta Description'
 						placeholder='e.g the best blog in the city for readers...'
@@ -332,7 +340,7 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 							),
 						}}
 					/>
-					<div className='my-2 color-primary fs-9'>
+					<div className='my-2 color-primary text-[13px]'>
 						{meta_description?.length} / {LIMITS.META_DESCRIPTION_LIMIT} characters allowed.
 					</div>
 
@@ -340,7 +348,7 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 						onChange={handleChangeInput}
 						value={meta_keywords}
 						color='primary'
-						className='w-100 mt-4'
+						className='w-full mt-4'
 						name='meta_keywords'
 						label='Meta Keywords'
 						placeholder='Separate each words with a comma...'
@@ -357,18 +365,18 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 							),
 						}}
 					/>
-					<div className='my-2 color-primary fs-9'>
+					<div className='my-2 color-primary text-[13px]'>
 						{meta_keywords?.length} / {LIMITS.META_KEYWORDS_LIMIT} characters allowed.
 					</div>
 
-					<div className='my-4 w-100'>
-						<div className='d-flex'>
-							<BsDot className='color-primary fs-2 my-auto' />
+					<div className='my-4 w-full'>
+						<div className='flex'>
+							<BsDot className='color-primary text-[40px] my-auto' />
 							<span className='my-auto'>Category Status</span>
 						</div>
-						<div className='d-flex'>
+						<div className='flex'>
 							<Switch checked={Boolean(published)} onChange={handleChangeInput} name='published' />
-							<span className={`${published ? 'color-primary' : 'text-secondary'} fw-bold my-auto`}>
+							<span className={`${published ? 'color-primary' : 'text-gray-500'} font-medium-custom my-auto`}>
 								{published ? 'Published' : 'Hidden'}
 							</span>
 						</div>
@@ -380,10 +388,10 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 					<React.Fragment>
 						{!isSubmitting && (
 							<React.Fragment>
-								<Button onClick={handleCreateCategory} className='w-100 text-decor-none btn-site' variant='contained'>
+								<Button onClick={handleCreateCategory} className='w-full normal-case btn-site' variant='contained'>
 									<AddIcon fontSize='small' sx={{ mr: '5px' }} /> Create Blog Category
 								</Button>
-								<Button onClick={handleCloseModal} className='text-decor-none' color='white' variant='contained'>
+								<Button onClick={handleCloseModal} className='normal-case' color='white' variant='contained'>
 									<CancelIcon fontSize='small' sx={{ mr: '5px' }} /> Cancel
 								</Button>
 							</React.Fragment>
@@ -396,10 +404,10 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 					<React.Fragment>
 						{!isSubmitting && (
 							<React.Fragment>
-								<Button onClick={handleEditCategory} className='w-100 text-decor-none btn-site' variant='contained'>
+								<Button onClick={handleEditCategory} className='w-full normal-case btn-site' variant='contained'>
 									<EditIcon fontSize='small' sx={{ mr: '5px' }} /> Update Blog Category
 								</Button>
-								<Button onClick={handleCloseModal} className='text-decor-none' color='white' variant='contained'>
+								<Button onClick={handleCloseModal} className='normal-case' color='white' variant='contained'>
 									<CancelIcon fontSize='small' sx={{ mr: '5px' }} /> Cancel
 								</Button>
 							</React.Fragment>
@@ -411,12 +419,12 @@ const CreateCategoryFunctionality = ({ allCategories, session, category, isEdit 
 				)
 			}>
 			{isEdit && (
-				<Button className='text-decor-none btn-site' variant='contained'>
+				<Button className='normal-case btn-site' variant='contained'>
 					<EditIcon />
 				</Button>
 			)}
 			{!isEdit && (
-				<Button className='text-decor-none btn-site' variant='contained'>
+				<Button className='normal-case btn-site' variant='contained'>
 					<AddIcon fontSize='small' sx={{ mr: '5px' }} /> Create Blog Category
 				</Button>
 			)}
@@ -428,9 +436,9 @@ const ViewCategoryDetailsModal = ({ session, category, allCategories }) => {
 	const [openModal, setOpenModal] = useState(false);
 	const RenderTitle = ({ title }) => {
 		return (
-			<div className='d-flex' style={{ marginLeft: '-10px' }}>
-				<BsDot className='color-primary fs-2 my-auto' />
-				<span className='my-auto fw-bold'>{title}</span>
+			<div className='flex' style={{ marginLeft: '-10px' }}>
+				<BsDot className='color-primary text-[40px] my-auto' />
+				<span className='my-auto font-medium-custom'>{title}</span>
 			</div>
 		);
 	};
@@ -440,8 +448,8 @@ const ViewCategoryDetailsModal = ({ session, category, allCategories }) => {
 			setOpenModal={setOpenModal}
 			closeOnOverlayClick={true}
 			modalTitle={
-				<div className='w-100 d-flex align-items-center justify-content-between'>
-					<Button className='text-decor-none btn-site' variant='contained'>
+				<div className='w-full flex items-center justify-between'>
+					<Button className='normal-case btn-site' variant='contained'>
 						<CategoryOutlinedIcon fontSize='small' sx={{ mr: '5px' }} /> {category?.title}
 					</Button>
 					<Avatar src={session?.user?.avatar} alt={session?.user?.firstname} className={`mild-shadow`} />
@@ -449,10 +457,10 @@ const ViewCategoryDetailsModal = ({ session, category, allCategories }) => {
 			}
 			modalBody={
 				<React.Fragment>
-					<div className='d-flex p-2 align-items-center justify-content-center mt-3 flex-column'>
+					<div className='flex p-2 items-center justify-center mt-3 flex-col'>
 						{/* <RenderTitle title='Author' /> */}
 						<div
-							className='border border-info mb-2 d-flex flex-column align-items-center justify-content-center rounded-2 p-2'
+							className='border border-zinc-300 mb-2 flex flex-col items-center justify-center rounded-2 p-2'
 							style={{ width: '250px' }}>
 							<Avatar
 								src={category?.author?.avatar}
@@ -460,16 +468,16 @@ const ViewCategoryDetailsModal = ({ session, category, allCategories }) => {
 								alt={category?.author?.firstname}
 								className={`mild-shadow`}
 							/>
-							<div className='mt-2 fs-8 text-center'>{`${category?.author?.lastname ? category?.author?.lastname : ''} ${
+							<div className='mt-2 text-[14px] text-center'>{`${category?.author?.lastname ? category?.author?.lastname : ''} ${
 								category?.author?.firstname ? category?.author?.firstname : ''
 							} ${category?.author?.secondname ? category?.author?.secondname : ''}`}</div>
-							<div className='mt-1 fs-9 color-primary fw-bold text-center'>
+							<div className='mt-1 text-[13px] color-primary font-medium-custom text-center'>
 								{category?.author?.member_role === MEMBER_ROLES.MASTER && 'Master Admin'}
 								{category?.author?.member_role === MEMBER_ROLES.MANAGER && 'Manager Admin'}
 							</div>
-							<div className='mt-1 fs-9 text-secondary text-center'>
+							<div className='mt-1 text-[13px] text-gray-500 text-center'>
 								Created Category On:
-								<div className='rounded-2 w-100 px-2'>
+								<div className='rounded-2 w-full px-2'>
 									<Moment format='LT'>{category?.createdAt}</Moment> - <Moment format='ddd'>{category?.createdAt}</Moment>,
 									<span className='ms-1'>
 										<Moment format='DD'>{category?.createdAt}</Moment>/<Moment format='MM'>{category?.createdAt}</Moment>/
@@ -479,24 +487,24 @@ const ViewCategoryDetailsModal = ({ session, category, allCategories }) => {
 							</div>
 						</div>
 					</div>
-					<div className='d-flex flex-column'>
+					<div className='flex flex-col'>
 						<RenderTitle title='Category Title' />
-						<div className='border-bottom border-2 border-info w-100 p-2'>{category?.title}</div>
+						<div className='border-b border-zinc-300 w-full p-2'>{category?.title}</div>
 					</div>
-					<div className='d-flex mt-3 flex-column'>
+					<div className='flex mt-3 flex-col'>
 						<RenderTitle title='Category Description' />
-						<div className='border-bottom border-2 border-info w-100 p-2'>{category?.description}</div>
+						<div className='border-b border-zinc-300 w-full p-2'>{category?.description}</div>
 					</div>
-					<div className='d-flex mt-3 flex-column'>
+					<div className='flex mt-3 flex-col'>
 						<RenderTitle title='Status' />
-						<div className='w-100 ms-2'>
+						<div className='w-full ms-2'>
 							<RenderCategoryStatusChip category={category} />
 						</div>
 					</div>
 
-					<div className='border-top border-2 border-info pt-3 d-flex mt-3 flex-column'>
+					<div className='border-t border-zinc-300 pt-3 flex mt-3 flex-col'>
 						<RenderTitle title='Last Updated' />
-						<div className='w-100 p-2'>
+						<div className='w-full p-2'>
 							<Moment format='LT'>{category?.updatedAt}</Moment> - <Moment format='ddd'>{category?.updatedAt}</Moment>,
 							<span className='ms-1'>
 								<Moment format='DD'>{category?.updatedAt}</Moment>/<Moment format='MM'>{category?.updatedAt}</Moment>/
@@ -505,29 +513,26 @@ const ViewCategoryDetailsModal = ({ session, category, allCategories }) => {
 						</div>
 					</div>
 
-					<div className='w-100 d-flex flex-wrap border-top border-bottom border-2 border-info py-2 mt-3 flex-column'>
+					<div className='w-full flex flex-wrap border-t border-b border-zinc-300 py-2 mt-3 flex-col'>
 						<RenderTitle title='Visit Category' />
-						<Link
-							href={`${APP_ROUTES.BLOGS_CATEGORIES}/${category?.slug}`}
-							className='text-decor-none color-primary fs-7'
-							target='_blank'>
+						<Link href={`${APP_ROUTES.BLOGS_CATEGORIES}/${category?.slug}`} className='normal-case color-primary fs-7' target='_blank'>
 							{`${APP_ROUTES.BLOGS_CATEGORIES}/${category?.slug}`}
-							<OpenInNewIcon sx={{ ml: 0.5 }} className='fs-6 fw-bold' />
+							<OpenInNewIcon sx={{ ml: 0.5 }} className='text-[16px] font-medium-custom' />
 						</Link>
 					</div>
-					<div className='d-flex flex-column mt-3'>
+					<div className='flex flex-col mt-3'>
 						<RenderTitle title='Category ID' />
-						<div className='border-bottom border-2 border-info w-100 p-2'>{category?.uniqueID}</div>
+						<div className='border-b border-zinc-300 w-full p-2'>{category?.uniqueID}</div>
 					</div>
 					{category?.blogs?.length === 0 && (
-						<div className='d-flex flex-column mt-3'>
+						<div className='flex flex-col mt-3'>
 							<RenderTitle title='No Blogs Associated with this Category' />
 						</div>
 					)}
 					{category?.blogs?.length > 0 && (
-						<div className='d-flex flex-column mt-3'>
+						<div className='flex flex-col mt-3'>
 							<RenderTitle title='Blogs Associated with this Category' />
-							<div className='border-bottom border-2 border-info w-100 p-2'>
+							<div className='border-b border-zinc-300 w-full p-2'>
 								{category?.blogs?.map((blog, i) => (
 									<BlogThumb
 										key={i}
@@ -555,7 +560,7 @@ const ViewCategoryDetailsModal = ({ session, category, allCategories }) => {
 			modalActions={
 				<React.Fragment>
 					<CreateCategoryFunctionality isEdit={true} allCategories={allCategories} session={session} category={category} />,
-					<Button onClick={() => setOpenModal(false)} className='text-decor-none' color='white' variant='contained'>
+					<Button onClick={() => setOpenModal(false)} className='normal-case' color='white' variant='contained'>
 						<CancelIcon fontSize='small' sx={{ mr: '5px' }} /> Close
 					</Button>
 				</React.Fragment>
@@ -565,7 +570,7 @@ const ViewCategoryDetailsModal = ({ session, category, allCategories }) => {
 	);
 };
 
-const DeleteCategoryModal = ({ category }) => {
+const DeleteCategoryModal = ({ session, category }) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const [openModal, setOpenModal] = useState(false);
@@ -574,7 +579,7 @@ const DeleteCategoryModal = ({ category }) => {
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
-			const res = await deleteDataAPI(`${API_ROUTES.MANAGE_BLOG_CATEGORIES}?category=${category?.uniqueID}`);
+			const res = await deleteDataAPI(`${API_ROUTES.MANAGE_BLOG_CATEGORIES}?category=${category?.uniqueID}`, session?.token);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
@@ -594,14 +599,14 @@ const DeleteCategoryModal = ({ category }) => {
 			modalSize={'xs'}
 			disableDefaultFullScreen={true}
 			modalTitle={
-				<div className='w-100 fs-6 fw-bold d-flex align-items-center justify-content-between'>
+				<div className='w-full text-[16px] font-medium-custom flex items-center justify-between'>
 					<div>
 						Delete <span className='color-primary'>{category?.title}?</span>
 					</div>
 				</div>
 			}
 			modalBody={
-				<div className='w-100 text-center'>
+				<div className='w-full text-center'>
 					<div>Are you sure you want to delete this category?</div>
 					<div>It will be permanently deleted.</div>
 				</div>
@@ -610,10 +615,14 @@ const DeleteCategoryModal = ({ category }) => {
 				<React.Fragment>
 					{!isSubmitting && (
 						<React.Fragment>
-							<Button onClick={handleDeleteCategory} className='w-100 text-decor-none' color='danger' variant='contained'>
+							<Button
+								onClick={handleDeleteCategory}
+								className='w-full normal-case bg-red-600 text-white'
+								color='danger'
+								variant='contained'>
 								<DeleteIcon fontSize='small' sx={{ mr: '5px' }} /> Delete
 							</Button>
-							<Button onClick={() => setOpenModal(false)} className='w-100 text-decor-none' variant='contained'>
+							<Button onClick={() => setOpenModal(false)} className='w-full btn-site normal-case' variant='contained'>
 								<CancelIcon fontSize='small' sx={{ mr: '5px' }} /> Cancel
 							</Button>
 						</React.Fragment>
@@ -628,8 +637,11 @@ const DeleteCategoryModal = ({ category }) => {
 	);
 };
 
-const ManageCategories = ({ categories, blogCategoriesPageSEOData }) => {
-	const { data: session } = useSession();
+const ManageCategories = ({ userAuth, categories, blogCategoriesPageSEOData }) => {
+	// ** DISPATCH USER AUTH
+	DispatchUserAuth({ userAuth });
+	const session = useSelector((state) => state.auth);
+
 	const columns = [
 		{ field: 'id', headerName: 'ID', width: 70 },
 		{
@@ -667,11 +679,11 @@ const ManageCategories = ({ categories, blogCategoriesPageSEOData }) => {
 		{
 			field: 'slug',
 			headerName: 'Category Link',
-			width: 100,
+			width: 120,
 			align: 'center',
 			renderCell: (params) => {
 				return (
-					<Link target='_blank' className='text-decor-none color-primary' href={`${APP_ROUTES.BLOGS_CATEGORIES}/${params?.row?.slug}`}>
+					<Link target='_blank' className='normal-case color-primary' href={`${APP_ROUTES.BLOGS_CATEGORIES}/${params?.row?.slug}`}>
 						Visit Category
 					</Link>
 				);
@@ -733,17 +745,20 @@ const ManageCategories = ({ categories, blogCategoriesPageSEOData }) => {
 
 export async function getServerSideProps({ req, res, query }) {
 	// ** REDIRECT TO LOGIN IF COOKIE NOT EXIST
-	const session = await getServerSession(req, res, authOptions);
-	if (!session) return { redirect: { destination: `${APP_ROUTES.LOGIN}?redirectUrl=${req.url}`, permanent: false } };
+	const verifyUserAuth = await AuthController.generateAccessToken(req, res);
+	if (verifyUserAuth?.redirect) return verifyUserAuth;
 
-	// ** REDIRECT TO USER DASHBOARD PAGE IF NOT ADMIN
-	if (session?.user?.member_role !== MEMBER_ROLES.MASTER && session?.user?.member_role !== MEMBER_ROLES.MANAGER)
+	// ** ASSIGN USER TO REQ OBJECT
+	req.user = verifyUserAuth?.user;
+
+	// ** REDIRECT TO 404 PAGE IF NOT ADMIN
+	if (verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MASTER && verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MANAGER)
 		return {
-			redirect: { destination: APP_ROUTES.USER_DASHBOARD, permanent: false },
+			redirect: { destination: APP_ROUTES.NOT_FOUND, permanent: false },
 		};
 
 	// REDIRECT TO DASHBOARD PAGE IF ADMIN IS RESTRICTED TO VIEW THIS PAGE
-	const isRestricted = await CheckAdminRestriction({ page: APP_ROUTES.ACTIVITY_LOGS, adminId: session?.user?._id });
+	const isRestricted = await CheckAdminRestriction({ page: APP_ROUTES.ACTIVITY_LOGS, adminId: verifyUserAuth?.user?._id });
 	if (isRestricted) return { redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false } };
 
 	// ** GET ALL BLOG CATEGORIES
@@ -755,7 +770,7 @@ export async function getServerSideProps({ req, res, query }) {
 	const blogCategoriesPageSEOData = await WebController.getPageSEO(req, res, true);
 	return {
 		props: {
-			session: JSON.parse(JSON.stringify({ ...session })),
+			userAuth: verifyUserAuth?.user ? verifyUserAuth : {},
 			categories: allCategories?.length ? allCategories : [],
 			blogCategoriesPageSEOData: blogCategoriesPageSEOData,
 		},

@@ -1,5 +1,3 @@
-/** @format */
-
 /**
  * Source :
  * https://github.com/vercel/next.js/blob/canary/examples/with-mongodb-mongoose/utils/dbConnect.js
@@ -7,7 +5,7 @@
  * @format
  */
 
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 const MONGODB_URI = process.env.PROD_ENV === 'production' ? process.env.DATABASE_URL : process.env.DEV_DATABASE_URL;
 
 if (!MONGODB_URI) throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
@@ -45,4 +43,4 @@ const connectDB = async () => {
 	}
 };
 
-export default connectDB;
+module.exports = connectDB;

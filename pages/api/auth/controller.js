@@ -1,6 +1,6 @@
 /** @format */
 
-const { default: connectDB } = require('@/middlewares/db_config');
+const connectDB = require('@/middlewares/db_config');
 const responseLogic = require('@/middlewares/server_response_logic');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -81,11 +81,11 @@ const AuthController = {
 		}
 	},
 	generateAccessToken: async (req, res) => {
+		const redirectObject = {
+			redirect: { destination: `${APP_ROUTES.LOGIN}?redirectUrl=${req.url}`, permanent: false },
+		};
 		try {
 			await connectDB();
-			const redirectObject = {
-				redirect: { destination: `${APP_ROUTES.LOGIN}?redirectUrl=${req.url}`, permanent: false },
-			};
 
 			const rf_token = req.cookies?.refreshtoken;
 			if (!rf_token) return redirectObject;
@@ -117,12 +117,12 @@ const AuthController = {
 			const OTP = randomNumberGenerator(4);
 			const mail = await requestPasswordResetOTPEmail({ email, OTP, expiresIn: ExpiresIn.PasswordResetToken.string });
 			if (!mail?.messageId)
-			return responseLogic({
-				req,
-				res,
-				status: 400,
-				data: { message: 'We could not send an email to your address!<br />Please try again...' },
-			});
+				return responseLogic({
+					req,
+					res,
+					status: 400,
+					data: { message: 'We could not send an email to your address!<br />Please try again...' },
+				});
 			// ** SAVE A SIGNED OTP TO DB FOR VERIFICATION LATER ...
 			// ** I USED JWT SO AS TO HAVE A TIME LIMIT FOR EACH OTP...
 			const otp_secret = await jwt.sign({ OTP }, process.env.RESET_PASSWORD_TOKEN_SECRET, { expiresIn: ExpiresIn.PasswordResetToken.jwtValue });

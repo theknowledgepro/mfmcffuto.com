@@ -1,6 +1,6 @@
 /** @format */
 
-const { default: connectDB } = require('@/middlewares/db_config');
+const connectDB = require('@/middlewares/db_config');
 const responseLogic = require('@/middlewares/server_response_logic');
 const bcrypt = require('bcrypt');
 const Users = require('@/models/user_model');
@@ -9,7 +9,7 @@ const BlogCategories = require('@/models/blog_categories_model');
 const Blogs = require('@/models/blog_model');
 const activityLog = require('@/middlewares/activity_log');
 const validate = require('@/middlewares/validate');
-const { deleteFileFromCloudStorage, uploadFileToCloudStorage } = require('@/middlewares/file_manager');
+const { uploadFile, deleteFile } = require('@/middlewares/file_manager');
 const { v4: uuidv4 } = require('uuid');
 const CheckAdminRestriction = require('@/middlewares/check_admin_restriction');
 const { ADMIN_PANEL_ACTIONS, MEMBER_ROLES, ACTIVITY_TYPES } = require('@/config');
@@ -40,14 +40,12 @@ const RawReqController = {
 			if (emailExists) return responseLogic({ req, res, status: 400, data: { message: 'This Email is already used!' } });
 
 			// ** AFTER ALL VALIDATIONS, STORE AVATAR TO CLOUD STORAGE
-			let avatar;
-			if (req.files.avatar) {
-				const { fileUrl } = await uploadFileToCloudStorage({
-					filePath: req.files.avatar.filepath,
-					folder: process.env.CLOUDINARY_AVATAR_UPLOAD_FOLDER,
-				});
-				avatar = fileUrl;
-			}
+			const { fileData } = await uploadFile({
+				file: req.files?.avatar,
+				S3Folder: 'admin-avatars',
+				appendFileExtensionToFileKeyName: true,
+			});
+
 			const passwordHash = await bcrypt.hash(password, 12);
 			const newAdmin = new Users({
 				url: uuidv4(),
@@ -60,7 +58,7 @@ const RawReqController = {
 				gender,
 				mobile,
 				member_role,
-				avatar,
+				avatar: fileData?.Key,
 			});
 			await newAdmin.save();
 
@@ -111,25 +109,18 @@ const RawReqController = {
 			let passwordHash;
 			if (password) passwordHash = await bcrypt.hash(password, 12);
 
-			// ** AFTER ALL VALIDATIONS, STORE AVATAR TO CLOUD STORAGE
-			let avatar;
-			if (req.files.avatar) {
-				const { fileUrl } = await uploadFileToCloudStorage({
-					filePath: req.files.avatar[0].path,
-					folder: process.env.CLOUDINARY_AVATAR_UPLOAD_FOLDER,
-				});
-				avatar = fileUrl;
-			}
-
 			const editedAdmin = await Users.findOneAndUpdate(
 				{ url: adminUrl },
 				{ firstname, secondname, lastname, username: newUsername, email, password: passwordHash, gender, mobile, member_role, avatar },
 				{ new: false } // ** SET TO FALSE SO THAT THE OLD URL CAN BE USED TO DELETE AVATAR FROM STORAGE BELOW...
 			);
 
-			// ** DELETE THE OLD AVATAR FROM CLOUDINARY STORE IF AND ONLY IF AN AVATAR FILE WAS SENT...
-			if (req.files.avatar && editedAdmin.avatar.toString() !== process.env.DEFAULT_AVATAR.toString())
-				deleteFileFromCloudStorage({ publicId: editedAdmin.avatar_public_id });
+			// ** AFTER ALL VALIDATIONS, STORE AVATAR TO CLOUD STORAGE
+			if (req.files?.avatar && editedAdmin.avatar.toString() !== process.env.DEFAULT_AVATAR.toString()) {
+				await uploadFile({ file: req?.files?.avatar, fileKeyNameToReplace: editedAdmin?.avatar }).catch((err) => {
+					throw err;
+				});
+			}
 
 			// ** RECORD IN ACTIVITY_LOG DATABASE
 			await activityLog({
@@ -256,7 +247,11 @@ const RawReqController = {
 					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 
 				// ** UPLOAD CATEGORY THUMBNAIL
-				const { filePublicId } = await uploadFileToCloudStorage({ file: req.files?.thumbnail });
+				const { fileData } = await uploadFile({
+					file: req.files?.thumbnail,
+					S3Folder: 'category-thumbnails',
+					appendFileExtensionToFileKeyName: true,
+				});
 
 				const { title, description, slug, type_writer_strings, meta_description, meta_keywords, published } = req.body;
 				const generatedSlug = slug ? slug.split(' ').join('-').toLowerCase() : title.split(' ').join('-').toLowerCase();
@@ -269,13 +264,14 @@ const RawReqController = {
 					const lastEntry = entries[0];
 					uniqueID = parseInt(lastEntry.uniqueID) + 1;
 				} else uniqueID = 1;
+				// console.log({ body: req.body, file: req.files, uniqueID });
 
 				// ** CREATE NEW RECORD
 				const newCategory = await new BlogCategories({
 					uniqueID,
 					title: newTitle,
 					description,
-					thumbnail: filePublicId,
+					thumbnail: fileData?.Key,
 					slug: generatedSlug,
 					published,
 					meta_description,
@@ -303,15 +299,11 @@ const RawReqController = {
 				const generatedSlug = slug ? slug.split(' ').join('-').toLowerCase() : title.split(' ').join('-').toLowerCase();
 				const newTitle = title?.charAt(0)?.toUpperCase() + title?.substring(1);
 
-				// ** UPLOAD CATEGORY THUMBNAIL
-				const { filePublicId } = await uploadFileToCloudStorage({ file: req.files?.thumbnail });
-
 				// ** RECORD IN DB
 				const categoryData = await BlogCategories.findOneAndUpdate(
 					{ uniqueID },
 					{
 						title: newTitle,
-						thumbnail: filePublicId ? filePublicId : undefined,
 						description,
 						slug: generatedSlug,
 						meta_description,
@@ -319,10 +311,15 @@ const RawReqController = {
 						published,
 						type_writer_strings,
 					},
-					{ new: false }
+					{ new: true }
 				);
-				// ** DELETE THE FORMER CATEGORY THUMBNAIL IF AND ONLY IF A FILE WAS SENT
-				if (req.files?.thumbnail) deleteFileFromCloudStorage({ publicId: categoryData?.thumbnail });
+
+				// ** REPLACE THE FORMER CATEGORY THUMBNAIL IF AND ONLY IF A FILE WAS SENT
+				if (req.files?.thumbnail) {
+					await uploadFile({ file: req?.files?.thumbnail, fileKeyNameToReplace: categoryData?.thumbnail }).catch((err) => {
+						throw err;
+					});
+				}
 
 				// ** RECORD IN ACTIVITY_LOG DATABASE
 				await activityLog({
@@ -332,8 +329,12 @@ const RawReqController = {
 				});
 
 				// ** RETURN FEEDBACK UPDATE
-				const updatedCategoryData = await BlogCategories.findOne({ uniqueID });
-				return responseLogic({ req, res, status: 200, data: { message: 'Category Updated Successfully!', updatedCategoryData } });
+				return responseLogic({
+					req,
+					res,
+					status: 200,
+					data: { message: 'Category Updated Successfully!', updatedCategoryData: categoryData },
+				});
 			}
 			// ** DELETE CATEGORY
 			if (req.method === 'DELETE') {
@@ -347,7 +348,7 @@ const RawReqController = {
 				await Blogs.updateMany({ categories: categoryData?._id }, { $pull: { categories: categoryData?._id } });
 
 				// ** DELETE CATEGORY FILE FROM CLOUD STORAGE
-				deleteFileFromCloudStorage({ publicId: categoryData?.thumbnail });
+				await deleteFile({ keyName: categoryData?.thumbnail });
 
 				// ** RECORD IN ACTIVITY_LOG DATABASE
 				await activityLog({
@@ -376,7 +377,11 @@ const RawReqController = {
 					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 
 				// ** UPLOAD BLOG THUMBNAIL
-				const { filePublicId } = await uploadFileToCloudStorage({ file: req.files?.thumbnail });
+				const { fileData } = await uploadFile({
+					file: req.files?.thumbnail,
+					S3Folder: 'blog-thumbnails',
+					appendFileExtensionToFileKeyName: true,
+				});
 
 				const { title, slug, body, summary, tags, categories, meta_description, meta_keywords, published } = req.body;
 
@@ -397,7 +402,7 @@ const RawReqController = {
 					title: newTitle,
 					body,
 					slug: generatedSlug,
-					thumbnail: filePublicId,
+					thumbnail: fileData?.Key,
 					summary,
 					tags,
 					categories,
@@ -430,14 +435,10 @@ const RawReqController = {
 				const generatedSlug = slug ? slug.split(' ').join('-').toLowerCase() : title.split(' ').join('-').toLowerCase();
 				const newTitle = title?.charAt(0)?.toUpperCase() + title?.substring(1);
 
-				// ** UPLOAD BLOG THUMBNAIL
-				const { filePublicId } = await uploadFileToCloudStorage({ file: req.files?.thumbnail });
-
 				const blogData = await Blogs.findOneAndUpdate(
 					{ uniqueID },
 					{
 						title: newTitle,
-						thumbnail: filePublicId ? filePublicId : undefined,
 						body,
 						summary,
 						tags,
@@ -447,7 +448,7 @@ const RawReqController = {
 						meta_keywords,
 						published,
 					},
-					{ new: false }
+					{ new: true }
 				);
 
 				// ** FIRST, DELETE BLOG FROM TAGS AND CATEGORIES ASSOCIATED WITH THIS BLOG
@@ -464,8 +465,12 @@ const RawReqController = {
 					await BlogCategories.findOneAndUpdate({ _id: categories[i] }, { $push: { blogs: blogData?._id } });
 				for (let i = 0; i < tags?.length; i++) await BlogTags.findOneAndUpdate({ _id: tags[i] }, { $push: { blogs: blogData?._id } });
 
-				// ** DELETE THE FORMER CATEGORY THUMBNAIL IF AND ONLY IF A FILE WAS SENT
-				if (req.files?.thumbnail) deleteFileFromCloudStorage({ publicId: blogData?.thumbnail });
+				// ** REPLACE THE FORMER CATEGORY THUMBNAIL IF AND ONLY IF A FILE WAS SENT
+				if (req.files?.thumbnail) {
+					await uploadFile({ file: req?.files?.thumbnail, fileKeyNameToReplace: blogData?.thumbnail }).catch((err) => {
+						throw err;
+					});
+				}
 
 				// ** RECORD IN ACTIVITY_LOG DATABASE
 				await activityLog({
@@ -475,8 +480,7 @@ const RawReqController = {
 				});
 
 				// ** RETURN FEEDBACK UPDATE
-				const updatedBlogData = await BlogCategories.findOne({ uniqueID });
-				return responseLogic({ req, res, status: 200, data: { message: 'Blog Updated Successfully!', updatedBlogData } });
+				return responseLogic({ req, res, status: 200, data: { message: 'Blog Updated Successfully!', updatedBlogData: blogData } });
 			}
 			// ** DELETE BLOG
 			if (req.method === 'DELETE') {
@@ -496,7 +500,7 @@ const RawReqController = {
 					await BlogTags.findOneAndUpdate({ _id: blogData?.tags[i], blogs: blogData?._id }, { $pull: { blogs: blogData?._id } });
 
 				// ** DELETE BLOG FILE FROM CLOUD STORAGE
-				deleteFileFromCloudStorage({ publicId: blogData?.thumbnail });
+				await deleteFile({ keyName: blogData?.thumbnail });
 
 				// ** RECORD IN ACTIVITY_LOG DATABASE
 				await activityLog({

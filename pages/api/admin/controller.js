@@ -1,10 +1,11 @@
 /** @format */
 
-const { default: connectDB } = require('@/middlewares/db_config');
+const connectDB = require('@/middlewares/db_config');
 const responseLogic = require('@/middlewares/server_response_logic');
 const ContactForm = require('@/models/contact_form_model');
 const activityLog = require('@/middlewares/activity_log');
 const SeoSettings = require('@/models/seo_model');
+const SiteSettings = require('@/models/site_settings_model');
 const ActivityLogs = require('@/models/activity_model');
 const Users = require('@/models/user_model');
 const BlogTags = require('@/models/blog_tags_model');
@@ -148,6 +149,7 @@ const AdminController = {
 				).catch((err) => {
 					throw err;
 				});
+				// console.log({ sent: 'yess' });
 
 				if (blogSettings)
 					await SiteSettings.findOneAndUpdate(

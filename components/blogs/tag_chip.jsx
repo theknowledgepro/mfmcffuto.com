@@ -12,7 +12,7 @@ const TagChip = ({ tag, hideLink }) => {
 		<React.Fragment>
 			{hideLink && (
 				<span
-					className='btn-animated text-decor-none mb-1 mx-1 fs-9 fw-medium px-1 little-shadow text-white rounded-1'
+					className='btn-animated text-decor-none mb-1 mx-1 text-[13px] font-medium-custom px-2 shadow-sm text-white rounded-[5px]'
 					style={{ background: stringToColor(tag?.title) }}>
 					#{tag?.title}
 				</span>
@@ -20,7 +20,7 @@ const TagChip = ({ tag, hideLink }) => {
 			{!hideLink && (
 				<Link
 					href={tagSlug}
-					className='btn-animated text-decor-none mb-1 mx-1 fs-9 fw-medium px-1 little-shadow text-white rounded-1'
+					className='btn-animated text-decor-none mb-1 mx-1 text-[13px] font-medium-custom px-2 shadow-sm text-white rounded-[5px]'
 					style={{ background: stringToColor(tag?.title) }}>
 					#{tag?.title}
 				</Link>

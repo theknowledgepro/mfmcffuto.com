@@ -528,3 +528,24 @@
 		font-size: 22px;
 	}
 }
+
+/* IMAGE UPLOAD INPUT CSS */
+.img_input {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	padding: 10px;
+	background: #eee;
+}
+
+.img_input input[type='file'] {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	cursor: pointer;
+	height: 100%;
+	width: 100%;
+	opacity: 0;
+}

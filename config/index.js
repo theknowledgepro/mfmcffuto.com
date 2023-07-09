@@ -17,13 +17,13 @@ export const SITE_DATA = {
 	MONGODB_DB_NAME: 'mfmcffuto',
 	BUSINESS_EMAIL_HANDLE: '@mfmcffuto.com',
 	THEME_COLOR: '#a63590',
-	DEFAULT_MALE_AVATAR: 'https://res.cloudinary.com/dhdckmdzz/image/upload/v1683274544/avatars/male-avatar_x1ieml.jpg',
+	DEFAULT_MALE_AVATAR: 'https://dbis5km5hrwi4.cloudfront.net/avatars/male-avatar_x1ieml.jpg',
 	DEFAULT_FEMALE_AVATAR: '',
 	DEVELOPER_URL: '',
 	DEVELOPER_NAME: 'Chidera Promise A.',
 };
 
-const CLOUD_ASSET_BASEURL = 'http://res.cloudinary.com/derapromise/image/upload/v1687726350';
+const CLOUD_ASSET_BASEURL = 'https://dbis5km5hrwi4.cloudfront.net';
 
 module.exports = {
 	API_ROUTES,

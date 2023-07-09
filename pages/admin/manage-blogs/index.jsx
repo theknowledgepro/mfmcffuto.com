@@ -5,9 +5,6 @@ import { AdminLayout, CategoryChip, MuiModal, MuiXDataGridTable, ReactEditor, Se
 import { API_ROUTES, APP_ROUTES, CLOUD_ASSET_BASEURL, LIMITS, MEMBER_ROLES, SITE_DATA } from '@/config';
 import CancelIcon from '@mui/icons-material/Cancel';
 import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { useSession } from 'next-auth/react';
 import CheckAdminRestriction from '@/middlewares/check_admin_restriction';
 import {
 	Box,
@@ -30,7 +27,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { deleteDataAPI, getDataAPI, patchDataAPI, patchFormDataAPI, postFormDataAPI } from '@/utils/api_client_side';
 import { handleClientAPIRequestErrors } from '@/utils/errors';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { GLOBALTYPES } from '@/redux/types';
 import { useRouter } from 'next/router';
 import AdminController from '@/pages/api/admin/controller';
@@ -41,13 +38,15 @@ import { validate } from '@/utils/validate';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import WebController from '@/pages/api/controller';
+import AuthController from '@/pages/api/auth/controller';
+import { DispatchUserAuth } from '@/utils/misc_functions';
 
 const RenderBlogStatusChip = ({ blog }) => {
 	return (
 		<div
 			style={{ width: 'max-content' }}
-			className={`d-flex align-items-center justify-content-center rounded-pill px-3 py-1 text-white fs-8 mild-shadow ${
-				Boolean(blog?.published) ? 'bg-success' : 'bg-secondary'
+			className={`flex items-center justify-center rounded-[30px] px-3 py-1 text-white text-[14px] mild-shadow ${
+				Boolean(blog?.published) ? 'bg-green-500' : 'bg-gray-400'
 			}`}>
 			{Boolean(blog?.published) ? 'Published' : 'Hidden'}
 		</div>
@@ -80,7 +79,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 		setIsFetchingBlogContent(true);
 		setIsErrored(false);
 		try {
-			const res = await getDataAPI(`${API_ROUTES.GET_BLOG_CONTENT}?blog=${blog?.uniqueID}`);
+			const res = await getDataAPI(`${API_ROUTES.GET_BLOG_CONTENT}?blog=${blog?.uniqueID}`, session?.token);
 			if (res?.status === 200) {
 				setIsFetchingBlogContent(false);
 				if (res?.data?.uniqueID !== blog?.uniqueID) return setIsErrored(true);
@@ -160,7 +159,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
-			const res = await postFormDataAPI(API_ROUTES.MANAGE_BLOGS, { ...blogData, body, thumbnail: file });
+			const res = await postFormDataAPI(API_ROUTES.MANAGE_BLOGS, { ...blogData, body, thumbnail: file }, session?.token);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
@@ -197,7 +196,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
-			const res = await patchFormDataAPI(API_ROUTES.MANAGE_BLOGS, { ...blogData, body, thumbnail: file ? file : thumbnail });
+			const res = await patchFormDataAPI(API_ROUTES.MANAGE_BLOGS, { ...blogData, body, thumbnail: file ? file : thumbnail }, session?.token);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
@@ -219,8 +218,8 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 			modalSize={'md'}
 			fullScreen={isFullScreen}
 			modalTitle={
-				<div className='w-100 d-flex align-items-center justify-content-between'>
-					<div className='d-flex'>
+				<div className='w-full flex items-center justify-between'>
+					<div className='flex'>
 						<Button className='text-decor-none btn-site' variant='contained'>
 							{isEdit && <EditIcon fontSize='small' sx={{ mr: '5px' }} />}
 							{!isEdit && <MenuBookOutlinedIcon fontSize='small' sx={{ mr: '5px' }} />}
@@ -238,12 +237,12 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 				</div>
 			}
 			modalBody={
-				<div className='w-100'>
+				<div className='w-full'>
 					<TextField
 						onChange={handleChangeInput}
 						value={title}
 						color='primary'
-						className='w-100 mt-4'
+						className='w-full mt-4'
 						name='title'
 						placeholder='e.g thebestblogs'
 						label='Blog Title'
@@ -260,19 +259,19 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 					/>
 
 					{!isFetchingBlogContent && !isErrored && (
-						<div className='w-100 mt-4'>
+						<div className='w-full mt-4'>
 							<ReactEditor content={body} setContent={setBody} />
 						</div>
 					)}
 					{isFetchingBlogContent && !isErrored && (
-						<div className='w-100 mt-5 d-flex flex-column align-items-center justify-content-center'>
+						<div className='w-full mt-5 flex flex-col items-center justify-center'>
 							<CircularProgress style={{ color: 'var(--color-primary)', height: '40px', width: '40px' }} sx={{ mt: 3 }} />
-							<div className='mt-4 w-100 text-center color-primary fs-7'>Loading Blog Content...</div>
+							<div className='mt-4 w-full text-center color-primary text-[15px]'>Loading Blog Content...</div>
 						</div>
 					)}
 					{!isFetchingBlogContent && isErrored && (
-						<div className='w-100 mt-5 d-flex flex-column align-items-center justify-content-center'>
-							<div className='mt-4 w-100 text-center color-primary fs-7'>An Error Occured While Fetching Blog Content...</div>
+						<div className='w-full mt-5 flex flex-col items-center justify-center'>
+							<div className='mt-4 w-full text-center color-primary text-[15px]'>An Error Occured While Fetching Blog Content...</div>
 							<Button onClick={fetchBlogContent} className='text-decor-none mt-4' color='white' variant='contained'>
 								Retry
 							</Button>
@@ -282,7 +281,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 						onChange={handleChangeInput}
 						value={slug}
 						color='primary'
-						className='w-100 mt-4'
+						className='w-full mt-4'
 						name='slug'
 						label='Blog Slug'
 						variant='standard'
@@ -301,7 +300,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 						onChange={handleChangeInput}
 						value={summary}
 						color='primary'
-						className='w-100 mt-4'
+						className='w-full mt-4'
 						name='summary'
 						label='Blog Summary'
 						variant='standard'
@@ -318,14 +317,14 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 							),
 						}}
 					/>
-					<div className='my-2 color-primary fs-9'>
+					<div className='my-2 color-primary text-[13px]'>
 						{summary?.length} / {LIMITS.BLOG_SUMMARY_LIMIT + 10} characters allowed.
 					</div>
 
-					<div className='w-100 mt-4'>
-						<div className='d-flex' style={{ marginLeft: '-10px' }}>
-							<BsDot className='color-primary fs-2 my-auto' />
-							<span className='fw-bold fs-6 my-auto'>Select Categories for this Blog</span>
+					<div className='w-full mt-4'>
+						<div className='flex' style={{ marginLeft: '-10px' }}>
+							<BsDot className='color-primary text-[17px] my-auto' />
+							<span className='font-medium-custom text-[14px] my-auto'>Select Categories for this Blog</span>
 						</div>
 						{allCategories.map((category, i) => (
 							<FormControlLabel
@@ -340,15 +339,15 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 								label={category?.title}
 								labelPlacement='end'
 								key={i}
-								className='w-100 d-flex'
+								className='w-full flex'
 							/>
 						))}
 					</div>
 
-					<div className='w-100 mt-4'>
-						<div className='d-flex' style={{ marginLeft: '-10px' }}>
-							<BsDot className='color-primary fs-2 my-auto' />
-							<span className='fw-bold fs-6 my-auto'>Select Tags for this Blog</span>
+					<div className='w-full mt-4'>
+						<div className='flex' style={{ marginLeft: '-10px' }}>
+							<BsDot className='color-primary text-[17px] my-auto' />
+							<span className='font-medium-custom text-[14px] my-auto'>Select Tags for this Blog</span>
 						</div>
 						{allTags.map((tag, i) => (
 							<FormControlLabel
@@ -363,29 +362,32 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 								label={`#${tag?.title}`}
 								labelPlacement='end'
 								key={i}
-								className='w-100 d-flex'
+								className='w-full flex'
 							/>
 						))}
 					</div>
 
-					<div className={`${comp_styles.img_input} mild-shadow mt-4 d-flex flex-column align-items-center justify-content-center`}>
-						<img
-							alt='Select Blog Thumbnail'
-							style={{ width: '100%', height: '100%', objectFit: 'cover', maxHeight: '300px' }}
-							className='img-thumbnail'
-							src={thumbnail}
-						/>
+					<div className={`${comp_styles.img_input} rounded-[5px] mild-shadow mt-4 flex flex-col items-center justify-center`}>
+						{thumbnail && (
+							<img
+								alt='Select Blog Thumbnail'
+								style={{ width: '100%', height: '100%', objectFit: 'cover', maxHeight: '300px' }}
+								className='img-thumbnail'
+								src={thumbnail}
+							/>
+						)}
+						{!thumbnail && <div className='font-medium-custom color-primary'>Click to Upload Blog Thumbnail</div>}
 						<input onChange={handleThumbnailUpload} type='file' name='thumbnail' id={`${comp_styles.avatar_input}`} accept='image/*' />
 					</div>
 
-					<div className='w-100 border-bottom fw-bold border-info rounded-1 p-1 fs-9 color-primary text-center mt-4'>
+					<div className='w-full border-b font-medium-custom border-zinc-300 rounded-sm p-1 text-[13px] color-primary text-center mt-4'>
 						Set Up SEO for this Blog.
 					</div>
 					<TextField
 						onChange={handleChangeInput}
 						value={meta_description}
 						color='primary'
-						className='w-100 mt-4'
+						className='w-full mt-4'
 						name='meta_description'
 						label='Meta Description'
 						placeholder='e.g the best blog in the city for readers...'
@@ -402,7 +404,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 							),
 						}}
 					/>
-					<div className='my-2 color-primary fs-9'>
+					<div className='my-2 color-primary text-[13px]'>
 						{meta_description?.length} / {LIMITS.META_DESCRIPTION_LIMIT} characters allowed.
 					</div>
 
@@ -410,7 +412,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 						onChange={handleChangeInput}
 						value={meta_keywords}
 						color='primary'
-						className='w-100 mt-4'
+						className='w-full mt-4'
 						name='meta_keywords'
 						label='Meta Keywords'
 						placeholder='Separate each words with a comma...'
@@ -427,18 +429,18 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 							),
 						}}
 					/>
-					<div className='my-2 color-primary fs-9'>
+					<div className='my-2 color-primary text-[13px]'>
 						{meta_keywords?.length} / {LIMITS.META_KEYWORDS_LIMIT} characters allowed.
 					</div>
 
-					<div className='my-4 w-100'>
-						<div className='d-flex'>
-							<BsDot className='color-primary fs-2 my-auto' />
+					<div className='my-4 w-full'>
+						<div className='flex'>
+							<BsDot className='color-primary text-[17px] my-auto' />
 							<span className='my-auto'>Blog Status</span>
 						</div>
-						<div className='d-flex'>
+						<div className='flex'>
 							<Switch checked={Boolean(published)} onChange={handleChangeInput} name='published' />
-							<span className={`${published ? 'color-primary' : 'text-secondary'} fw-bold my-auto`}>
+							<span className={`${published ? 'color-primary' : 'text-secondary'} font-medium-custom my-auto`}>
 								{published ? 'Published' : 'Hidden'}
 							</span>
 						</div>
@@ -450,7 +452,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 					<React.Fragment>
 						{!isSubmitting && (
 							<React.Fragment>
-								<Button onClick={handleCreateBlog} className='w-100 text-decor-none btn-site' variant='contained'>
+								<Button onClick={handleCreateBlog} className='w-full text-decor-none btn-site' variant='contained'>
 									<AddIcon fontSize='small' sx={{ mr: '5px' }} /> Create New Blog
 								</Button>
 								<Button onClick={handleCloseModal} className='text-decor-none' color='white' variant='contained'>
@@ -466,7 +468,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 					<React.Fragment>
 						{!isSubmitting && (
 							<React.Fragment>
-								<Button onClick={handleEditBlog} className='w-100 text-decor-none btn-site' variant='contained'>
+								<Button onClick={handleEditBlog} className='w-full text-decor-none btn-site' variant='contained'>
 									<EditIcon fontSize='small' sx={{ mr: '5px' }} /> Update Blog
 								</Button>
 								<Button onClick={handleCloseModal} className='text-decor-none' color='white' variant='contained'>
@@ -498,9 +500,9 @@ const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, 
 	const [openModal, setOpenModal] = useState(false);
 	const RenderTitle = ({ title }) => {
 		return (
-			<div className='d-flex' style={{ marginLeft: '-10px' }}>
-				<BsDot className='color-primary fs-2 my-auto' />
-				<span className='my-auto fw-bold'>{title}</span>
+			<div className='flex' style={{ marginLeft: '-10px' }}>
+				<BsDot className='color-primary text-[17px] my-auto' />
+				<span className='my-auto font-medium-custom'>{title}</span>
 			</div>
 		);
 	};
@@ -512,7 +514,7 @@ const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, 
 			closeOnOverlayClick={true}
 			modalSize={'md'}
 			modalTitle={
-				<div className='w-100 d-flex align-items-center justify-content-between'>
+				<div className='w-full flex items-center justify-between'>
 					<Button className='text-decor-none btn-site' variant='contained'>
 						<MenuBookOutlinedIcon fontSize='small' sx={{ mr: '5px' }} /> {blog?.title}
 					</Button>
@@ -521,9 +523,9 @@ const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, 
 			}
 			modalBody={
 				<React.Fragment>
-					<div className='d-flex p-2 align-items-center justify-content-center mt-3 flex-column'>
+					<div className='flex p-2 items-center justify-center mt-3 flex-col'>
 						<div
-							className='border border-info mb-2 d-flex flex-column align-items-center justify-content-center rounded-2 p-2'
+							className='border border-zinc-300 mb-2 flex flex-col items-center justify-center rounded-2 p-2'
 							style={{ width: '250px' }}>
 							<Avatar
 								src={blog?.author?.avatar}
@@ -534,13 +536,13 @@ const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, 
 							<div className='mt-2 fs-8 text-center'>{`${blog?.author?.lastname ? blog?.author?.lastname : ''} ${
 								blog?.author?.firstname ? blog?.author?.firstname : ''
 							} ${blog?.author?.secondname ? blog?.author?.secondname : ''}`}</div>
-							<div className='mt-1 fs-9 color-primary fw-bold text-center'>
+							<div className='mt-1 text-[13px] color-primary font-medium-custom text-center'>
 								{blog?.author?.member_role === MEMBER_ROLES.MASTER && 'Master Admin'}
 								{blog?.author?.member_role === MEMBER_ROLES.MANAGER && 'Manager Admin'}
 							</div>
-							<div className='mt-1 fs-9 text-secondary text-center'>
+							<div className='mt-1 text-[13px] text-secondary text-center'>
 								Created Blog On:
-								<div className='rounded-2 w-100 px-2'>
+								<div className='rounded-2 w-full px-2'>
 									<Moment format='LT'>{blog?.createdAt}</Moment> - <Moment format='ddd'>{blog?.createdAt}</Moment>,
 									<span className='ms-1'>
 										<Moment format='DD'>{blog?.createdAt}</Moment>/<Moment format='MM'>{blog?.createdAt}</Moment>/
@@ -551,19 +553,19 @@ const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, 
 						</div>
 					</div>
 
-					<div className='d-flex flex-column'>
+					<div className='flex flex-col'>
 						<RenderTitle title='Blog Title' />
-						<div className='border-bottom border-2 border-info w-100 p-2'>{blog?.title}</div>
+						<div className='border-b border-zinc-300 w-full p-2'>{blog?.title}</div>
 					</div>
-					<div className='d-flex mt-3 flex-column'>
+					<div className='flex mt-3 flex-col'>
 						<RenderTitle title='Status' />
-						<div className='w-100 ms-2'>
+						<div className='w-full ms-2'>
 							<RenderBlogStatusChip blog={blog} />
 						</div>
 					</div>
-					<div className='border-top border-2 border-info pt-3 d-flex mt-3 flex-column'>
+					<div className='border-top border-zinc-300 pt-3 flex mt-3 flex-col'>
 						<RenderTitle title='Last Updated' />
-						<div className='w-100 p-2'>
+						<div className='w-full p-2'>
 							<Moment format='LT'>{blog?.updatedAt}</Moment> - <Moment format='ddd'>{blog?.updatedAt}</Moment>,
 							<span className='ms-1'>
 								<Moment format='DD'>{blog?.updatedAt}</Moment>/<Moment format='MM'>{blog?.updatedAt}</Moment>/
@@ -571,20 +573,20 @@ const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, 
 							</span>
 						</div>
 					</div>
-					<div className='w-100 d-flex flex-wrap border-top border-bottom border-2 border-info py-2 mt-3 flex-column'>
+					<div className='w-full flex flex-wrap border-top border-b border-zinc-300 py-2 mt-3 flex-col'>
 						<RenderTitle title='Visit Blog' />
-						<Link href={`${APP_ROUTES.BLOGS}/${blog?.slug}`} className='text-decor-none color-primary fs-7' target='_blank'>
+						<Link href={`${APP_ROUTES.BLOGS}/${blog?.slug}`} className='text-decor-none color-primary text-[15px]' target='_blank'>
 							{`${APP_ROUTES.BLOGS}/${blog?.slug}`}
-							<OpenInNewIcon sx={{ ml: 0.5 }} className='fs-6 fw-bold' />
+							<OpenInNewIcon sx={{ ml: 0.5 }} className='text-[14px] font-medium-custom' />
 						</Link>
 					</div>
-					<div className='d-flex flex-column mt-3'>
+					<div className='flex flex-col mt-3'>
 						<RenderTitle title='Blog ID' />
-						<div className='border-bottom border-2 border-info w-100 p-2'>{blog?.uniqueID}</div>
+						<div className='border-b border-zinc-300 w-full p-2'>{blog?.uniqueID}</div>
 					</div>
-					<div className='d-flex flex-column mt-3'>
+					<div className='flex flex-col mt-3'>
 						<RenderTitle title='Tags Associated with this Blog' />
-						<div className='border-bottom border-2 border-info d-flex flex-wrap w-100 p-2'>
+						<div className='border-b border-zinc-300 flex flex-wrap w-full p-2'>
 							{allTags
 								.filter((tagIndex) => blog?.tags?.find((index) => index?.toString() === tagIndex?._id?.toString()))
 								?.map((tag, i) => (
@@ -592,9 +594,9 @@ const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, 
 								))}
 						</div>
 					</div>
-					<div className='d-flex flex-column mt-3'>
+					<div className='flex flex-col mt-3'>
 						<RenderTitle title='Categories Associated with this Blog' />
-						<div className='border-bottom border-2 border-info d-flex flex-wrap w-100 p-2'>
+						<div className='border-b border-zinc-300 flex flex-wrap w-full p-2'>
 							{allCategories
 								.filter((catIndex) => blog?.categories?.find((index) => index?.toString() === catIndex?._id?.toString()))
 								?.map((category, i) => (
@@ -614,7 +616,7 @@ const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, 
 						allCategories={allCategories}
 						allTags={allTags}
 					/>
-					<Button onClick={() => setOpenModal(false)} className='text-decor-none' color='white' variant='contained'>
+					<Button onClick={() => setOpenModal(false)} className='text-decor-none ml-2' color='white' variant='contained'>
 						<CancelIcon fontSize='small' sx={{ mr: '5px' }} /> Close
 					</Button>
 				</React.Fragment>
@@ -633,7 +635,7 @@ const DeleteBlogModal = ({ blog, session }) => {
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
-			const res = await deleteDataAPI(`${API_ROUTES.MANAGE_BLOGS}?blog=${blog?.uniqueID}`);
+			const res = await deleteDataAPI(`${API_ROUTES.MANAGE_BLOGS}?blog=${blog?.uniqueID}`, session?.token);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
@@ -653,14 +655,14 @@ const DeleteBlogModal = ({ blog, session }) => {
 			modalSize={'xs'}
 			disableDefaultFullScreen={true}
 			modalTitle={
-				<div className='w-100 fs-6 fw-bold d-flex align-items-center justify-content-between'>
+				<div className='w-full text-[14px] font-medium-custom flex items-center justify-between'>
 					<div>
 						Delete <span className='color-primary'>{blog?.title}?</span>
 					</div>
 				</div>
 			}
 			modalBody={
-				<div className='w-100 text-center'>
+				<div className='w-full text-center'>
 					<div>Are you sure you want to delete this blog?</div>
 					<div>It will be permanently deleted.</div>
 				</div>
@@ -669,10 +671,14 @@ const DeleteBlogModal = ({ blog, session }) => {
 				<React.Fragment>
 					{!isSubmitting && (
 						<React.Fragment>
-							<Button onClick={handleDeleteBlog} className='w-100 text-decor-none' color='danger' variant='contained'>
+							<Button
+								onClick={handleDeleteBlog}
+								className='w-full normal-case bg-red-600 text-white'
+								color='danger'
+								variant='contained'>
 								<DeleteIcon fontSize='small' sx={{ mr: '5px' }} /> Delete
 							</Button>
-							<Button onClick={() => setOpenModal(false)} className='w-100 text-decor-none' variant='contained'>
+							<Button onClick={() => setOpenModal(false)} className='w-full btn-site text-decor-none' variant='contained'>
 								<CancelIcon fontSize='small' sx={{ mr: '5px' }} /> Cancel
 							</Button>
 						</React.Fragment>
@@ -687,8 +693,10 @@ const DeleteBlogModal = ({ blog, session }) => {
 	);
 };
 
-const ManageBlogs = ({ categories, tags, blogs, blogHomePageSEOData }) => {
-	const { data: session } = useSession();
+const ManageBlogs = ({ userAuth, categories, tags, blogs, blogHomePageSEOData }) => {
+	// ** DISPATCH USER AUTH
+	DispatchUserAuth({ userAuth });
+	const session = useSelector((state) => state.auth);
 
 	const columns = [
 		{ field: 'id', headerName: 'ID', width: 70 },
@@ -804,17 +812,20 @@ const ManageBlogs = ({ categories, tags, blogs, blogHomePageSEOData }) => {
 
 export async function getServerSideProps({ req, res, query }) {
 	// ** REDIRECT TO LOGIN IF COOKIE NOT EXIST
-	const session = await getServerSession(req, res, authOptions);
-	if (!session) return { redirect: { destination: `${APP_ROUTES.LOGIN}?redirectUrl=${req.url}`, permanent: false } };
+	const verifyUserAuth = await AuthController.generateAccessToken(req, res);
+	if (verifyUserAuth?.redirect) return verifyUserAuth;
 
-	// ** REDIRECT TO USER DASHBOARD PAGE IF NOT ADMIN
-	if (session?.user?.member_role !== MEMBER_ROLES.MASTER && session?.user?.member_role !== MEMBER_ROLES.MANAGER)
+	// ** ASSIGN USER TO REQ OBJECT
+	req.user = verifyUserAuth?.user;
+
+	// ** REDIRECT TO 404 PAGE IF NOT ADMIN
+	if (verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MASTER && verifyUserAuth?.user?.member_role !== MEMBER_ROLES.MANAGER)
 		return {
-			redirect: { destination: APP_ROUTES.USER_DASHBOARD, permanent: false },
+			redirect: { destination: APP_ROUTES.NOT_FOUND, permanent: false },
 		};
 
 	// REDIRECT TO DASHBOARD PAGE IF ADMIN IS RESTRICTED TO VIEW THIS PAGE
-	const isRestricted = await CheckAdminRestriction({ page: APP_ROUTES.ACTIVITY_LOGS, adminId: session?.user?._id });
+	const isRestricted = await CheckAdminRestriction({ page: APP_ROUTES.ACTIVITY_LOGS, adminId: verifyUserAuth?.user?._id });
 	if (isRestricted) return { redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false } };
 
 	// ** GET ALL BLOGS
@@ -828,7 +839,7 @@ export async function getServerSideProps({ req, res, query }) {
 	const blogHomePageSEOData = await WebController.getPageSEO(req, res, true);
 	return {
 		props: {
-			session: JSON.parse(JSON.stringify({ ...session })),
+			userAuth: verifyUserAuth?.user ? verifyUserAuth : {},
 			blogs: allBlogs?.length ? allBlogs : [],
 			tags: allTags?.length ? allTags : [],
 			categories: allCategories?.length ? allCategories : [],
