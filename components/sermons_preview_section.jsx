@@ -10,7 +10,7 @@ const SermonsPreviewSection = () => {
 			</h2>
 			<i className='text-center w-full text-gray-600 mb-2'>
 				Do not be drunken with wine wherein is excess but be filled with the Spirit... -{' '}
-				<i className='font-medium-custom text-[var(--color-primary)]'>Eph. 5:18</i>
+				<i className='font-medium-custom text-[var(--color-primary)] text-[30px]'>Eph. 5:18</i>
 			</i>
 		</section>
 	);

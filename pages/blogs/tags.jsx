@@ -65,20 +65,20 @@ const BlogTags = ({ metatags, settings, blogsettings, tags }) => {
 				</div>
 				{tags?.length === 0 && <NoDataFound sorryText='Ooops! We could not find any blog tags at this time!' />}
 				{tags?.length > 0 && (
-					<Grid columns={{ xs: 12, sm: 12, md: 12 }} container={true} className='pb-4 d-flex flex-column-reverse flex-md-row'>
-						<Grid xs={12} sm={12} md={9.5} item={true} className='pb-5 d-flex flex-column'>
+					<Grid columns={{ xs: 12, sm: 12, md: 12 }} container={true} className='pb-4 flex xss:flex-col-reverse md:flex-row'>
+						<Grid xs={12} sm={12} md={9.5} item={true} className='pb-5 flex flex-col'>
 							{tags?.map((tag, index) => (
 								<RenderTagsBlock key={index} tag={tag} blogsettings={blogsettings} />
 							))}
 						</Grid>
 						<Grid xs={12} sm={12} md={2.5} item={true} className={`${styles.sticky_card_from_md_up} overflow-hidden p-2`}>
-							<Divider className='bg-primary my-2 w-full' />
-							<div className='w-full h-100'>
+							<Divider className='my-2 w-full' />
+							<div className='w-full h-full'>
 								{tags?.map((tag, index) => (
 									<RenderTagsLink key={index} tag={tag} />
 								))}
 							</div>
-							<Divider className='bg-primary mt-3 w-full' />
+							<Divider className='mt-3 w-full' />
 						</Grid>
 					</Grid>
 				)}

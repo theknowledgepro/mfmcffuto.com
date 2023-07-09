@@ -142,7 +142,7 @@ const WebHeader = ({ sitesettings, headerOriginalBgColor }) => {
 			<div
 				ref={pcHeaderRef}
 				className={`${
-					headerOriginalBgColor ? 'bg-[var(--color-primary)]' : 'bg-inherit'
+					headerOriginalBgColor ? 'bg-[var(--color-primary)]' : ''
 				} hidden border-b border-t border-zinc-300 py-2 sm:pr-[30px] sm:pl-[25px] md:pr-[50px] md:pl-[30px] md:flex justify-between items-center transition-all ease-out duration-300`}>
 				<ImageTag
 					src={sitesettings?.logoUrl ? sitesettings?.logoUrl : ASSETS.LOGO}

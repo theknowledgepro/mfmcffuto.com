@@ -80,7 +80,7 @@ const WorshipDays = ({
 	return (
 		<section className='w-full flex flex-col items-center justify-center mb-5'>
 			<h2 style={{ fontFamily: 'var(--font-family-medium)' }} className={`font-semibold text-[30px] text-center w-full my-[20px]`}>
-				<span className='text-[var(--color-primary)] mr-2'>Worship</span>with Us!
+				<span className='text-[var(--color-primary)] text-[30px] mr-2'>Worship</span>with Us!
 			</h2>
 			<div className='w-full grid xss:grid-cols-1 sm:grid-cols-2 md:grid-cols-3'>
 				{WorshipDays.map((event, index) => (
