@@ -29,9 +29,9 @@ const BlogCard = ({
 		return (
 			<Grid item={true} {...responsiveSizes} className={`rounded-md m-auto ${isMatchWidth ? 'p-1' : 'p-2'}`}>
 				<Paper
-					elevation={0}
+					elevation={2}
 					sx={{ height: { ...responsiveHeight }, borderRadius: '0px' }}
-					className='relative flex flex-col items-baseline justify-end w-full border bg-inherit'>
+					className='relative flex flex-col items-baseline justify-end w-full bg-white rounded-[8px]'>
 					<div
 						title={blog?.title}
 						style={{ '--image-color': stringToColor(blog?.title), maxHeight: '55%', borderRadius: '0px' }}
@@ -42,7 +42,7 @@ const BlogCard = ({
 							style={{ borderRadius: '0' }}
 							alt={blog?.title}
 						/>
-						<div className='absolute z-3 p-2 left-0 top-0 w-full flex flex-wrap align-items-start justify-content-start'>
+						<div className='absolute z-3 p-2 left-0 top-0 w-full flex flex-wrap items-start justify-start'>
 							{blog?.categories
 								?.slice(0, isMatchWidth !== undefined && isMatchWidth && size === 'SMALL' ? 1 : 2)
 								?.map((category, i) => (
@@ -52,7 +52,7 @@ const BlogCard = ({
 					</div>
 					<div
 						style={{ height: '45%', width: '100%' }}
-						className='absolute text-dark z-3 p-2 left-0 bottom-0 w-full flex flex-col items-baseline justify-content-start'>
+						className='absolute text-dark z-3 p-2 left-0 bottom-0 w-full flex flex-col items-baseline justify-start'>
 						<div style={{ top: -8 }} className='absolute flex flex-wrap w-full'>
 							{!(isMatchWidth !== undefined && isMatchWidth && size === 'SMALL') &&
 								blog?.tags
@@ -61,7 +61,7 @@ const BlogCard = ({
 
 							{((isMatchWidth !== undefined && !isMatchWidth) || size === 'LARGE') &&
 								blog?.tags?.slice(isMatchWidth || size === 'SMALL' ? 2 : 3, undefined)?.length > 0 && (
-									<div className='bg-white mb-1 ms-1 fs-9 fw-bold px-1 border text-dark rounded-1'>
+									<div className='bg-white mb-1 ml-1 text-[13px] font-medium-custom px-1 border text-dark rounded-1'>
 										+ {blog?.tags?.slice(isMatchWidth || size === 'SMALL' ? 2 : 3, undefined)?.length} more tag
 										{blog?.tags?.slice(isMatchWidth || size === 'SMALL' ? 2 : 3, undefined)?.length > 1 ? 's' : ''}
 									</div>
@@ -78,41 +78,43 @@ const BlogCard = ({
 								<div
 									ref={titleRef}
 									style={{ width: '90%' }}
-									className={`text-single-line mt-2 text-dark fw-bold ${size === 'SMALL' && 'fs-8'} ${size === 'LARGE' && 'fs-5'}`}>
+									className={`text-single-line mt-2 text-dark font-medium-custom ${size === 'SMALL' && 'fs-8'} ${
+										size === 'LARGE' && 'fs-5'
+									}`}>
 									{blog?.title}
 								</div>
 							</Link>
-							<Divider className='bg-primary my-1 me-auto' sx={{ width: '95%' }} />
+							<Divider className='my-1' sx={{ width: '90%' }} />
 							<Link href={blogSlug} className='text-dark text-decor-none'>
 								<div className='mb-2 flex flex-wrap fs-7' style={{ width: '90%' }}>
-									{blog?.summary?.length > LIMITS.BLOG_SUMMARY_LIMIT + 10
-										? blog?.summary?.slice(0, LIMITS.BLOG_SUMMARY_LIMIT + 10) + '...'
+									{blog?.summary?.length > LIMITS.BLOG_SUMMARY_LIMIT
+										? blog?.summary?.slice(0, LIMITS.BLOG_SUMMARY_LIMIT) + '...'
 										: blog?.summary}
 								</div>
 							</Link>
-							<Divider className='bg-primary my-1 me-auto' sx={{ width: '95%' }} />
+							<Divider className='my-1' sx={{ width: '90%' }} />
 							{((isMatchWidth !== undefined && !isMatchWidth) || size === 'LARGE') && (
-								<div className='mb-1 fs-9 text-dark flex flex-wrap'>
+								<div className='mb-1 text-[13px] text-dark flex flex-wrap'>
 									{blogsettings?.show_views && (
-										<div className='my-auto me-1'>
-											<RemoveRedEyeTwoToneIcon className='fs-6 text-dark me-1' />
-											<span className='fs-9 my-auto'>{blog?.views?.length} views |</span>
+										<div className='my-auto mr-1'>
+											<RemoveRedEyeTwoToneIcon className='text-[15px] text-dark mr-1' />
+											<span className='text-[13px] my-auto'>{blog?.views?.length} views |</span>
 										</div>
 									)}
 									{blogsettings?.show_comments && (
-										<div className='my-auto me-1'>
-											<ForumOutlinedIcon className='fs-6 text-dark me-1' />
-											<span className='fs-9 my-auto'>{blog?.comments?.length} |</span>
+										<div className='my-auto mr-1'>
+											<ForumOutlinedIcon className='text-[15px] text-dark mr-1' />
+											<span className='text-[13px] my-auto'>{blog?.comments?.length} |</span>
 										</div>
 									)}
 									<span className='my-auto'>
-										<span className='ms-1'>
+										<span className='ml-1'>
 											<Moment format='MMMM'>{blog?.createdAt}</Moment>
 										</span>
-										<span className='ms-1'>
+										<span className='ml-1'>
 											<Moment format='DD'>{blog?.createdAt}</Moment>,
 										</span>
-										<span className='ms-1'>
+										<span className='ml-1'>
 											<Moment format='YYYY'>{blog?.createdAt}</Moment>
 										</span>
 									</span>
@@ -123,11 +125,11 @@ const BlogCard = ({
 									{blog?.author?.avatar && (
 										<ImageTag
 											src={blog?.author?.avatar}
-											className={`rounded-circle me-1 ${styles.blog_author_avatar}`}
+											className={`rounded-[50%] mr-1 ${styles.blog_author_avatar}`}
 											alt={blog?.title}
 										/>
 									)}
-									<div className='fs-9 my-auto fw-bold'>
+									<div className='text-[13px] my-auto font-medium-custom'>
 										{blog?.author?.lastname?.charAt(0)?.toUpperCase()}
 										{'. '}
 										{` ${blog?.author?.firstname?.charAt(0)?.toUpperCase()}${blog?.author?.firstname
@@ -145,16 +147,16 @@ const BlogCard = ({
 			</Grid>
 		);
 	return (
-		<Grid item={true} {...responsiveSizes} className={`rounded-md m-auto ${isMatchWidth ? 'p-1' : 'p-2'}`}>
-			<Box sx={{ height: { ...responsiveHeight } }} className='relative flex flex-col items-baseline justify-end w-full border rounded-1'>
-				<div title={blog?.title} style={{ '--image-color': stringToColor(blog?.title) }} className={styles.blog_card_wrapper}>
+		<Grid item={true} {...responsiveSizes} className={`rounded-md my-auto ${isMatchWidth ? 'p-1' : 'p-2'}`}>
+			<Box sx={{ height: { ...responsiveHeight } }} className='relative flex flex-col items-baseline justify-end w-full rounded-sm'>
+				<Paper title={blog?.title} style={{ '--image-color': stringToColor(blog?.title) }} className={styles.blog_card_wrapper}>
 					<ImageTag src={`${CLOUD_ASSET_BASEURL}/${blog?.thumbnail?.trim()}`} className={styles.blog_img} alt={blog?.title} />
-					<div className='absolute z-3 p-2 left-0 top-0 w-full flex flex-wrap align-items-start justify-content-start'>
+					<div className='absolute z-[1000] p-2 left-0 top-0 w-full flex flex-wrap items-start justify-start'>
 						{blog?.categories?.slice(0, isMatchWidth !== undefined && isMatchWidth && size === 'SMALL' ? 1 : 2)?.map((category, i) => (
 							<CategoryChip hideLink={true} category={category} key={i} />
 						))}
 					</div>
-					<div className='absolute z-3 p-2 left-0 bottom-0 w-full flex flex-col align-items-start justify-content-start'>
+					<div className='absolute z-[1000] p-2 left-0 bottom-0 w-full flex flex-col items-start justify-start'>
 						<div className='my-1 flex flex-wrap w-full'>
 							{!(isMatchWidth !== undefined && isMatchWidth && size === 'SMALL') &&
 								blog?.tags
@@ -163,30 +165,30 @@ const BlogCard = ({
 
 							{((isMatchWidth !== undefined && !isMatchWidth) || size === 'LARGE') &&
 								blog?.tags?.slice(isMatchWidth || size === 'SMALL' ? 2 : 3, undefined)?.length > 0 && (
-									<div className='bg-white mb-1 ms-1 fs-9 fw-bold px-1 border text-dark rounded-1'>
+									<div className='bg-white mb-1 ml-1 text-[13px] font-medium-custom px-1 border text-dark rounded-1'>
 										+ {blog?.tags?.slice(isMatchWidth || size === 'SMALL' ? 2 : 3, undefined)?.length} more tag
 										{blog?.tags?.slice(isMatchWidth || size === 'SMALL' ? 2 : 3, undefined)?.length > 1 ? 's' : ''}
 									</div>
 								)}
 						</div>
 						<Link href={blogSlug} className='text-decor-none'>
-							<div className={`text-white w-full fw-bold ${size === 'SMALL' && 'fs-8'} ${size === 'LARGE' && 'fs-5'}`}>
+							<div className={`text-white w-full font-medium-custom ${size === 'SMALL' && 'fs-8'} ${size === 'LARGE' && 'fs-5'}`}>
 								{blog?.title?.length > 35 && size === 'SMALL' ? blog?.title?.slice(0, 35) + '...' : blog?.title?.slice(0, undefined)}
 							</div>
 							{
-								<div className='mb-1 fs-9 text-white flex flex-wrap'>
+								<div className='mb-1 text-[13px] text-white flex flex-wrap'>
 									{((isMatchWidth !== undefined && !isMatchWidth) || size === 'LARGE') && (
 										<React.Fragment>
 											{blogsettings?.show_views && (
-												<div className='my-auto me-1'>
-													<RemoveRedEyeTwoToneIcon className='fs-6 text-white me-1' />
-													<span className='fs-9 my-auto'>{blog?.views?.length} views |</span>
+												<div className='my-auto mr-1'>
+													<RemoveRedEyeTwoToneIcon className='text-[15px] text-white mr-1' />
+													<span className='text-[13px] my-auto'>{blog?.views?.length} views |</span>
 												</div>
 											)}
 											{blogsettings?.show_comments && (
-												<div className='my-auto me-2'>
-													<ForumOutlinedIcon className='fs-6 text-white me-1' />
-													<span className='fs-9 my-auto'>{blog?.comments?.length} |</span>
+												<div className='my-auto mr-2'>
+													<ForumOutlinedIcon className='text-[15px] text-white mr-1' />
+													<span className='text-[13px] my-auto'>{blog?.comments?.length} |</span>
 												</div>
 											)}
 										</React.Fragment>
@@ -196,10 +198,10 @@ const BlogCard = ({
 										<span className=''>
 											<Moment format='MMMM'>{blog?.createdAt}</Moment>
 										</span>
-										<span className='ms-1'>
+										<span className='ml-1'>
 											<Moment format='DD'>{blog?.createdAt}</Moment>,
 										</span>
-										<span className='ms-1'>
+										<span className='ml-1'>
 											<Moment format='YYYY'>{blog?.createdAt}</Moment>
 										</span>
 									</span>
@@ -210,11 +212,11 @@ const BlogCard = ({
 									{blog?.author?.avatar && (
 										<ImageTag
 											src={blog?.author?.avatar}
-											className={`rounded-circle me-1 ${styles.blog_author_avatar}`}
+											className={`rounded-[50%] mr-1 ${styles.blog_author_avatar}`}
 											alt={blog?.title}
 										/>
 									)}
-									<div className='fs-9 my-auto fw-bold'>
+									<div className='text-[13px] my-auto font-medium-custom'>
 										{blog?.author?.lastname?.charAt(0)?.toUpperCase()}
 										{'. '}
 										{` ${blog?.author?.firstname?.charAt(0)?.toUpperCase()}${blog?.author?.firstname
@@ -228,7 +230,7 @@ const BlogCard = ({
 							)}
 						</Link>
 					</div>
-				</div>
+				</Paper>
 			</Box>
 		</Grid>
 	);

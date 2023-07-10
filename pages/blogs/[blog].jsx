@@ -33,7 +33,6 @@ import DoneAllTwoToneIcon from '@mui/icons-material/DoneAllTwoTone';
 import { SvgIcons } from '@/components/icons';
 import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
 import WebController from '@/pages/api/controller';
-import useSWR from 'swr';
 
 const RenderCommentsSection = ({ blogData, dividerBgColor }) => {
 	const [inputData, setInputData] = useState({ comment: '', use: '' });
@@ -127,30 +126,17 @@ const BlogPage = ({
 	const dividerBgColor = 'var(--blog-section-dividers)';
 
 	React.useEffect(() => {
-		document.querySelector(':root').style.setProperty('--app-bg', 'var(--blog-section-bg)');
+		document.querySelector(':root').style.setProperty('--app-bg', 'var(--bg-fair-two)');
 		return () => document.querySelector(':root').style.setProperty('--app-bg', 'var(--app-bg)');
 	}, []);
 	const divRef = useRef(null);
-
-	// Page views count
-	const { data } = useSWR(
-		`/api/page-views?blog=${encodeURIComponent('https://mfmcffuto.vercel.app/blogs/' + blogData.slug)}`,
-		async (url) => {
-			const res = await fetch(url);
-			return res.json();
-		},
-		{ revalidateOnFocus: false }
-	);
-	const views = data?.pageViews;
-
-	console.log({ views: data });
 
 	return (
 		<WebLayout
 			headerOriginalBgColor={true}
 			metatags={{ meta_title: `${blogData?.title} | ${SITE_DATA.OFFICIAL_NAME}`, ...metatags }}
 			sitesettings={settings}>
-			<div className={`${styles.page_padding}`} style={{ background: 'var(--blog-section-bg)' }}>
+			<div className={`${styles.page_padding}`} style={{ background: 'var(--bg-fair-two)' }}>
 				<div className={`px-2 ${styles.blog_data_space_right} ${styles.page_top_margin} h-full`}>
 					<Grid spacing={1} columns={{ xs: 12, sm: 12, md: 12 }} container={true} className='pb-4'>
 						<Grid xs={12} sm={12} md={8} item={true} className=''>
@@ -402,12 +388,12 @@ const BlogPage = ({
 											!blogsettings?.blog_preview_card_custom_display ||
 											blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1
 												? '238px'
-												: '420px',
+												: '425px',
 										sm:
 											!blogsettings?.blog_preview_card_custom_display ||
 											blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1
 												? '268px'
-												: '420px',
+												: '425px',
 									}}
 									blog={blog}
 									size={'LARGE'}

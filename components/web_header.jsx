@@ -22,6 +22,7 @@ import Link from 'next/link';
 import { getAbsoluteUrl } from '@/utils/get_absolute_url';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import styles from '@/components/components.module.css';
+import { APP_ROUTES } from '@/config';
 
 const RenderNavigation = ({ nav }) => {
 	return (
@@ -102,30 +103,35 @@ const WebHeader = ({ sitesettings, headerOriginalBgColor }) => {
 	const defaultURL = sitesettings && Object?.keys(sitesettings)?.length > 0 ? 'https://' : undefined;
 
 	const NavItems = [
-		{ name: 'Home', href: '', icon: '' },
-		{ name: 'About Us', href: '', icon: '' },
-		{ name: 'Academics', href: '', icon: '' },
+		{ name: 'Home', href: APP_ROUTES.HOME, icon: '' },
+		{ name: 'About Us', href: APP_ROUTES.ABOUT_US, icon: '' },
+		{ name: 'Academics', href: APP_ROUTES.ACADEMICS, icon: '' },
 		{
 			name: 'Articles & Blogs',
-			href: '',
+			href: APP_ROUTES.BLOGS,
 			icon: '',
 			children: [
-				{ name: 'Explore Articles & Blogs', href: '', icon: '' },
-				{ name: 'Featured Articles!', href: '', icon: '' },
-				{ name: 'Browse By Categories', href: '', icon: '' },
-				{ name: 'Browse By Tags', href: '', icon: '' },
+				{ name: 'Explore Articles & Blogs', href: APP_ROUTES.BLOGS, icon: '' },
+				{ name: 'Featured Articles!', href: APP_ROUTES.FEATURED_BLOGS, icon: '' },
+				{ name: 'Browse By Categories', href: APP_ROUTES.BLOGS_CATEGORIES, icon: '' },
+				{ name: 'Browse By Tags', href: APP_ROUTES.BLOGS_TAGS, icon: '' },
 			],
 		},
-		{ name: 'Fellowship Groups', href: '', icon: '', children: [{ name: 'Bible Study Group', href: '', icon: '' }] },
-		{ name: 'Our Excos', href: '', icon: '' },
-		{ name: 'Gallery', href: '', icon: '' },
-		{ name: 'Sermons', href: '', icon: '' },
-		{ name: 'Tithes & Offerings', href: '', icon: '' },
-		{ name: 'Contact Us', href: '', icon: '' },
+		{
+			name: 'Fellowship Groups',
+			href: APP_ROUTES.FELLOWSHIP_GROUPS,
+			icon: '',
+			children: [{ name: 'Bible Study Group', href: `${APP_ROUTES.FELLOWSHIP_GROUPS}/bible-study-group`, icon: '' }],
+		},
+		{ name: 'Our Excos', href: APP_ROUTES.EXCOS, icon: '' },
+		{ name: 'Gallery', href: APP_ROUTES.GALLERY, icon: '' },
+		{ name: 'Sermons', href: APP_ROUTES.SERMONS, icon: '' },
+		{ name: 'Tithes & Offerings', href: APP_ROUTES.TITHES_OFFERINGS, icon: '' },
+		{ name: 'Contact Us', href: APP_ROUTES.CONTACT_US, icon: '' },
 	];
 
 	return (
-		<div className={`z-[1000] fixed top-0 left-0 right-0 w-[100vw] h-[max-content] p-0 m-0`}>
+		<div className={`z-[5000] fixed top-0 left-0 right-0 w-[100vw] h-[max-content] p-0 m-0`}>
 			<div
 				ref={preHeaderRef}
 				className={`w-full p-2 hidden md:flex items-center justify-between ${

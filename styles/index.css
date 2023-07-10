@@ -18,19 +18,19 @@
 
 @font-face {
 	font-family: 'YsabeauInfant';
-	src: url('./fonts/ABeeZee-Regular.ttf');
+	src: url('./fonts/FiraSans-Regular.ttf');
 	font-weight: 500;
 }
 @font-face {
 	font-family: 'YsabeauInfant-Medium';
-	src: url('./fonts/ABeeZee-Medium.ttf');
+	src: url('./fonts/FiraSans-Medium.ttf');
 	font-weight: 600;
 }
 * {
 	box-sizing: border-box;
 	padding: 0;
 	margin: 0;
-	font-size: 17px;
+	font-size: 15px;
 }
 
 body {

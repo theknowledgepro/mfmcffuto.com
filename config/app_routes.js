@@ -3,10 +3,16 @@
 module.exports = {
 	NOT_FOUND: '/404',
 	HOME: '/',
-	CONTACT_US: '/contact-us',
+	ACADEMICS: '/academics',
 	ABOUT_US: '/about-us',
-	SERVICES: '/services',
+	FELLOWSHIP_GROUPS: `/groups`,
+	CONTACT_US: '/contact-us',
+	GALLERY: `/gallery`,
+	EXCOS: `/excos`,
+	SERMONS: `/sermons`,
+	TITHES_OFFERINGS: `/give`,
 	TERMS: '#',
+
 	// ** BLOGS ROUTES
 	BLOGS: `/blogs`,
 	BLOGS_CATEGORIES: `/blogs/categories`,

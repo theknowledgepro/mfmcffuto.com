@@ -59,6 +59,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, blogAuthors
 	const router = useRouter();
 	const [openModal, setOpenModal] = useState(false);
 	const defaultAuthor = blog?.author?._id ? blogAuthors?.filter((index) => index?._id === blog?.author?._id)[0] : blogAuthors[0];
+	// console.log(blog?.thumbnail);
 	const initialState = blog
 		? { ...blog, thumbnail: `${CLOUD_ASSET_BASEURL}/${blog?.thumbnail?.trim()}` }
 		: {
@@ -349,7 +350,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, blogAuthors
 						inputProps={{ maxLength: LIMITS.BLOG_SUMMARY_LIMIT + 10 }}
 						error={errors.summary ? true : false}
 						multiline
-						rows={3}
+						rows={2}
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position='start'>

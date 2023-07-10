@@ -477,10 +477,18 @@ const RawReqController = {
 				for (let i = 0; i < tags?.length; i++) await BlogTags.findOneAndUpdate({ _id: tags[i] }, { $push: { blogs: blogData?._id } });
 
 				// ** REPLACE THE FORMER CATEGORY THUMBNAIL IF AND ONLY IF A FILE WAS SENT
-				if (req.files?.thumbnail) {
+				if (req.files?.thumbnail && blogData?.thumbnail) {
 					await uploadFile({ file: req?.files?.thumbnail, fileKeyNameToReplace: blogData?.thumbnail }).catch((err) => {
 						throw err;
 					});
+				} else if (req.files?.thumbnail && !blogData?.thumbnail) {
+					// ** UPLOAD BLOG THUMBNAIL
+					const { fileData } = await uploadFile({
+						file: req.files?.thumbnail,
+						S3Folder: 'blog-thumbnails',
+						appendFileExtensionToFileKeyName: true,
+					});
+					await Blogs.findOneAndUpdate({ uniqueID }, { thumbnail: fileData?.Key });
 				}
 
 				// ** RECORD IN ACTIVITY_LOG DATABASE
