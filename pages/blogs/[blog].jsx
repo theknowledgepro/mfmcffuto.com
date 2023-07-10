@@ -132,20 +132,19 @@ const BlogPage = ({
 	}, []);
 	const divRef = useRef(null);
 
-	useEffect(() => {
-		// Page views count
-		const { data } = useSWR(
-			`/api/page-views?blog=${blogData.slug}`,
-			async (url) => {
-				const res = await fetch(url);
-				return res.json();
-			},
-			{ revalidateOnFocus: false }
-		);
-		const views = data?.pageViews;
+	// Page views count
+	const { data } = useSWR(
+		`/api/page-views?blog=${blogData.slug}`,
+		async (url) => {
+			const res = await fetch(url);
+			return res.json();
+		},
+		{ revalidateOnFocus: false }
+	);
+	const views = data?.pageViews;
 
-		console.log({ views: pageViews });
-	}, []);
+	console.log({ views: data });
+
 
 	return (
 		<WebLayout
