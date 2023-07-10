@@ -5,6 +5,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { GLOBALTYPES } from '@/redux/types';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
+import { pageview } from '@/utils/google_analytics';
 
 const RouteChangeLinearProgress = () => {
 	const router = useRouter();
@@ -39,7 +40,10 @@ const RouteChangeLinearProgress = () => {
 			dispatch({ type: GLOBALTYPES.RESETLOADING, payload: null });
 			console.log(`App is changing to ${url} ${shallow ? 'with' : 'without'} shallow routing`);
 		};
-		const handleRouteChangeComplete = () => setLoading(false);
+		const handleRouteChangeComplete = (url) => {
+			pageview(url, document.title);
+			setLoading(false);
+		};
 		const handleRouteChangeError = (err, url) => {
 			if (err.cancelled) {
 				console.log(`Route to ${url} was cancelled!`);

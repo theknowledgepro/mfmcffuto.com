@@ -3,12 +3,30 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import createEmotionServer from '@emotion/server/create-instance';
 import { createEmotionCache } from './_app';
+import { GA_TRACKING_ID } from '@/utils/google_analytics';
 
 export default class MyDocument extends Document {
 	render() {
 		return (
 			<Html lang='en'>
-				<Head>{this.props.emotionStyleTags}</Head>
+				<Head>
+					{GA_TRACKING_ID ? (
+						<>
+							<script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
+							<script
+								dangerouslySetInnerHTML={{
+									__html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}');
+              `,
+								}}
+							/>
+						</>
+					) : null}
+					{this.props.emotionStyleTags}
+				</Head>
 				<body>
 					<Main />
 					<div id='portal'></div>

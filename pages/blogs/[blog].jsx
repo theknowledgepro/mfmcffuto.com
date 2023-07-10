@@ -33,6 +33,7 @@ import DoneAllTwoToneIcon from '@mui/icons-material/DoneAllTwoTone';
 import { SvgIcons } from '@/components/icons';
 import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
 import WebController from '@/pages/api/controller';
+import useSWR from 'swr';
 
 const RenderCommentsSection = ({ blogData, dividerBgColor }) => {
 	const [inputData, setInputData] = useState({ comment: '', use: '' });
@@ -130,6 +131,19 @@ const BlogPage = ({
 		return () => document.querySelector(':root').style.setProperty('--app-bg', 'var(--app-bg)');
 	}, []);
 	const divRef = useRef(null);
+
+	// Page views count
+	const { data } = useSWR(
+		`/api/page-views?blog=${encodeURIComponent(PostsDirectory + blog.slug)}`,
+		async (url) => {
+			const res = await fetch(url);
+			return res.json();
+		},
+		{ revalidateOnFocus: false }
+	);
+	const views = data?.pageViews;
+
+	console.log({ views: pageViews });
 
 	return (
 		<WebLayout

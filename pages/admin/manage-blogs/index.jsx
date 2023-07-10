@@ -349,6 +349,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, blogAuthors
 						inputProps={{ maxLength: LIMITS.BLOG_SUMMARY_LIMIT + 10 }}
 						error={errors.summary ? true : false}
 						multiline
+						rows={3}
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position='start'>
@@ -438,6 +439,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, blogAuthors
 						variant='standard'
 						inputProps={{ maxLength: LIMITS.META_DESCRIPTION_LIMIT }}
 						multiline
+						rows={2}
 						helperText={errors.meta_description}
 						error={errors.meta_description ? true : false}
 						InputProps={{
@@ -463,6 +465,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, blogAuthors
 						variant='standard'
 						inputProps={{ maxLength: LIMITS.META_KEYWORDS_LIMIT }}
 						multiline
+						rows={2}
 						helperText={errors.meta_keywords}
 						error={errors.meta_keywords ? true : false}
 						InputProps={{
