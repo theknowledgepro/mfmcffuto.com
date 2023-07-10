@@ -134,7 +134,7 @@ const BlogPage = ({
 
 	// Page views count
 	const { data } = useSWR(
-		`/api/page-views?blog=${encodeURIComponent('/blogs/' + blogData.slug)}`,
+		`/api/page-views?blog=${encodeURIComponent('https://mfmcffuto.vercel.app/blogs/' + blogData.slug)}`,
 		async (url) => {
 			const res = await fetch(url);
 			return res.json();

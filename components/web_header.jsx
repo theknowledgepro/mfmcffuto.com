@@ -163,7 +163,7 @@ const WebHeader = ({ sitesettings, headerOriginalBgColor }) => {
 			<div
 				ref={mobileHeaderRef}
 				className={`${
-					headerOriginalBgColor ? 'bg-[var(--color-primary)]' : 'bg-inherit'
+					headerOriginalBgColor ? 'bg-[var(--color-primary)]' : ''
 				} w-full flex md:hidden items-center justify-between p-2 border-b border-zinc-300 transition-all ease-out duration-300`}>
 				<ImageTag
 					src={sitesettings?.logoUrl ? sitesettings?.logoUrl : ASSETS.LOGO}
