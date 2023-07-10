@@ -134,7 +134,7 @@ const BlogPage = ({
 
 	// Page views count
 	const { data } = useSWR(
-		`/api/page-views?blog=${encodeURIComponent(PostsDirectory + blog.slug)}`,
+		`/api/page-views?blog=${encodeURIComponent(blog.slug)}`,
 		async (url) => {
 			const res = await fetch(url);
 			return res.json();
