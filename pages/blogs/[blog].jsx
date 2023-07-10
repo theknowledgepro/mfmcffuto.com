@@ -135,7 +135,7 @@ const BlogPage = ({
 	useEffect(() => {
 		// Page views count
 		const { data } = useSWR(
-			`/api/page-views?blog=${blog.slug}`,
+			`/api/page-views?blog=${blogData.slug}`,
 			async (url) => {
 				const res = await fetch(url);
 				return res.json();
