@@ -189,7 +189,7 @@ export async function getServerSideProps({ req, res }) {
 		};
 
 	// REDIRECT TO DASHBOARD PAGE IF ADMIN IS RESTRICTED TO VIEW THIS PAGE
-	const isRestricted = await CheckAdminRestriction({ page: APP_ROUTES.ACTIVITY_LOGS, adminId: verifyUserAuth?.user?._id });
+	const isRestricted = await CheckAdminRestriction({ page: APP_ROUTES.MANAGE_BLOGS_SETTINGS, adminId: verifyUserAuth?.user?._id });
 	if (isRestricted) return { redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false } };
 
 	// ** GET BLOG SETTINGS

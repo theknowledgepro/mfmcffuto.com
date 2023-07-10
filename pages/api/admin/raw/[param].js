@@ -19,6 +19,8 @@ const RawRouter = async (incomingReqObj, incomingResObj) => {
 			return authenticate(req, res, RawReqController.manageBlogCategories);
 		case 'blog':
 			return authenticate(req, res, RawReqController.manageBlogs);
+		case 'blogauthors':
+			return authenticate(req, res, RawReqController.manageBlogAuthors);
 		// // ** SITE SETTINGS ROUTES
 		// case 'update-site-settings':
 		// 	return authenticate(req, res, RawReqController.updateSiteSettings);

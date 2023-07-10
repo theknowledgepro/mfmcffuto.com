@@ -19,6 +19,7 @@ import {
 	Checkbox,
 	MenuItem,
 	Select,
+	FormControl,
 } from '@mui/material';
 import { BsDot } from 'react-icons/bs';
 import AddIcon from '@mui/icons-material/Add';
@@ -53,15 +54,27 @@ const RenderBlogStatusChip = ({ blog }) => {
 	);
 };
 
-const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, blog, isEdit }) => {
+const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, blogAuthors, session, blog, isEdit }) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const [openModal, setOpenModal] = useState(false);
+	const defaultAuthor = blog?.author?._id ? blogAuthors?.filter((index) => index?._id === blog?.author?._id)[0] : blogAuthors[0];
 	const initialState = blog
 		? { ...blog, thumbnail: `${CLOUD_ASSET_BASEURL}/${blog?.thumbnail?.trim()}` }
-		: { title: '', slug: '', thumbnail: '', summary: '', tags: [], categories: [], meta_description: '', meta_keywords: '', published: true };
+		: {
+				title: '',
+				slug: '',
+				thumbnail: '',
+				summary: '',
+				tags: [],
+				categories: [],
+				meta_description: '',
+				meta_keywords: '',
+				published: true,
+				author: defaultAuthor,
+		  };
 	const [blogData, setBlogData] = useState(initialState);
-	const { title, slug, thumbnail, summary, tags, categories, meta_description, meta_keywords, published } = blogData;
+	const { title, slug, thumbnail, summary, tags, categories, meta_description, meta_keywords, published, author } = blogData;
 	const [body, setBody] = useState('');
 	const [file, setFile] = useState(null);
 	const handleChangeInput = (e) => {
@@ -138,6 +151,8 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 	};
 
 	const handleCreateBlog = async () => {
+		// console.log({ auth: blogData?.author });
+		if (!blogData.author?._id) return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: `Please select an author for this blog!` } });
 		setErrors({
 			title: !title && 'Please provide a name for this new blog.',
 			meta_description: !meta_description && 'Please provide a meta description for this blog.',
@@ -174,6 +189,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 	};
 
 	const handleEditBlog = async () => {
+		if (!blogData.author?._id) return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: `Please select an author for this blog!` } });
 		setErrors({
 			title: !title && 'Please provide a name for this new blog.',
 			meta_description: !meta_description && 'Please provide a meta description for this blog.',
@@ -211,6 +227,12 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 	};
 
 	const [isFullScreen, setIsFullScreen] = useState(false);
+
+	const handleSelectAuthor = (e) => {
+		// console.log({ ll: blogAuthors?.filter((index) => index?._id === e.target.value)[0] });
+		setBlogData({ ...blogData, author: blogAuthors?.filter((index) => index?._id === e.target.value)[0] });
+	};
+
 	return (
 		<MuiModal
 			openModal={openModal}
@@ -242,7 +264,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 						onChange={handleChangeInput}
 						value={title}
 						color='primary'
-						className='w-full mt-4'
+						className='w-full mt-6'
 						name='title'
 						placeholder='e.g thebestblogs'
 						label='Blog Title'
@@ -258,21 +280,39 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 						}}
 					/>
 
+					<Box sx={{ minWidth: 120, minHeight: 20, mt: '40px' }}>
+						<FormControl fullWidth size='small'>
+							<InputLabel id='admin-level-select'>Author</InputLabel>
+							<Select labelId='admin-level-select' value={defaultAuthor?._id} label='Sort By' onChange={handleSelectAuthor}>
+								{blogAuthors.map((author, index) => (
+									<MenuItem key={index} value={author?._id}>
+										<div className='w-full flex items-center justify-left'>
+											<Avatar src={author?.avatar} alt={author?.firstname} className={``} />
+											<span className='ml-2 my-auto'>{`${author?.lastname ? author?.lastname : ''} ${
+												author?.firstname ? author?.firstname : ''
+											} ${author?.secondname ? author?.secondname : ''}`}</span>
+										</div>
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					</Box>
+
 					{!isFetchingBlogContent && !isErrored && (
-						<div className='w-full mt-4'>
+						<div className='w-full mt-6'>
 							<ReactEditor content={body} setContent={setBody} />
 						</div>
 					)}
 					{isFetchingBlogContent && !isErrored && (
 						<div className='w-full mt-5 flex flex-col items-center justify-center'>
 							<CircularProgress style={{ color: 'var(--color-primary)', height: '40px', width: '40px' }} sx={{ mt: 3 }} />
-							<div className='mt-4 w-full text-center color-primary text-[15px]'>Loading Blog Content...</div>
+							<div className='mt-6 w-full text-center color-primary text-[15px]'>Loading Blog Content...</div>
 						</div>
 					)}
 					{!isFetchingBlogContent && isErrored && (
 						<div className='w-full mt-5 flex flex-col items-center justify-center'>
-							<div className='mt-4 w-full text-center color-primary text-[15px]'>An Error Occured While Fetching Blog Content...</div>
-							<Button onClick={fetchBlogContent} className='text-decor-none mt-4' color='white' variant='contained'>
+							<div className='mt-6 w-full text-center color-primary text-[15px]'>An Error Occured While Fetching Blog Content...</div>
+							<Button onClick={fetchBlogContent} className='text-decor-none mt-6' color='white' variant='contained'>
 								Retry
 							</Button>
 						</div>
@@ -281,7 +321,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 						onChange={handleChangeInput}
 						value={slug}
 						color='primary'
-						className='w-full mt-4'
+						className='w-full mt-6'
 						name='slug'
 						label='Blog Slug'
 						variant='standard'
@@ -300,7 +340,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 						onChange={handleChangeInput}
 						value={summary}
 						color='primary'
-						className='w-full mt-4'
+						className='w-full mt-6'
 						name='summary'
 						label='Blog Summary'
 						variant='standard'
@@ -321,53 +361,57 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 						{summary?.length} / {LIMITS.BLOG_SUMMARY_LIMIT + 10} characters allowed.
 					</div>
 
-					<div className='w-full mt-4'>
+					<div className='w-full mt-6'>
 						<div className='flex' style={{ marginLeft: '-10px' }}>
 							<BsDot className='color-primary text-[17px] my-auto' />
-							<span className='font-medium-custom text-[14px] my-auto'>Select Categories for this Blog</span>
+							<span className='font-medium-custom text-[16px] my-auto'>Select Categories for this Blog</span>
 						</div>
-						{allCategories.map((category, i) => (
-							<FormControlLabel
-								control={
-									<Checkbox
-										checked={Boolean(categories?.find((index) => index?.toString() === category?._id))}
-										name={category?._id}
-										onChange={handleSelectCategories}
-										inputProps={{ 'aria-label': 'controlled' }}
-									/>
-								}
-								label={category?.title}
-								labelPlacement='end'
-								key={i}
-								className='w-full flex'
-							/>
-						))}
+						<FormControl fullWidth size='small'>
+							{allCategories.map((category, i) => (
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={Boolean(categories?.find((index) => index?.toString() === category?._id))}
+											name={category?._id}
+											onChange={handleSelectCategories}
+											inputProps={{ 'aria-label': 'controlled' }}
+										/>
+									}
+									label={category?.title}
+									labelPlacement='end'
+									key={i}
+									className='w-full flex'
+								/>
+							))}
+						</FormControl>
 					</div>
 
-					<div className='w-full mt-4'>
+					<div className='w-full mt-6'>
 						<div className='flex' style={{ marginLeft: '-10px' }}>
 							<BsDot className='color-primary text-[17px] my-auto' />
-							<span className='font-medium-custom text-[14px] my-auto'>Select Tags for this Blog</span>
+							<span className='font-medium-custom text-[16px] my-auto'>Select Tags for this Blog</span>
 						</div>
-						{allTags.map((tag, i) => (
-							<FormControlLabel
-								control={
-									<Checkbox
-										checked={Boolean(tags?.find((index) => index?.toString() === tag?._id))}
-										name={tag?._id}
-										onChange={handleSelectTags}
-										inputProps={{ 'aria-label': 'controlled' }}
-									/>
-								}
-								label={`#${tag?.title}`}
-								labelPlacement='end'
-								key={i}
-								className='w-full flex'
-							/>
-						))}
+						<FormControl fullWidth size='small'>
+							{allTags.map((tag, i) => (
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={Boolean(tags?.find((index) => index?.toString() === tag?._id))}
+											name={tag?._id}
+											onChange={handleSelectTags}
+											inputProps={{ 'aria-label': 'controlled' }}
+										/>
+									}
+									label={`#${tag?.title}`}
+									labelPlacement='end'
+									key={i}
+									className='w-full flex'
+								/>
+							))}
+						</FormControl>
 					</div>
 
-					<div className={`${comp_styles.img_input} rounded-[5px] mild-shadow mt-4 flex flex-col items-center justify-center`}>
+					<div className={`${comp_styles.img_input} rounded-[5px] mild-shadow mt-6 flex flex-col items-center justify-center`}>
 						{thumbnail && (
 							<img
 								alt='Select Blog Thumbnail'
@@ -380,14 +424,14 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 						<input onChange={handleThumbnailUpload} type='file' name='thumbnail' id={`${comp_styles.avatar_input}`} accept='image/*' />
 					</div>
 
-					<div className='w-full border-b font-medium-custom border-zinc-300 rounded-sm p-1 text-[13px] color-primary text-center mt-4'>
+					<div className='w-full border-b font-medium-custom border-zinc-300 rounded-sm p-1 text-[13px] color-primary text-center mt-6'>
 						Set Up SEO for this Blog.
 					</div>
 					<TextField
 						onChange={handleChangeInput}
 						value={meta_description}
 						color='primary'
-						className='w-full mt-4'
+						className='w-full mt-6'
 						name='meta_description'
 						label='Meta Description'
 						placeholder='e.g the best blog in the city for readers...'
@@ -412,7 +456,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 						onChange={handleChangeInput}
 						value={meta_keywords}
 						color='primary'
-						className='w-full mt-4'
+						className='w-full mt-6'
 						name='meta_keywords'
 						label='Meta Keywords'
 						placeholder='Separate each words with a comma...'
@@ -496,7 +540,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, session, bl
 	);
 };
 
-const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, session }) => {
+const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, blogAuthors, session }) => {
 	const [openModal, setOpenModal] = useState(false);
 	const RenderTitle = ({ title }) => {
 		return (
@@ -543,10 +587,26 @@ const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, 
 							<div className='mt-1 text-[13px] text-secondary text-center'>
 								Created Blog On:
 								<div className='rounded-2 w-full px-2'>
-									<Moment format='LT'>{blog?.createdAt}</Moment> - <Moment format='ddd'>{blog?.createdAt}</Moment>,
+									<Moment className='text-[14px]' format='LT'>
+										{blog?.createdAt}
+									</Moment>{' '}
+									-{' '}
+									<Moment className='text-[14px]' format='ddd'>
+										{blog?.createdAt}
+									</Moment>
+									,
 									<span className='ms-1'>
-										<Moment format='DD'>{blog?.createdAt}</Moment>/<Moment format='MM'>{blog?.createdAt}</Moment>/
-										<Moment format='YY'>{blog?.createdAt}</Moment>
+										<Moment className='text-[14px]' format='DD'>
+											{blog?.createdAt}
+										</Moment>
+										/
+										<Moment className='text-[14px]' format='MM'>
+											{blog?.createdAt}
+										</Moment>
+										/
+										<Moment className='text-[14px]' format='YY'>
+											{blog?.createdAt}
+										</Moment>
 									</span>
 								</div>
 							</div>
@@ -566,10 +626,26 @@ const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, 
 					<div className='border-top border-zinc-300 pt-3 flex mt-3 flex-col'>
 						<RenderTitle title='Last Updated' />
 						<div className='w-full p-2'>
-							<Moment format='LT'>{blog?.updatedAt}</Moment> - <Moment format='ddd'>{blog?.updatedAt}</Moment>,
+							<Moment className='text-[14px]' format='LT'>
+								{blog?.updatedAt}
+							</Moment>{' '}
+							-{' '}
+							<Moment className='text-[14px]' format='ddd'>
+								{blog?.updatedAt}
+							</Moment>
+							,
 							<span className='ms-1'>
-								<Moment format='DD'>{blog?.updatedAt}</Moment>/<Moment format='MM'>{blog?.updatedAt}</Moment>/
-								<Moment format='YY'>{blog?.updatedAt}</Moment>
+								<Moment className='text-[14px]' format='DD'>
+									{blog?.updatedAt}
+								</Moment>
+								/
+								<Moment className='text-[14px]' format='MM'>
+									{blog?.updatedAt}
+								</Moment>
+								/
+								<Moment className='text-[14px]' format='YY'>
+									{blog?.updatedAt}
+								</Moment>
 							</span>
 						</div>
 					</div>
@@ -609,6 +685,7 @@ const ViewBlogDetailsModal = ({ allBlogs, allTags, allCategories, blog, params, 
 			modalActions={
 				<React.Fragment>
 					<CreateBlogFunctionality
+						blogAuthors={blogAuthors}
 						isEdit={true}
 						session={session}
 						blog={blog}
@@ -693,7 +770,7 @@ const DeleteBlogModal = ({ blog, session }) => {
 	);
 };
 
-const ManageBlogs = ({ userAuth, categories, tags, blogs, blogHomePageSEOData }) => {
+const ManageBlogs = ({ userAuth, categories, tags, blogs, blogAuthors, blogHomePageSEOData }) => {
 	// ** DISPATCH USER AUTH
 	DispatchUserAuth({ userAuth });
 	const session = useSelector((state) => state.auth);
@@ -707,6 +784,7 @@ const ManageBlogs = ({ userAuth, categories, tags, blogs, blogHomePageSEOData })
 			renderCell: (params) => {
 				return (
 					<ViewBlogDetailsModal
+						blogAuthors={blogAuthors}
 						allCategories={categories}
 						allTags={tags}
 						params={params}
@@ -737,6 +815,7 @@ const ManageBlogs = ({ userAuth, categories, tags, blogs, blogHomePageSEOData })
 				return (
 					<React.Fragment>
 						<CreateBlogFunctionality
+							blogAuthors={blogAuthors}
 							allCategories={categories}
 							allTags={tags}
 							isEdit={true}
@@ -793,7 +872,7 @@ const ManageBlogs = ({ userAuth, categories, tags, blogs, blogHomePageSEOData })
 					justifyContent: 'space-between',
 				}}>
 				<div className='mt-3'>
-					<CreateBlogFunctionality allCategories={categories} allTags={tags} allBlogs={blogs} session={session} />
+					<CreateBlogFunctionality blogAuthors={blogAuthors} allCategories={categories} allTags={tags} allBlogs={blogs} session={session} />
 				</div>
 				<div className='mt-3'>
 					<SetUpPageSEO
@@ -832,9 +911,12 @@ export async function getServerSideProps({ req, res, query }) {
 	const allBlogs = await AdminController.getAllBlogs(req, res, true);
 	const allCategories = await AdminController.getAllBlogCategories(req, res, true);
 	const allTags = await AdminController.getAllBlogTags(req, res, true);
+	// ** GET BLOG AUTHORS
+	req.query = query;
+	req.query.isBlogCreate = true;
+	const blogAuthors = await AdminController.getBlogAuthors(req, res, true);
 
 	// ** GET BLOG PAGE SEO DATA
-	req.query = query;
 	req.query.pageSlug = APP_ROUTES.BLOGS;
 	const blogHomePageSEOData = await WebController.getPageSEO(req, res, true);
 	return {
@@ -843,6 +925,7 @@ export async function getServerSideProps({ req, res, query }) {
 			blogs: allBlogs?.length ? allBlogs : [],
 			tags: allTags?.length ? allTags : [],
 			categories: allCategories?.length ? allCategories : [],
+			blogAuthors: blogAuthors?.length ? blogAuthors : [],
 			blogHomePageSEOData: blogHomePageSEOData,
 		},
 	};

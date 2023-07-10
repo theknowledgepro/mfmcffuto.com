@@ -120,6 +120,12 @@ const AdminDashboardNavItems1 = [
 				id: 'blogsmanagae',
 			},
 			{
+				name: 'Manage Authors',
+				icon: <AccountCircleOutlinedIcon className={admin_comp_styles.nav_icon} />,
+				href: APP_ROUTES.MANAGE_BLOG_AUTHORS,
+				id: 'manageauthors',
+			},
+			{
 				name: 'Articles & Blog Settings',
 				icon: <SettingsTwoToneIcon className={admin_comp_styles.nav_icon} />,
 				href: `${APP_ROUTES.MANAGE_BLOGS_SETTINGS}`,

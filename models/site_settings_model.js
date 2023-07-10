@@ -1,7 +1,7 @@
 /** @format */
 
 import { SITE_DATA } from '@/config';
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const SiteSettingsSchema = new mongoose.Schema(
 	{
@@ -30,6 +30,6 @@ SiteSettingsSchema.statics.findOneOrCreate = function findOneOrCreate(condition,
 	});
 };
 
-const DB = mongoose.connection.useDb(SITE_DATA.MONGODB_DB_NAME);
+const DB = mongoose.connection.useDb(SITE_DATA.MONGODB_DB_NAME); 
 
 module.exports = DB.models.SiteSettings || DB.model('SiteSettings', SiteSettingsSchema);

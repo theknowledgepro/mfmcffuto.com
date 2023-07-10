@@ -17,6 +17,7 @@ module.exports = {
 	MANAGE_BLOG_TAGS: 'admin/raw/blogtag',
 	MANAGE_BLOG_CATEGORIES: 'admin/raw/blogcategory',
 	MANAGE_BLOGS: 'admin/raw/blog',
+	MANAGE_BLOG_AUTHORS: `admin/raw/blogauthors`,
 	MANAGE_BLOGS_SETTINGS: `admin/blog-settings`,
 	GET_BLOG_CONTENT: 'admin/blog-content',
 

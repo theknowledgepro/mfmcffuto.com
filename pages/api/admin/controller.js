@@ -109,7 +109,7 @@ const AdminController = {
 			const allBlogs = await Blogs.find(filter)
 				.populate({
 					path: 'author',
-					select: '-_id firstname secondname lastname member_role avatar',
+					select: 'url firstname secondname lastname member_role avatar',
 					model: Users,
 				})
 				.select('-body')
@@ -127,6 +127,45 @@ const AdminController = {
 			return responseLogic({ req, res, status: 200, data: blog?._doc });
 		} catch (err) {
 			return responseLogic({ res, catchError: err });
+		}
+	}, // DONE
+	getBlogAuthors: async (req, res, SSG = false) => {
+		try {
+			if (req.method !== 'GET') return responseLogic({ SSG, req, res, status: 404, data: { message: 'This route does not exist!' } });
+			await connectDB();
+
+			if (!req?.query?.isBlogCreate) {
+				const blogSelectionFields = `title slug summary thumbnail published featured views tags categories`;
+				const allAuthors = await Users.find({ member_role: MEMBER_ROLES.AUTHOR })
+					.populate({
+						path: 'articles',
+						select: blogSelectionFields,
+						model: Blogs,
+						options: { sort: { createdAt: -1 } },
+						populate: {
+							path: 'tags',
+							select: '-_id title slug',
+							model: BlogTags,
+						},
+					})
+					.populate({
+						path: 'articles',
+						select: blogSelectionFields,
+						model: Blogs,
+						options: { sort: { createdAt: -1 } },
+						populate: {
+							path: 'categories',
+							select: '-_id title slug',
+							model: BlogCategories,
+						},
+					});
+				return JSON.parse(JSON.stringify(allAuthors));
+			} else {
+				const allAuthors = await Users.find({ member_role: MEMBER_ROLES.AUTHOR }).select('firstname secondname lastname avatar url');
+				return JSON.parse(JSON.stringify(allAuthors));
+			}
+		} catch (err) {
+			return {};
 		}
 	}, // DONE
 

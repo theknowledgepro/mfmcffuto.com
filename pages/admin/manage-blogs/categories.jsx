@@ -478,10 +478,10 @@ const ViewCategoryDetailsModal = ({ session, category, allCategories }) => {
 							<div className='mt-1 text-[13px] text-gray-500 text-center'>
 								Created Category On:
 								<div className='rounded-2 w-full px-2'>
-									<Moment format='LT'>{category?.createdAt}</Moment> - <Moment format='ddd'>{category?.createdAt}</Moment>,
+									<Moment className='text-[14px]' format='LT'>{category?.createdAt}</Moment> - <Moment className='text-[14px]' format='ddd'>{category?.createdAt}</Moment>,
 									<span className='ms-1'>
-										<Moment format='DD'>{category?.createdAt}</Moment>/<Moment format='MM'>{category?.createdAt}</Moment>/
-										<Moment format='YY'>{category?.createdAt}</Moment>
+										<Moment className='text-[14px]' format='DD'>{category?.createdAt}</Moment>/<Moment className='text-[14px]' format='MM'>{category?.createdAt}</Moment>/
+										<Moment className='text-[14px]' format='YY'>{category?.createdAt}</Moment>
 									</span>
 								</div>
 							</div>
@@ -505,10 +505,10 @@ const ViewCategoryDetailsModal = ({ session, category, allCategories }) => {
 					<div className='border-t border-zinc-300 pt-3 flex mt-3 flex-col'>
 						<RenderTitle title='Last Updated' />
 						<div className='w-full p-2'>
-							<Moment format='LT'>{category?.updatedAt}</Moment> - <Moment format='ddd'>{category?.updatedAt}</Moment>,
+							<Moment className='text-[14px]' format='LT'>{category?.updatedAt}</Moment> - <Moment className='text-[14px]' format='ddd'>{category?.updatedAt}</Moment>,
 							<span className='ms-1'>
-								<Moment format='DD'>{category?.updatedAt}</Moment>/<Moment format='MM'>{category?.updatedAt}</Moment>/
-								<Moment format='YY'>{category?.updatedAt}</Moment>
+								<Moment className='text-[14px]' format='DD'>{category?.updatedAt}</Moment>/<Moment className='text-[14px]' format='MM'>{category?.updatedAt}</Moment>/
+								<Moment className='text-[14px]' format='YY'>{category?.updatedAt}</Moment>
 							</span>
 						</div>
 					</div>

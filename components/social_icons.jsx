@@ -7,21 +7,20 @@ import { SvgIcons } from './icons';
 import { SITE_DATA } from '@/config';
 
 const SocialIcons = ({ sitesettings, defaultURL }) => {
-
 	return (
 		<div className={`${comp_styles.social_icons}`}>
-			{sitesettings?.facebookUrl !== defaultURL && (
-				<Link target='_blank' href={sitesettings?.facebookUrl} className={`${comp_styles.icon} facebook`}>
+			{sitesettings?.facebookUrl && sitesettings?.facebookUrl !== defaultURL && (
+				<Link target='_blank' href={sitesettings?.facebookUrl ?? ''} className={`${comp_styles.icon} facebook`}>
 					<SvgIcons.FaFacebookF />
 				</Link>
 			)}
-			{sitesettings?.instagramUrl !== defaultURL && (
-				<Link target='_blank' href={sitesettings?.instagramUrl} className={`${comp_styles.icon} instagram`}>
+			{sitesettings?.instagramUrl && sitesettings?.instagramUrl !== defaultURL && (
+				<Link target='_blank' href={sitesettings?.instagramUrl ?? ''} className={`${comp_styles.icon} instagram`}>
 					<SvgIcons.FaInstagram />
 				</Link>
 			)}
-			{sitesettings?.telegramUrl !== defaultURL && (
-				<Link target='_blank' href={sitesettings?.telegramUrl} className={`${comp_styles.icon} telegram`}>
+			{sitesettings?.telegramUrl && sitesettings?.telegramUrl !== defaultURL && (
+				<Link target='_blank' href={sitesettings?.telegramUrl ?? ''} className={`${comp_styles.icon} telegram`}>
 					<SvgIcons.FaTelegramPlane />
 				</Link>
 			)}
@@ -33,8 +32,8 @@ const SocialIcons = ({ sitesettings, defaultURL }) => {
 					<SvgIcons.FaWhatsapp />
 				</Link>
 			)}
-			{sitesettings?.youTubeUrl !== defaultURL && (
-				<Link target='_blank' href={sitesettings?.youTubeUrl} className={`${comp_styles.icon} youtube`}>
+			{sitesettings?.youTubeUrl && sitesettings?.youTubeUrl !== defaultURL && (
+				<Link target='_blank' href={sitesettings?.youTubeUrl ?? ''} className={`${comp_styles.icon} youtube`}>
 					<SvgIcons.FaYoutube />
 				</Link>
 			)}

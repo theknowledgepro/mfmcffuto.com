@@ -76,7 +76,7 @@ const ActivityLogs = ({ userAuth, activityLogs }) => {
 							<div key={i} className='w-full my-3 flex'>
 								<Avatar src={log?.user_id?.avatar} className='my-auto mr-2' />
 								<div className={`${backgroundColor(log?.deed)} shadow-sm rounded-[8px] text-center px-2 py-2`}>
-									<div className='text-[15px]'>{log.details}</div>
+									<div className='text-[16px]'>{log.details}</div>
 									<Divider className='bg-gray-500 my-1' />
 									<div className='px-2 flex flex-wrap font-medium-custom w-full justify-between'>
 										<div className='my-auto text-[15px] mr-2 text-gray-400'>
@@ -87,15 +87,30 @@ const ActivityLogs = ({ userAuth, activityLogs }) => {
 												} ${log?.user_id?.secondname ? log?.user_id?.secondname : ''}`}
 										</div>
 										<div className='flex'>
-											<div className='my-auto text-[12px] text-gray-400'>
-												<Moment format='ddd'>{log.createdAt}</Moment> - <Moment format='LT'>{log.createdAt}</Moment>
+											<div className='my-auto text-[14px] text-gray-400'>
+												<Moment className='text-[14px]' format='ddd'>
+													{log.createdAt}
+												</Moment>{' '}
+												-{' '}
+												<Moment className='text-[14px]' format='LT'>
+													{log.createdAt}
+												</Moment>
 											</div>
 											<div className='mx-1 my-auto'>
 												<BsDot />
 											</div>
-											<div className='my-auto text-[12px] text-gray-400'>
-												<Moment format='DD'>{log.createdAt}</Moment>/<Moment format='MM'>{log.createdAt}</Moment>/
-												<Moment format='YY'>{log.createdAt}</Moment>
+											<div className='my-auto text-[14px] text-gray-400'>
+												<Moment className='text-[14px]' format='DD'>
+													{log.createdAt}
+												</Moment>
+												/
+												<Moment className='text-[14px]' format='MM'>
+													{log.createdAt}
+												</Moment>
+												/
+												<Moment className='text-[14px]' format='YY'>
+													{log.createdAt}
+												</Moment>
 											</div>
 										</div>
 									</div>

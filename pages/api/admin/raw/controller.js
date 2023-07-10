@@ -383,7 +383,7 @@ const RawReqController = {
 					appendFileExtensionToFileKeyName: true,
 				});
 
-				const { title, slug, body, summary, tags, categories, meta_description, meta_keywords, published } = req.body;
+				const { title, slug, body, summary, tags, categories, meta_description, meta_keywords, published, author } = req.body;
 
 				const generatedSlug = slug ? slug.split(' ').join('-').toLowerCase() : title.split(' ').join('-').toLowerCase();
 				const newTitle = title?.charAt(0)?.toUpperCase() + title?.substring(1);
@@ -409,10 +409,14 @@ const RawReqController = {
 					published,
 					meta_description,
 					meta_keywords,
-					author: req?.user?._id,
+					author: author?._id,
 				});
 				await newBlog.save();
 
+				// ** RECORD BLOG AUTHOR IN DB
+				await Users.findOneAndUpdate({ _id: author?._id }, { $push: { articles: newBlog?._id } });
+
+				// ** RECORD BLOG CATEGORIES AND TAGS IN DB
 				for (let i = 0; i < categories?.length; i++)
 					await BlogCategories.findOneAndUpdate({ _id: categories[i] }, { $push: { blogs: newBlog?._id } });
 				for (let i = 0; i < tags?.length; i++) await BlogTags.findOneAndUpdate({ _id: tags[i] }, { $push: { blogs: newBlog?._id } });
@@ -430,7 +434,7 @@ const RawReqController = {
 				const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.EDIT_BLOG, adminId: req?.user?._id });
 				if (isRestricted)
 					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
-				const { uniqueID, title, slug, body, summary, tags, categories, meta_description, meta_keywords, published } = req.body;
+				const { uniqueID, title, slug, body, summary, tags, categories, meta_description, meta_keywords, published, author } = req.body;
 
 				const generatedSlug = slug ? slug.split(' ').join('-').toLowerCase() : title.split(' ').join('-').toLowerCase();
 				const newTitle = title?.charAt(0)?.toUpperCase() + title?.substring(1);
@@ -447,9 +451,16 @@ const RawReqController = {
 						meta_description,
 						meta_keywords,
 						published,
+						author: author?._id,
 					},
-					{ new: true }
+					{ new: false }
 				);
+
+				// ** RECORD BLOG AUTHOR IN DB
+				if (blogData?.author?._id !== author?._id) {
+					await Users.findOneAndUpdate({ _id: blogData?.author?._id }, { $pull: { articles: blogData?._id } });
+					await Users.findOneAndUpdate({ _id: author?._id }, { $push: { articles: blogData?._id } });
+				}
 
 				// ** FIRST, DELETE BLOG FROM TAGS AND CATEGORIES ASSOCIATED WITH THIS BLOG
 				for (let i = 0; i < blogData?.categories?.length; i++)
@@ -480,7 +491,8 @@ const RawReqController = {
 				});
 
 				// ** RETURN FEEDBACK UPDATE
-				return responseLogic({ req, res, status: 200, data: { message: 'Blog Updated Successfully!', updatedBlogData: blogData } });
+				const updatedBlogData = await Blogs.findOne({ uniqueID });
+				return responseLogic({ req, res, status: 200, data: { message: 'Blog Updated Successfully!', updatedBlogData } });
 			}
 			// ** DELETE BLOG
 			if (req.method === 'DELETE') {
@@ -502,10 +514,125 @@ const RawReqController = {
 				// ** DELETE BLOG FILE FROM CLOUD STORAGE
 				await deleteFile({ keyName: blogData?.thumbnail });
 
+				// ** REMOVE BLOG FROM AUTHOR LIST OF BLOGS
+				await Users.findOneAndUpdate({ _id: blogData?.author?._id }, { $pull: { articles: blogData?._id } });
+
 				// ** RECORD IN ACTIVITY_LOG DATABASE
 				await activityLog({
 					deed: ACTIVITY_TYPES.DELETE_BLOG.title,
 					details: `${ACTIVITY_TYPES.DELETE_BLOG.desc} - ${blogData?.title} with ID: ${blogData?.uniqueID}`,
+					user_id: req?.user?._id,
+				});
+				return responseLogic({ req, res, status: 200, data: { message: 'Blog Deleted Successfully!' } });
+			}
+
+			return responseLogic({ req, res, status: 404, data: { message: 'This route does not exist!' } });
+		} catch (err) {
+			return responseLogic({ res, catchError: err });
+		}
+	},
+	manageBlogAuthors: async (req, res) => {
+		try {
+			await connectDB();
+			if (req.user?.member_role !== MEMBER_ROLES.MASTER && req.user?.member_role !== MEMBER_ROLES.MANAGER)
+				return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
+
+			// ** ADD BLOG AUTHOR
+			if (req.method === 'POST') {
+				const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.CREATE_BLOG_AUTHOR, adminId: req?.user?._id });
+				if (isRestricted)
+					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
+
+				// ** UPLOAD BLOG AUTHOR AVATAR
+				const { fileData } = await uploadFile({
+					file: req.files?.avatar,
+					S3Folder: 'blog-authors',
+					appendFileExtensionToFileKeyName: true,
+				});
+
+				const { firstname, secondname, lastname, email, mobile, avatar, gender, about, social_handles } = req.body;
+
+				// ** CREATE NEW RECORD
+				const newBlogAuthor = await new Users({
+					firstname,
+					secondname,
+					lastname,
+					email,
+					mobile,
+					avatar: fileData?.Key,
+					gender,
+					about,
+					social_handles,
+				});
+				await newBlogAuthor.save();
+
+				// ** RECORD IN ACTIVITY_LOG DATABASE
+				await activityLog({
+					deed: ACTIVITY_TYPES.CREATE_BLOG_AUTHOR.title,
+					details: `${ACTIVITY_TYPES.CREATE_BLOG_AUTHOR.desc} - ${firstname} ${secondname} ${lastname}`,
+					user_id: req?.user?._id,
+				});
+				return responseLogic({ req, res, status: 200, data: { message: 'Author Added Successfully!' } });
+			}
+			// ** EDIT BLOG AUTHOR
+			if (req.method === 'PATCH') {
+				const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.EDIT_BLOG_AUTHOR, adminId: req?.user?._id });
+				if (isRestricted)
+					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
+				const { url, firstname, secondname, lastname, email, mobile, avatar, gender, about, social_handles } = req.body;
+
+				const blogAuthorData = await Users.findOneAndUpdate(
+					{ url },
+					{
+						firstname,
+						secondname,
+						lastname,
+						email,
+						mobile,
+						avatar,
+						gender,
+						about,
+						social_handles,
+					},
+					{ new: true }
+				);
+
+				// ** REPLACE THE FORMER AVATAR IF AND ONLY IF A FILE WAS SENT
+				if (req.files?.avatar) {
+					await uploadFile({ file: req?.files?.avatar, fileKeyNameToReplace: blogAuthorData?.avatar }).catch((err) => {
+						throw err;
+					});
+				}
+
+				// ** RECORD IN ACTIVITY_LOG DATABASE
+				await activityLog({
+					deed: ACTIVITY_TYPES.UPDATE_BLOG_AUTHOR.title,
+					details: `${ACTIVITY_TYPES.UPDATE_BLOG_AUTHOR.desc} - ${firstname} ${secondname} ${lastname}`,
+					user_id: req?.user?._id,
+				});
+
+				// ** RETURN FEEDBACK UPDATE
+				return responseLogic({ req, res, status: 200, data: { message: 'Author Updated Successfully!', updatedAuthorData: blogAuthorData } });
+			}
+			// ** DELETE BLOG AUTHOR
+			if (req.method === 'DELETE') {
+				const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.DELETE_BLOG_AUTHOR, adminId: req?.user?._id });
+				if (isRestricted)
+					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
+				const { author } = req?.query;
+				const blogAuthorData = await Users.findOneAndDelete({ url: author });
+
+				// ** DELETE ALL BLOGS AUTHORED BY THIS BLOG AUTHOR
+				for (let i = 0; i < blogAuthorData?.articles?.length; i++) await Blogs.deleteMany({ _id: blogAuthorData?.articles[i] });
+
+				// ** DELETE AVATAR FROM CLOUD STORAGE
+				if (blogAuthorData?.avatar.toString() !== process.env.DEFAULT_AVATAR.toString())
+					await deleteFile({ keyName: blogAuthorData?.avatar });
+
+				// ** RECORD IN ACTIVITY_LOG DATABASE
+				await activityLog({
+					deed: ACTIVITY_TYPES.DELETE_BLOG_AUTHOR.title,
+					details: `${ACTIVITY_TYPES.DELETE_BLOG_AUTHOR.desc} - ${blogData?.title} with ID: ${blogData?.uniqueID}`,
 					user_id: req?.user?._id,
 				});
 				return responseLogic({ req, res, status: 200, data: { message: 'Blog Deleted Successfully!' } });

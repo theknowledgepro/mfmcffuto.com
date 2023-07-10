@@ -68,7 +68,6 @@ const CreateTagFunctionality = ({ session, allTags, tag, isEdit }) => {
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
-			console.log({ session });
 			const res = await postDataAPI(API_ROUTES.MANAGE_BLOG_TAGS, tagData, session?.token);
 			if (res?.status === 200) {
 				setIsSubmitting(false);

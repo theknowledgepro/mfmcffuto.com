@@ -29,12 +29,6 @@ const UserSchema = new mongoose.Schema(
 			trim: true,
 			default: '',
 		},
-		username: {
-			type: String,
-			trim: true,
-			unique: true,
-			required: true,
-		},
 		email: {
 			type: String,
 			required: true,
@@ -45,13 +39,37 @@ const UserSchema = new mongoose.Schema(
 			type: String,
 			default: '',
 		},
-		password: {
-			type: String,
-			required: true,
-		},
 		avatar: {
 			type: String,
 			default: process.env.DEFAULT_AVATAR,
+		},
+		gender: {
+			type: String,
+			default: 'Male',
+		},
+		about: {
+			type: String,
+		},
+		social_handles: { type: Object },
+		articles: [
+			{
+				type: mongoose.Types.ObjectId,
+				ref: 'Blogs',
+			},
+		],
+		member_role: {
+			type: String,
+			default: MEMBER_ROLES.AUTHOR,
+		},
+		username: {
+			type: String,
+			trim: true,
+			unique: true,
+			required: false,
+		},
+		password: {
+			type: String,
+			required: false,
 		},
 		restrictions: {
 			// ** FOR ADMINS ONLY
@@ -60,17 +78,9 @@ const UserSchema = new mongoose.Schema(
 			type: Array,
 			required: false,
 		},
-		gender: {
-			type: String,
-			default: 'Male',
-		},
 		otp_secret: {
 			type: String,
 			required: false,
-		},
-		member_role: {
-			type: String,
-			default: MEMBER_ROLES.USER,
 		},
 		last_login: {
 			type: Date,

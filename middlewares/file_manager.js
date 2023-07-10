@@ -49,6 +49,7 @@ const uploadFile = async ({ file, S3Folder, fileKeyNameToReplace, appendFileExte
 };
 
 const deleteFile = async ({ keyName }) => {
+	if (!keyName) return false;
 	const isDeleted = await new Promise((resolve, reject) => {
 		s3.deleteObject(
 			{

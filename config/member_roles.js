@@ -1,7 +1,7 @@
 /** @format */
 
 module.exports = {
-	USER: 'USER',
+	AUTHOR: 'AUTHOR',
 	MASTER: 'MASTER',
 	MANAGER: 'MANAGER',
 };

@@ -28,6 +28,10 @@ module.exports = {
 	UPDATE_BLOG: { title: 'UPDATE_BLOG', desc: 'Updated Blog' },
 	DELETE_BLOG: { title: 'DELETE_BLOG', desc: 'Deleted Blog' },
 
+	CREATE_BLOG_AUTHOR: { title: 'CREATE_BLOG_AUTHOR', desc: 'Created Blog Author' },
+	UPDATE_BLOG_AUTHOR: { title: 'UPDATE_BLOG_AUTHOR', desc: 'Updated Blog Author' },
+	DELETE_BLOG_AUTHOR: { title: 'DELETE_BLOG_AUTHOR', desc: 'Deleted Blog Author' },
+
 	UPDATE_BLOG_SETTINGS: { title: 'UPDATE_BLOG_SETTINGS', desc: 'Updated Blog Section Settings' },
 
 	UPDATE_PAGE_SEO_DATA: { title: 'UPDATE_PAGE_SEO_DATA', desc: 'Updated SEO settings for ' },

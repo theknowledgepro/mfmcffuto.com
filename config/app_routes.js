@@ -20,6 +20,7 @@ module.exports = {
 	MANAGE_BLOG_TAGS: `/admin/manage-blogs/tags`,
 	MANAGE_BLOG_CATEGORIES: `/admin/manage-blogs/categories`,
 	MANAGE_BLOGS: `/admin/manage-blogs`,
+	MANAGE_BLOG_AUTHORS: `/admin/manage-blogs/authors`,
 	MANAGE_BLOGS_SETTINGS: `/admin/manage-blogs/settings`,
 	CONTACT_FORM_SUBMISSIONS: '/admin/contact-form-submissions',
 	MANAGE_ADMINS: '/admin/manage-admins',
