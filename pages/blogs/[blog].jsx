@@ -16,7 +16,7 @@ import {
 	WithDrawer,
 } from '@/components';
 import { APP_ROUTES, CUSTOM_UI_TYPES, SITE_DATA } from '@/config';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from '@/pages/pages_styles.module.css';
 import comp_styles from '@/components/components.module.css';
 import Grid from '@mui/material/Grid';
@@ -132,18 +132,20 @@ const BlogPage = ({
 	}, []);
 	const divRef = useRef(null);
 
-	// Page views count
-	const { data } = useSWR(
-		`/api/page-views?blog=${encodeURIComponent(blog.slug)}`,
-		async (url) => {
-			const res = await fetch(url);
-			return res.json();
-		},
-		{ revalidateOnFocus: false }
-	);
-	const views = data?.pageViews;
+	useEffect(() => {
+		// Page views count
+		const { data } = useSWR(
+			`/api/page-views?blog=${blog.slug}`,
+			async (url) => {
+				const res = await fetch(url);
+				return res.json();
+			},
+			{ revalidateOnFocus: false }
+		);
+		const views = data?.pageViews;
 
-	console.log({ views: pageViews });
+		console.log({ views: pageViews });
+	}, []);
 
 	return (
 		<WebLayout
