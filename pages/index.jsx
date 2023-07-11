@@ -14,7 +14,7 @@ import {
 	MeetAcadTeamSection,
 	GiveTithesAndOfferingsSection,
 	SermonsPreviewSection,
-	FellowshipGroupsPreview
+	FellowshipGroupsPreview,
 } from '@/components';
 import Slider from 'react-slick';
 import styles from '@/pages/pages_styles.module.css';
@@ -26,8 +26,9 @@ import React, { useRef } from 'react';
 import image1 from '@/assets/demo/1.jpg';
 import image2 from '@/assets/demo/2.jpg';
 import image3 from '@/assets/demo/3.jpg';
+import WebController from '@/pages/api/controller';
 
-const HomePage = ({ metatags, settings }) => {
+const HomePage = ({ metatags, settings, recentBlogs, blogsettings }) => {
 	const carouselSettings = {
 		dots: false,
 		infinite: true,
@@ -62,7 +63,7 @@ const HomePage = ({ metatags, settings }) => {
 	const useSlider = useRef(null);
 
 	return (
-		<WebLayout metatags={{ meta_title: `Home | ${SITE_DATA.OFFICIAL_NAME}`, ...metatags }} sitesettings={settings}>
+		<WebLayout metatags={metatags} sitesettings={settings}>
 			<Slider
 				className='relative'
 				ref={(slider) => {
@@ -99,12 +100,12 @@ const HomePage = ({ metatags, settings }) => {
 								</div>
 							</div>
 						</div>
-						<div className={`absolute flex items-center gap-2 font-semibold bottom-[10px] right-[15px]`}>
+						<div className={`absolute flex items-center gap-2 font-semibold bottom-[10px] xss:right-[15px] md:right-[25px]`}>
 							<ImageTag className='w-[40px] h-[40px]' src={ASSETS.LOGO} alt='logo' />
-							<div className='text-white pr-[5px]'>
+							<div className='line-height-1 text-white pr-[5px]'>
 								Dr. D.K. Olukoya
-								<div className='text-[12px]'>General Overseer</div>
-								<div className='text-[12px]'>MFM worldwide</div>
+								<div className='line-height-1 text-[12px]'>General Overseer</div>
+								<div className='line-height-1 text-[12px]'>MFM worldwide</div>
 							</div>
 						</div>
 					</div>
@@ -136,7 +137,7 @@ const HomePage = ({ metatags, settings }) => {
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
-				<RecentlyPublishedArticles />
+				<RecentlyPublishedArticles articles={recentBlogs} blogsettings={blogsettings} />
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-two)]`}>
@@ -162,13 +163,30 @@ const HomePage = ({ metatags, settings }) => {
 	);
 };
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res, query }) {
 	// ** GET SITE SETTINGS
-	// ** GET PAGE CONFIG FROM DB
+	const siteSettings = await WebController.getSiteSettings(req, res, true);
+
+	// ** GET BLOG SETTINGS
+	const blogSettings = await WebController.getBlogSettings(req, res, true);
+
+	// ** RECENT BLOGS
+	req.query = query;
+	req.query.limit = 6;
+	const recentBlogs = await WebController.getBlogsWithPopulatedFields(req, res, true);
+
 	return {
 		props: {
-			metatags: {},
-			settings: {},
+			metatags: JSON.parse(
+				JSON.stringify({
+					og_title: `${SITE_DATA.OFFICIAL_NAME}`,
+					twitter_site: siteSettings?.org_twitter_username,
+					meta_title: `${SITE_DATA.OFFICIAL_NAME}`,
+				})
+			),
+			settings: siteSettings,
+			blogsettings: blogSettings,
+			recentBlogs: recentBlogs?.length ? recentBlogs : [],
 		},
 	};
 }

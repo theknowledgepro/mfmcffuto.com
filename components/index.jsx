@@ -33,7 +33,6 @@ export { default as RouteChangeLinearProgress } from './route_change_linear_prog
 export { default as AboutUsIntro } from './about_us_intro';
 export { default as WorshipDays } from './worship_days';
 export { default as FromthePresidentsDesk } from './from_president_desk';
-export { default as RecentlyPublishedArticles } from './recently_published_articles';
 export { default as GalleryPreviewSection } from './gallery_preview';
 export { default as MeetCurrentExecutives } from './meet_current_excos';
 export { default as UpcomingEvents } from './upcoming_events';
@@ -41,10 +40,11 @@ export { default as MeetAcadTeamSection } from './meet_acad_team';
 export { default as GiveTithesAndOfferingsSection } from './tithes_and_offerings_preview';
 export { default as SermonsPreviewSection } from './sermons_preview_section';
 export { default as FellowshipGroupsPreview } from './fellowship_groups_preview';
+export { default as SeeMoreLink } from './see_more_link';
 
 // ** BLOG SECTION COMPONENTS
 export { default as CategoriesSection } from './blogs/categories_section';
-export { default as RecentBlogsSection } from './blogs/recent_blogs_section';
+export { default as RecentlyPublishedArticles } from './blogs/recently_published_articles';
 export { default as CategoryCard } from './blogs/category_card';
 export { default as BlogThumb } from './blogs/blog_thumb';
 export { default as TagChip } from './blogs/tag_chip';

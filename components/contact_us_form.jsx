@@ -60,7 +60,7 @@ const ContactUsForm = ({ hideLogo, sitesettings }) => {
 			<div className={`w-full ${comp_styles.contact_form_wrapper}`}>
 				<div className={`${comp_styles.contact_form_header} border-b border-zinc-300 pb-2`}>
 					<h2 className={comp_styles.title}>
-						Contact <span className='color-primary'>Us!</span>
+						Contact <span className='color-primary text-[30px]'>Us!</span>
 					</h2>
 
 					<SocialIcons

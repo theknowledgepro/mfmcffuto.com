@@ -12,7 +12,7 @@ const CategoryChip = ({ category, hideLink }) => {
 		<React.Fragment>
 			{hideLink && (
 				<span
-					className='btn-animated text-decor-none mb-1 mx-1 text-[13px] font-medium-custom px-2 shadow-sm text-white rounded-[5px]'
+					className='btn-animated line-height-1 text-decor-none mb-1 mx-1 text-[13px] font-medium-custom px-2 shadow-sm text-white rounded-[5px]'
 					style={{ background: stringToColor(category?.title) }}>
 					{category?.title}
 				</span>
@@ -20,7 +20,7 @@ const CategoryChip = ({ category, hideLink }) => {
 			{!hideLink && (
 				<Link
 					href={categorySlug}
-					className='btn-animated text-decor-none mb-1 mx-1 text-[13px] font-medium-custom px-2 shadow-sm text-white rounded-[5px]'
+					className='btn-animated line-height-1 text-decor-none mb-1 mx-1 text-[13px] font-medium-custom px-2 shadow-sm text-white rounded-[5px]'
 					style={{ background: stringToColor(category?.title) }}>
 					{category?.title}
 				</Link>

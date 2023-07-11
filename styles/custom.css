@@ -53,6 +53,9 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.line-height-1 {
+	line-height: 1.4rem !important;
+}
 .truncate-overflow {
 	/* --max-lines: 3; */
 	position: relative;

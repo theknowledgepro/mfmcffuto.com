@@ -1,6 +1,6 @@
 /** @format */
 
-import { WebLayout, CategoriesSection, RecentBlogsSection, BlogCard, BlogSectionCommonFooter } from '@/components';
+import { WebLayout, CategoriesSection, RecentlyPublishedArticles, BlogCard, BlogSectionCommonFooter } from '@/components';
 import { APP_ROUTES, SITE_DATA } from '@/config';
 import React from 'react';
 import styles from '@/pages/pages_styles.module.css';
@@ -40,7 +40,7 @@ const BlogsIntroPage = ({ metatags, settings, blogsettings, categories, featured
 					</Grid>
 				</div>
 				<CategoriesSection blogsettings={blogsettings} categories={categories} />
-				<RecentBlogsSection blogsettings={blogsettings} recentBlogs={recentBlogs} />
+				<RecentlyPublishedArticles blogsettings={blogsettings} articles={recentBlogs} />
 				<BlogSectionCommonFooter />
 			</div>
 		</WebLayout>
@@ -78,18 +78,18 @@ export async function getServerSideProps({ req, res, query }) {
 		props: {
 			metatags: JSON.parse(
 				JSON.stringify({
-					og_title: `Blogs | ${SITE_DATA.OFFICIAL_NAME}`,
+					og_title: `Articles & Blogs | ${SITE_DATA.OFFICIAL_NAME}`,
 					og_description: seoData?.meta_description,
 					og_url: APP_ROUTES.BLOGS,
 					og_image: siteSettings?.logo_url,
 
-					twitter_title: `Blogs | ${SITE_DATA.OFFICIAL_NAME}`,
+					twitter_title: `Articles & Blogs | ${SITE_DATA.OFFICIAL_NAME}`,
 					twitter_description: seoData?.meta_description,
 					twitter_card: 'summary_large_image',
 					twitter_image: siteSettings?.logo_url,
 					twitter_site: siteSettings?.org_twitter_username,
 
-					meta_title: `Blogs | ${SITE_DATA.OFFICIAL_NAME}`,
+					meta_title: `Articles & Blogs | ${SITE_DATA.OFFICIAL_NAME}`,
 					...seoData,
 				})
 			),

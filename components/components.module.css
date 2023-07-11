@@ -703,3 +703,18 @@
 	color: #fff;
 	border: 1px solid #fff;
 }
+
+/* SEE MORE */
+.see_more {
+	font-weight: 600;
+	font-family: var(--font-family-medium);
+	font-size: 16px;
+	text-align: right;
+	width: 100% !important;
+	margin: 15px 0 0;
+	cursor: pointer;
+}
+
+.see_more:hover {
+	opacity: 0.7;
+}

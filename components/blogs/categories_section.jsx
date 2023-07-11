@@ -15,7 +15,7 @@ const CategoriesSection = ({ categories = [], blogsettings, isCategoryPage }) =>
 		<section className='w-100 py-3'>
 			{!isCategoryPage && (
 				<React.Fragment>
-					<h1 className={styles.section_title}>Explore Blog Categories</h1>
+					<h1 className={styles.section_title}>Explore Blog Categories!</h1>
 					<h2 className={styles.section_sub_title}>Wholesome articles for your taste!</h2>
 				</React.Fragment>
 			)}
