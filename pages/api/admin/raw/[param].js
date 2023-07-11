@@ -21,6 +21,10 @@ const RawRouter = async (incomingReqObj, incomingResObj) => {
 			return authenticate(req, res, RawReqController.manageBlogs);
 		case 'blogauthors':
 			return authenticate(req, res, RawReqController.manageBlogAuthors);
+
+		// ** WORSHIP DAYS ACTION ROUTES
+		case 'worshipevent':
+			return authenticate(req, res, RawReqController.manageWorshipEvent);
 		// // ** SITE SETTINGS ROUTES
 		// case 'update-site-settings':
 		// 	return authenticate(req, res, RawReqController.updateSiteSettings);

@@ -27,8 +27,9 @@ import image1 from '@/assets/demo/1.jpg';
 import image2 from '@/assets/demo/2.jpg';
 import image3 from '@/assets/demo/3.jpg';
 import WebController from '@/pages/api/controller';
+import AdminController from '@/pages/api/admin/controller';
 
-const HomePage = ({ metatags, settings, recentBlogs, blogsettings }) => {
+const HomePage = ({ metatags, settings, recentBlogs, blogsettings, worshipDays }) => {
 	const carouselSettings = {
 		dots: false,
 		infinite: true,
@@ -117,7 +118,7 @@ const HomePage = ({ metatags, settings, recentBlogs, blogsettings }) => {
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
-				<WorshipDays />
+				<WorshipDays worshipDays={worshipDays} />
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-two)]`}>
@@ -175,6 +176,8 @@ export async function getServerSideProps({ req, res, query }) {
 	req.query.limit = 6;
 	const recentBlogs = await WebController.getBlogsWithPopulatedFields(req, res, true);
 
+	// ** GET WORSHIP DAYS
+	const worshipDays = await AdminController.getAllWorshipDays(req, res, true);
 	return {
 		props: {
 			metatags: JSON.parse(
@@ -187,6 +190,7 @@ export async function getServerSideProps({ req, res, query }) {
 			settings: siteSettings,
 			blogsettings: blogSettings,
 			recentBlogs: recentBlogs?.length ? recentBlogs : [],
+			worshipDays: worshipDays?.data?.length ? worshipDays?.data : [],
 		},
 	};
 }

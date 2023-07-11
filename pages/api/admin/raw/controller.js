@@ -7,12 +7,26 @@ const Users = require('@/models/user_model');
 const BlogTags = require('@/models/blog_tags_model');
 const BlogCategories = require('@/models/blog_categories_model');
 const Blogs = require('@/models/blog_model');
+const WorshipDays = require('@/models/worship_days_model');
+const UpComingEvents = require('@/models/upcoming_events_model');
 const activityLog = require('@/middlewares/activity_log');
 const validate = require('@/middlewares/validate');
 const { uploadFile, deleteFile } = require('@/middlewares/file_manager');
 const { v4: uuidv4 } = require('uuid');
 const CheckAdminRestriction = require('@/middlewares/check_admin_restriction');
 const { ADMIN_PANEL_ACTIONS, MEMBER_ROLES, ACTIVITY_TYPES } = require('@/config');
+
+const capitalizeFirstLetter = (word) => {
+	return word?.trim()?.charAt(0)?.toUpperCase() + word?.substring(1);
+};
+
+const capitalizeFirstLetterOfEachWord = (words) => {
+	const Words = words.split(' ');
+	const newWords = Words.map((word, index) => {
+		return capitalizeFirstLetter(word);
+	});
+	return newWords.toString().split(',').join(' ');
+};
 
 const RawReqController = {
 	createAdmin: async (req, res) => {
@@ -254,7 +268,7 @@ const RawReqController = {
 				});
 
 				const { title, description, slug, type_writer_strings, meta_description, meta_keywords, published } = req.body;
-				const generatedSlug = slug ? slug.split(' ').join('-').toLowerCase() : title.split(' ').join('-').toLowerCase();
+				const generatedSlug = slug ? slug?.trim().split(' ').join('-').toLowerCase() : title?.trim().split(' ').join('-').toLowerCase();
 				const newTitle = title?.trim()?.charAt(0)?.toUpperCase() + title?.substring(1);
 
 				// ** GENERATE UNIQUE ID
@@ -296,7 +310,7 @@ const RawReqController = {
 					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 				const { uniqueID, title, description, slug, type_writer_strings, meta_description, meta_keywords, published } = req.body;
 
-				const generatedSlug = slug ? slug.split(' ').join('-').toLowerCase() : title.split(' ').join('-').toLowerCase();
+				const generatedSlug = slug ? slug?.trim().split(' ').join('-').toLowerCase() : title?.trim().split(' ').join('-').toLowerCase();
 				const newTitle = title?.charAt(0)?.toUpperCase() + title?.substring(1);
 
 				// ** RECORD IN DB
@@ -385,7 +399,7 @@ const RawReqController = {
 
 				const { title, slug, body, summary, tags, categories, meta_description, meta_keywords, published, author } = req.body;
 
-				const generatedSlug = slug ? slug.split(' ').join('-').toLowerCase() : title.split(' ').join('-').toLowerCase();
+				const generatedSlug = slug ? slug?.trim().split(' ').join('-').toLowerCase() : title?.trim().split(' ').join('-').toLowerCase();
 				const newTitle = title?.charAt(0)?.toUpperCase() + title?.substring(1);
 
 				// ** GENERATE UNIQUE ID
@@ -436,7 +450,7 @@ const RawReqController = {
 					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 				const { uniqueID, title, slug, body, summary, tags, categories, meta_description, meta_keywords, published, author } = req.body;
 
-				const generatedSlug = slug ? slug.split(' ').join('-').toLowerCase() : title.split(' ').join('-').toLowerCase();
+				const generatedSlug = slug ? slug?.trim().split(' ').join('-').toLowerCase() : title?.trim().split(' ').join('-').toLowerCase();
 				const newTitle = title?.charAt(0)?.toUpperCase() + title?.substring(1);
 
 				const blogData = await Blogs.findOneAndUpdate(
@@ -562,9 +576,9 @@ const RawReqController = {
 
 				// ** CREATE NEW RECORD
 				const newBlogAuthor = await new Users({
-					firstname,
-					secondname,
-					lastname,
+					firstname: capitalizeFirstLetter(firstname),
+					secondname: capitalizeFirstLetter(secondname),
+					lastname: capitalizeFirstLetter(lastname),
 					email,
 					mobile,
 					avatar: fileData?.Key,
@@ -640,10 +654,124 @@ const RawReqController = {
 				// ** RECORD IN ACTIVITY_LOG DATABASE
 				await activityLog({
 					deed: ACTIVITY_TYPES.DELETE_BLOG_AUTHOR.title,
-					details: `${ACTIVITY_TYPES.DELETE_BLOG_AUTHOR.desc} - ${blogData?.title} with ID: ${blogData?.uniqueID}`,
+					details: `${ACTIVITY_TYPES.DELETE_BLOG_AUTHOR.desc} - ${blogAuthorData?.lastname} ${blogAuthorData?.firstname} ${blogAuthorData?.secondname}`,
 					user_id: req?.user?._id,
 				});
-				return responseLogic({ req, res, status: 200, data: { message: 'Blog Deleted Successfully!' } });
+				return responseLogic({ req, res, status: 200, data: { message: 'Blog Author Deleted Successfully!' } });
+			}
+
+			return responseLogic({ req, res, status: 404, data: { message: 'This route does not exist!' } });
+		} catch (err) {
+			return responseLogic({ res, catchError: err });
+		}
+	},
+
+	// ** WORSHIP EVENT CTRLERS
+	manageWorshipEvent: async (req, res) => {
+		try {
+			await connectDB();
+			if (req.user?.member_role !== MEMBER_ROLES.MASTER && req.user?.member_role !== MEMBER_ROLES.MANAGER)
+				return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
+
+			// ** ADD WORSHIP DAY
+			if (req.method === 'POST') {
+				const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.CREATE_DAY_OF_WORSHIP, adminId: req?.user?._id });
+				if (isRestricted)
+					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
+
+				// ** UPLOAD THUMBNAIL
+				const { fileData } = await uploadFile({
+					file: req.files?.thumbnail,
+					S3Folder: 'worship-days',
+					appendFileExtensionToFileKeyName: true,
+				});
+
+				const { title, description, quote, quote_author, thumbnail, day, venue, time, published } = req.body;
+
+				// ** CREATE NEW RECORD
+				const newWorshipDay = await new WorshipDays({
+					title: capitalizeFirstLetterOfEachWord(title),
+					description,
+					quote,
+					quote_author: capitalizeFirstLetter(quote_author),
+					thumbnail: fileData?.Key,
+					day,
+					venue: capitalizeFirstLetter(venue),
+					time,
+					published,
+				});
+				await newWorshipDay.save();
+
+				// ** RECORD IN ACTIVITY_LOG DATABASE
+				await activityLog({
+					deed: ACTIVITY_TYPES.CREATE_DAY_OF_WORSHIP.title,
+					details: `${ACTIVITY_TYPES.CREATE_DAY_OF_WORSHIP.desc} - ${title}`,
+					user_id: req?.user?._id,
+				});
+				return responseLogic({ req, res, status: 200, data: { message: 'Worship Day Added Successfully!' } });
+			}
+			// ** EDIT WORSHIP DAY
+			if (req.method === 'PATCH') {
+				const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.EDIT_DAY_OF_WORSHIP, adminId: req?.user?._id });
+				if (isRestricted)
+					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
+				const { _id, title, description, quote, quote_author, thumbnail, day, venue, time, published } = req.body;
+
+				const worshipDayData = await WorshipDays.findOneAndUpdate(
+					{ _id },
+					{
+						title: capitalizeFirstLetterOfEachWord(title),
+						description,
+						quote,
+						quote_author: capitalizeFirstLetter(quote_author),
+						day,
+						venue: capitalizeFirstLetter(venue),
+						time,
+						published,
+					},
+					{ new: true }
+				);
+
+				// ** REPLACE THE FORMER THUMBNAIL IF AND ONLY IF A FILE WAS SENT
+				if (req.files?.thumbnail) {
+					await uploadFile({ file: req?.files?.thumbnail, fileKeyNameToReplace: worshipDayData?.thumbnail }).catch((err) => {
+						throw err;
+					});
+				}
+
+				// ** RECORD IN ACTIVITY_LOG DATABASE
+				await activityLog({
+					deed: ACTIVITY_TYPES.UPDATE_DAY_OF_WORSHIP.title,
+					details: `${ACTIVITY_TYPES.UPDATE_DAY_OF_WORSHIP.desc} - ${title}`,
+					user_id: req?.user?._id,
+				});
+
+				// ** RETURN FEEDBACK UPDATE
+				return responseLogic({
+					req,
+					res,
+					status: 200,
+					data: { message: 'Worship Day Updated Successfully!', updatedAuthorData: worshipDayData },
+				});
+			}
+			// ** DELETE WORSHIP DAY
+			if (req.method === 'DELETE') {
+				const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.DELETE_DAY_OF_WORSHIP, adminId: req?.user?._id });
+				if (isRestricted)
+					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
+
+				const worshipData = await WorshipDays.findOneAndDelete({ _id: req.query._id });
+
+				// ** DELETE THUMBNAIL FROM CLOUD STORAGE
+				if (worshipData?.thumbnail) await deleteFile({ keyName: worshipData?.thumbnail });
+
+				// ** RECORD IN ACTIVITY_LOG DATABASE
+				await activityLog({
+					deed: ACTIVITY_TYPES.DELETE_DAY_OF_WORSHIP.title,
+					details: `${ACTIVITY_TYPES.DELETE_DAY_OF_WORSHIP.desc} - ${worshipData?.title}`,
+					user_id: req?.user?._id,
+				});
+				return responseLogic({ req, res, status: 200, data: { message: 'Worship Day Deleted Successfully!' } });
 			}
 
 			return responseLogic({ req, res, status: 404, data: { message: 'This route does not exist!' } });

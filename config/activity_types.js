@@ -34,5 +34,10 @@ module.exports = {
 
 	UPDATE_BLOG_SETTINGS: { title: 'UPDATE_BLOG_SETTINGS', desc: 'Updated Blog Section Settings' },
 
+
+	CREATE_DAY_OF_WORSHIP: { title: 'CREATE_DAY_OF_WORSHIP', desc: 'Created Worship Day' },
+	UPDATE_DAY_OF_WORSHIP: { title: 'UPDATE_DAY_OF_WORSHIP', desc: 'Updated Worship Day' },
+	DELETE_DAY_OF_WORSHIP: { title: 'DELETE_DAY_OF_WORSHIP', desc: 'Deleted Worship Day' },
+
 	UPDATE_PAGE_SEO_DATA: { title: 'UPDATE_PAGE_SEO_DATA', desc: 'Updated SEO settings for ' },
 };

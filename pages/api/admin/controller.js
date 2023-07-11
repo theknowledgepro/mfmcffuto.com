@@ -13,6 +13,7 @@ const BlogCategories = require('@/models/blog_categories_model');
 const Blogs = require('@/models/blog_model');
 const { MEMBER_ROLES, ADMIN_PANEL_ACTIONS, ACTIVITY_TYPES } = require('@/config');
 const CheckAdminRestriction = require('@/middlewares/check_admin_restriction');
+const WorshipDays = require('@/models/worship_days_model');
 
 class APIfeatures {
 	constructor(query, queryString) {
@@ -177,13 +178,25 @@ const AdminController = {
 				if (isRestricted)
 					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 
-				const { show_comments, show_views, no_of_articles_on_category_card, categories_section_typewriter, blog_preview_card_custom_display } = req.body;
+				const {
+					show_comments,
+					show_views,
+					no_of_articles_on_category_card,
+					categories_section_typewriter,
+					blog_preview_card_custom_display,
+				} = req.body;
 
 				const blogSettings = await SiteSettings.findOneOrCreate(
 					{ type: 'Blog-Settings' },
 					{
 						type: 'Blog-Settings',
-						config: { show_comments, show_views, no_of_articles_on_category_card, categories_section_typewriter, blog_preview_card_custom_display },
+						config: {
+							show_comments,
+							show_views,
+							no_of_articles_on_category_card,
+							categories_section_typewriter,
+							blog_preview_card_custom_display,
+						},
 					}
 				).catch((err) => {
 					throw err;
@@ -193,7 +206,15 @@ const AdminController = {
 				if (blogSettings)
 					await SiteSettings.findOneAndUpdate(
 						{ type: 'Blog-Settings' },
-						{ config: { show_comments, show_views, no_of_articles_on_category_card, categories_section_typewriter, blog_preview_card_custom_display } }
+						{
+							config: {
+								show_comments,
+								show_views,
+								no_of_articles_on_category_card,
+								categories_section_typewriter,
+								blog_preview_card_custom_display,
+							},
+						}
 					);
 
 				// ** RECORD IN ACTIVITY_LOG DATABASE
@@ -310,6 +331,23 @@ const AdminController = {
 				})
 				.sort({ createdAt: -1 });
 			return responseLogic({ SSG: SSG, req, res, status: 200, data: { results } });
+		} catch (err) {
+			return responseLogic({ SSG: SSG, res, catchError: err });
+		}
+	},
+
+	// ** WORSHIP DAYS CONTROLLER
+	getAllWorshipDays: async (req, res, SSG = false) => {
+		try {
+			if (req.method !== 'GET') return responseLogic({ SSG: SSG, req, res, status: 404, data: { message: 'This route does not exist!' } });
+			await connectDB();
+
+			let select;
+			if (req.user?.member_role !== MEMBER_ROLES.MASTER && req.user?.member_role !== MEMBER_ROLES.MANAGER)
+				select = `-_id -createdAt -updatedAt -__v`;
+
+			const results = await WorshipDays.find({}).select(select).sort({ createdAt: -1 });
+			return responseLogic({ SSG: SSG, req, res, status: 200, data: results });
 		} catch (err) {
 			return responseLogic({ SSG: SSG, res, catchError: err });
 		}

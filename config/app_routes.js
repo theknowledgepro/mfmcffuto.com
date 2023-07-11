@@ -33,6 +33,8 @@ module.exports = {
 	SITE_SETTINGS: '/admin/site-settings',
 	ACTIVITY_LOGS: '/admin/activity-logs',
 
+	MANAGE_DAYS_OF_WORSHIP: '/admin/days-of-worship',
+
 	// ** AUTHENTICATION ROUTES
 	LOGIN: '/admin/login',
 	FORGOT_PASSWORD: '/admin/forgot-password',

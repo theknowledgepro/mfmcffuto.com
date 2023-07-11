@@ -59,6 +59,7 @@ import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
 import ContactMailSharpIcon from '@mui/icons-material/ContactMailSharp';
 import AttachEmailSharpIcon from '@mui/icons-material/AttachEmailSharp';
 import SendSharpIcon from '@mui/icons-material/SendSharp';
+import ChurchOutlinedIcon from '@mui/icons-material/ChurchOutlined';
 
 const AdminDashboardNavItems1 = [
 	{ name: 'Dashboard', icon: <FlutterDashIcon className={admin_comp_styles.nav_icon} />, href: APP_ROUTES.ADMIN_DASHBOARD, id: 'dashboardlink' },
@@ -132,6 +133,12 @@ const AdminDashboardNavItems1 = [
 				id: 'blogsmanagae',
 			},
 		],
+	},
+	{
+		name: 'Days Of Worship',
+		icon: <ChurchOutlinedIcon className={admin_comp_styles.nav_icon} />,
+		href: APP_ROUTES.MANAGE_DAYS_OF_WORSHIP,
+		id: 'daysofworship',
 	},
 	{
 		name: 'Upcoming Events',

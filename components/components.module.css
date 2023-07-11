@@ -358,7 +358,7 @@
 
 @media screen and (max-width: 400px) {
 	.flip_card {
-		margin: 15px 10px;
+		margin: 15px 0px;
 	}
 }
 /* This container is needed to position the front and back side */
@@ -391,6 +391,7 @@
 /* Position the front and back side */
 .flip_card_front,
 .flip_card_back {
+	overflow: hidden !important;
 	position: absolute;
 	display: flex;
 	align-items: center;

@@ -21,6 +21,9 @@ module.exports = {
 	MANAGE_BLOGS_SETTINGS: `admin/blog-settings`,
 	GET_BLOG_CONTENT: 'admin/blog-content',
 
+	// DAYS OF WORSHIP ACTION ROUTES
+	MANAGE_DAYS_OF_WORSHIP: 'admin/raw/worshipevent',
+
 	GET_ALL_ADMINS: 'admin/all-admins',
 	GET_ACTIVITY_LOGS: 'admin/activity-logs',
 
