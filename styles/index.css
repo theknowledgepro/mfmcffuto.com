@@ -18,12 +18,12 @@
 
 @font-face {
 	font-family: 'YsabeauInfant';
-	src: url('./fonts/FiraSans-Regular.ttf');
+	src: url('./fonts/Saira-Regular.ttf');
 	font-weight: 500;
 }
 @font-face {
 	font-family: 'YsabeauInfant-Medium';
-	src: url('./fonts/FiraSans-Medium.ttf');
+	src: url('./fonts/Saira-Medium.ttf');
 	font-weight: 600;
 }
 * {
