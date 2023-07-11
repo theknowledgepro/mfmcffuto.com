@@ -30,7 +30,7 @@ const BlogCard = ({ blog, blogsettings, responsiveSizes = { xs: 12, sm: 4, md: 6
 						style={{ '--image-color': stringToColor(blog?.title), maxHeight: '55%', borderRadius: '0px' }}
 						className={styles.blog_card_wrapper}>
 						<ImageTag
-							src={`${CLOUD_ASSET_BASEURL}/${blog?.thumbnail?.trim()}`}
+							src={blog?.thumbnail ? `${CLOUD_ASSET_BASEURL}/${blog?.thumbnail?.trim()}` : ASSETS.LOGO}
 							className={`border ${styles.blog_img}`}
 							style={{ borderRadius: '0' }}
 							alt={blog?.title}
@@ -160,7 +160,7 @@ const BlogCard = ({ blog, blogsettings, responsiveSizes = { xs: 12, sm: 4, md: 6
 		<Grid item={true} {...responsiveSizes} className={`rounded-md my-auto ${isMatchWidth ? 'p-1' : 'p-2'}`}>
 			<Box sx={{ height: { ...responsiveHeight } }} className='relative flex flex-col items-baseline justify-end w-full rounded-sm'>
 				<Paper title={blog?.title} style={{ '--image-color': stringToColor(blog?.title) }} className={styles.blog_card_wrapper}>
-					<ImageTag src={`${CLOUD_ASSET_BASEURL}/${blog?.thumbnail?.trim()}`} className={styles.blog_img} alt={blog?.title} />
+					<ImageTag src={blog?.thumbnail ? `${CLOUD_ASSET_BASEURL}/${blog?.thumbnail?.trim()}` : ASSETS.LOGO} className={styles.blog_img} alt={blog?.title} />
 					<div className='absolute z-[1000] p-2 left-0 top-0 w-full flex flex-wrap items-start justify-start'>
 						{blog?.categories?.slice(0, isMatchWidth !== undefined && isMatchWidth && size === 'SMALL' ? 1 : 2)?.map((category, i) => (
 							<CategoryChip hideLink={true} category={category} key={i} />
