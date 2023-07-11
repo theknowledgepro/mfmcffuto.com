@@ -373,11 +373,7 @@ const BlogPage = ({
 					<div className='w-full pb-5 mb-5'>
 						<h1 className={`${comp_styles.section_title} blog-text-theme`}>You May Also Like...</h1>
 						<Divider className='w-full mt-2 mb-5' sx={{ background: dividerBgColor }} />
-						<Grid
-							spacing={0}
-							columns={{ xs: 12, sm: 8, md: 12 }}
-							container={true}
-							className='w-full flex items-center justify-center'>
+						<Grid spacing={0} columns={{ xs: 12, sm: 8, md: 12 }} container={true} className='w-full flex items-center justify-center'>
 							{youMayAlsoLike.map((blog, i) => (
 								<BlogCard
 									responsiveSizes={{ xs: 12, sm: 4, md: 4 }}
@@ -448,6 +444,7 @@ export async function getServerSideProps({ req, res, query }) {
 	req.query.limit = 12;
 	const recentBlogs = await WebController.getBlogsWithPopulatedFields(req, res, true);
 
+	console.log({ blogsRelatedByTags, blogsRelatedByCategories });
 	return {
 		props: {
 			metatags: JSON.parse(

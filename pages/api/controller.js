@@ -316,6 +316,7 @@ const WebController = {
 				)
 			);
 		} catch (err) {
+			console.log({ err });
 			return {};
 		}
 	}, // DONE

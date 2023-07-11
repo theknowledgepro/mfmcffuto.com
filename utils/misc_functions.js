@@ -39,3 +39,15 @@ export const stringToColor = (string = 'fff', saturation = 95, lightness = 45) =
 	}
 	return `hsl(${hash % 360}, ${saturation}%, ${lightness}%)`;
 };
+
+export const makeObectArrayUniqueByValueIndex = ({ array, index }) => {
+    const flag = {};
+    const uniqueArray = [];
+    array.forEach(elem => {
+        if (!flag[elem[index]]) {
+            flag[elem[index]] = true;
+            uniqueArray.push(elem);
+        }
+    })
+    return uniqueArray;
+}
