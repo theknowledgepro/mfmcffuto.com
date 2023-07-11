@@ -444,7 +444,7 @@ export async function getServerSideProps({ req, res, query }) {
 	req.query.limit = 12;
 	const recentBlogs = await WebController.getBlogsWithPopulatedFields(req, res, true);
 
-	console.log({ blogsRelatedByTags, blogsRelatedByCategories });
+	// console.log({ blogsRelatedByTags, blogsRelatedByCategories });
 	return {
 		props: {
 			metatags: JSON.parse(

@@ -107,7 +107,7 @@ const WebController = {
 				.sort({ updatedAt: -1 }); // ** FETCHES RECENTLY UPDATED CATEGORY
 
 			const newData =
-				allCategories.length === 1
+				allCategories.filter(index => index?.blogs?.length > 0).length === 1
 					? allCategories
 					: allCategories
 							.sort((obj1, obj2) => (obj1.blogs?.length < obj2.blogs?.length ? 1 : obj1.blogs?.length > obj2.blogs?.length ? -1 : 0)) // ** SORTS THE ARRAY BY LENGTH OF BLOGS
