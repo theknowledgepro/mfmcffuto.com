@@ -56,6 +56,12 @@
 .line-height-1 {
 	line-height: 1.4rem !important;
 }
+.line-height-1b {
+	line-height: 1.6rem !important;
+}
+.line-height-2 {
+	line-height: 2.6rem !important;
+}
 .truncate-overflow {
 	/* --max-lines: 3; */
 	position: relative;

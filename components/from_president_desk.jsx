@@ -8,13 +8,13 @@ import { ImageTag } from '.';
 const FromthePresidentsDesk = () => {
 	return (
 		<section className='w-full flex flex-col items-center justify-center mb-5'>
-			<h2 style={{ fontFamily: 'var(--font-family-medium)' }} className={`font-semibold text-[30px] text-center w-full my-[20px]`}>
+			<h2 style={{ fontFamily: 'var(--font-family-medium)' }} className={`font-semibold text-[30px] text-center line-height-2 w-full my-[20px]`}>
 				From the<span className='text-[var(--color-primary)] text-[30px] mx-2'>Presidents's</span>Desk...
 			</h2>
 			<div className={`items-center justify-center grid xss:grid-cols-1 md:grid-cols-2`}>
 				<div className={`col-span-1 mb-5`}>
 					<div className={`xss:text-[26px] md:text-[40px] font-medium-custom mt-3 color-primary`}>His Shekinah Glory!</div>
-					<div className={`font-medium-custom`}>
+					<div className={`mt-2 font-medium-custom`}>
 						Fellowship, Intimacy & Partnership <br />
 						(Semester's Emphasis)
 					</div>

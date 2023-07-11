@@ -6,8 +6,10 @@ import React from 'react';
 import styles from '@/pages/pages_styles.module.css';
 import Grid from '@mui/material/Grid';
 import WebController from '@/pages/api/controller';
+import { CustomizeAppBackground } from '@/utils/customize_bg';
 
 const BlogsIntroPage = ({ metatags, settings, blogsettings, categories, featuredBlogs, recentBlogs }) => {
+	CustomizeAppBackground({ color: 'var(--bg-fair-one)' });
 	return (
 		<WebLayout headerOriginalBgColor={true} metatags={metatags} sitesettings={settings}>
 			<div className={`${styles.page_padding} ${styles.page_top_margin} `}>

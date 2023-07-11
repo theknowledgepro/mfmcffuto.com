@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { AdminLayout, MuiXDataGridTable, MuiModal, SocialIcons } from '@/components';
-import { MEMBER_ROLES, API_ROUTES, APP_ROUTES, SITE_DATA } from '@/config';
+import { MEMBER_ROLES, API_ROUTES, APP_ROUTES, SITE_DATA, ASSETS } from '@/config';
 import { Box, Button, CircularProgress, InputAdornment, Avatar, TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteDataAPI, patchFormDataAPI, postFormDataAPI } from '@/utils/api_client_side';
@@ -70,7 +70,7 @@ const CreateAuthorFunctionality = ({ isEdit, author, allAuthors, session }) => {
 	const handleChangeAvatar = (e) => {
 		setAuthorData({
 			...authorData,
-			avatar: file ? avatar : e.target?.value === 'Female' ? SITE_DATA.DEFAULT_FEMALE_AVATAR : SITE_DATA.DEFAULT_MALE_AVATAR,
+			avatar: file ? avatar : e.target?.value === 'Female' ? ASSETS.FEMALE_AVATAR.src : ASSETS.MALE_AVATAR.src,
 		});
 	};
 

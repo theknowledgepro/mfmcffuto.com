@@ -33,6 +33,7 @@ import DoneAllTwoToneIcon from '@mui/icons-material/DoneAllTwoTone';
 import { SvgIcons } from '@/components/icons';
 import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
 import WebController from '@/pages/api/controller';
+import { CustomizeAppBackground } from '@/utils/customize_bg';
 
 const RenderCommentsSection = ({ blogData, dividerBgColor }) => {
 	const [inputData, setInputData] = useState({ comment: '', use: '' });
@@ -44,7 +45,7 @@ const RenderCommentsSection = ({ blogData, dividerBgColor }) => {
 	const handleSubmitComment = () => {};
 	return (
 		<div style={{ zIndex: '4' }} className={`${styles.sticky_card_from_md_up} overflow-hidden w-full py-2`}>
-			<Paper className='w-full pt-2 mb-2 bg-inherit border position-relative'>
+			<Paper className='w-full pt-2 mb-2 bg-white border position-relative'>
 				<div className='w-full px-2'>
 					<div className={`fs-8 ${comp_styles.category_title}`}>Comments</div>
 					<Divider className='mt-3 w-full' sx={{ background: dividerBgColor }} />
@@ -67,7 +68,7 @@ const RenderCommentsSection = ({ blogData, dividerBgColor }) => {
 							<BlogCommentCard key={i} comment={comment} />
 						))}
 					</div>
-					<div className='px-2 pb-2 bg-inherit w-full position-absolute bottom-0'>
+					<div className='px-2 pb-2 bg-white w-full position-absolute bottom-0'>
 						<TextField
 							onChange={handleChangeInput}
 							defaultValue={inputData?.comment}
@@ -123,12 +124,9 @@ const BlogPage = ({
 		?.toLowerCase()} ${blogData?.author?.firstname?.charAt(0)?.toUpperCase()}${blogData?.author?.firstname?.slice(1, undefined)?.toLowerCase()} ${
 		blogData?.author?.secondname
 	}`;
-	const dividerBgColor = 'var(--blog-section-dividers)';
 
-	React.useEffect(() => {
-		document.querySelector(':root').style.setProperty('--app-bg', 'var(--bg-fair-two)');
-		return () => document.querySelector(':root').style.setProperty('--app-bg', 'var(--app-bg)');
-	}, []);
+	const dividerBgColor = 'var(--blog-section-dividers)';
+	CustomizeAppBackground({ color: 'var(--bg-fair-one)' });
 	const divRef = useRef(null);
 
 	return (
@@ -136,13 +134,13 @@ const BlogPage = ({
 			headerOriginalBgColor={true}
 			metatags={{ meta_title: `${blogData?.title} | ${SITE_DATA.OFFICIAL_NAME}`, ...metatags }}
 			sitesettings={settings}>
-			<div className={`${styles.page_padding}`} style={{ background: 'var(--bg-fair-two)' }}>
+			<div className={`${styles.page_padding}`}>
 				<div className={`px-2 ${styles.blog_data_space_right} ${styles.page_top_margin} h-full`}>
 					<Grid spacing={1} columns={{ xs: 12, sm: 12, md: 12 }} container={true} className='pb-4'>
 						<Grid xs={12} sm={12} md={8} item={true} className=''>
-							<Paper ref={divRef} elevation={2} className='p-2 w-full border border-zinc-300 bg-inherit'>
+							<Paper ref={divRef} elevation={2} className='p-2 w-full border border-zinc-300 bg-white'>
 								<WebSectionBreadCrumb sectionsColor={'var(--blog-section-color)'} sections={sections} />
-								<div className={`${comp_styles.category_title} ${styles.blog_data_title} blog-text-theme mb-4`}>
+								<div className={`${comp_styles.category_title} line-height-2 ${styles.blog_data_title} blog-text-theme mb-4`}>
 									{blogData?.title}
 								</div>
 								<div className='flex w-full flex-wrap'>
@@ -256,7 +254,7 @@ const BlogPage = ({
 									</div>
 								</div>
 							</Paper>
-							<Paper className='p-2 mt-2 w-full border bg-inherit'>
+							<Paper className='p-2 mt-2 w-full border bg-white'>
 								<div className='fs-5 fw-bold blog-text-theme'> Meet the Author</div>
 								<Divider className='w-full my-2' sx={{ background: dividerBgColor }} />
 								<div className='flex justify-between w-full flex-col flex-md-row gap-3'>
@@ -334,7 +332,7 @@ const BlogPage = ({
 							className='pb-2 flex flex-col flex-col-reverse flex-md-column align-items-start position-relative'>
 							<div className='w-full'>
 								{blogsRelatedByCategories?.length > 0 && (
-									<Paper className='border w-full p-2 my-2 bg-inherit'>
+									<Paper className='border w-full p-2 my-2 bg-white'>
 										<div className='w-full'>
 											<div className={`fs-8 ${comp_styles.category_title} blog-text-theme`}>Related Posts By Category</div>
 											<Divider className='my-3 w-full' sx={{ background: dividerBgColor }} />
@@ -354,7 +352,7 @@ const BlogPage = ({
 								)}
 
 								{blogsRelatedByTags?.length > 0 && (
-									<Paper className='border w-full p-2 my-2 bg-inherit'>
+									<Paper className='border w-full p-2 my-2 bg-white'>
 										<div className='w-full'>
 											<div className={`fs-8 ${comp_styles.category_title} blog-text-theme`}>Related Posts By Tags</div>
 											<Divider className='my-3 w-full' sx={{ background: dividerBgColor }} />
@@ -379,7 +377,7 @@ const BlogPage = ({
 							spacing={0}
 							columns={{ xs: 12, sm: 8, md: 12 }}
 							container={true}
-							className='w-full flex align-items-center justify-content-center'>
+							className='w-full flex items-center justify-center'>
 							{youMayAlsoLike.map((blog, i) => (
 								<BlogCard
 									responsiveSizes={{ xs: 12, sm: 4, md: 4 }}
@@ -388,12 +386,12 @@ const BlogPage = ({
 											!blogsettings?.blog_preview_card_custom_display ||
 											blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1
 												? '238px'
-												: '425px',
+												: '480px',
 										sm:
 											!blogsettings?.blog_preview_card_custom_display ||
 											blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1
 												? '268px'
-												: '425px',
+												: '480px',
 									}}
 									blog={blog}
 									size={'LARGE'}

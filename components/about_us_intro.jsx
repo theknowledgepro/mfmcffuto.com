@@ -24,7 +24,7 @@ const AboutUsIntro = ({ sitesettings, homePageSettings }) => {
 				<div className='w-full relative mb-5'>
 					<blockquote className={`${comp_styles.blockquote}`}>
 						<p className={`text-center`}>I was glad when they said...</p>
-						<h3 className={`text-[30px] text-[var(--color-primary)]`}>Let us go to the LORD's house...</h3>
+						<h3 className={`text-[30px] text-[var(--color-primary)] line-height-2`}>Let us go to the LORD's house...</h3>
 						<p style={{ position: 'absolute', bottom: '-10px', right: '5px' }} className={`text-[13px] text-[var(--color-primary)]`}>
 							Ps.122:1
 						</p>

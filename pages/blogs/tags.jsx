@@ -9,13 +9,14 @@ import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
 import Link from 'next/link';
 import WebController from '@/pages/api/controller';
+import { CustomizeAppBackground } from '@/utils/customize_bg';
 
 const RenderTagsBlock = ({ tag, blogsettings }) => {
 	if (tag?.blogs?.length === 0) return;
 	return (
 		<div id={`${tag?.slug}`} className='pt-5'>
-			<div className={`${comp_styles.category_title} ${styles.blog_data_title} ml-2 mb-4`}>
-				<span className='color-primary'>#</span> {tag?.title}
+			<div className={`${comp_styles.category_title} pb-3 ${styles.blog_data_title} ml-2 mb-4`}>
+				<span className='color-primary xss:text-[30px] sm:text-[35px] md:text-[45px]'>#</span> {tag?.title}
 			</div>
 			<Grid spacing={0} columns={{ xs: 12, sm: 8, md: 12 }} container={true} className=''>
 				{tag?.blogs?.map((blog, index) => (
@@ -26,12 +27,12 @@ const RenderTagsBlock = ({ tag, blogsettings }) => {
 								!blogsettings?.blog_preview_card_custom_display ||
 								blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1
 									? '238px'
-									: '420px',
+									: '480px',
 							sm:
 								!blogsettings?.blog_preview_card_custom_display ||
 								blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1
 									? '268px'
-									: '420px',
+									: '480px',
 						}}
 						blog={blog}
 						size={'LARGE'}
@@ -57,6 +58,7 @@ const RenderTagsLink = ({ tag }) => {
 
 const BlogTags = ({ metatags, settings, blogsettings, tags }) => {
 	const sections = [{ title: 'Articles & Blogs', href: APP_ROUTES.BLOGS_TAGS }, `Browse By Tags`];
+	CustomizeAppBackground({ color: 'var(--bg-fair-one)' });
 	return (
 		<WebLayout headerOriginalBgColor={true} metatags={metatags} sitesettings={settings}>
 			<div className={`${styles.page_padding} ${styles.page_top_margin} `}>

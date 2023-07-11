@@ -10,9 +10,11 @@ import Divider from '@mui/material/Divider';
 import WebController from '@/pages/api/controller';
 import { Button } from '@mui/material';
 import Link from 'next/link';
+import { CustomizeAppBackground } from '@/utils/customize_bg';
 
 const FeaturedBlogs = ({ metatags, settings, blogsettings, featuredBlogs }) => {
 	const sections = [{ title: 'Articles & Blogs', href: APP_ROUTES.BLOGS }, 'Featured Blogs'];
+	CustomizeAppBackground({ color: 'var(--bg-fair-one)' });
 
 	return (
 		<WebLayout headerOriginalTextColor={true} metatags={metatags} sitesettings={settings}>

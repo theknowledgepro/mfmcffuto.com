@@ -100,7 +100,7 @@
 	}
 }
 .blog_data_title {
-	font-size: 45px;
+	font-size: 45px !important;
 	margin: 20px 0 10px;
 	padding: 0px;
 	text-transform: none !important;
@@ -159,14 +159,14 @@
 }
 @media screen and (max-width: 768px) {
 	.blog_data_title {
-		font-size: 35px;
+		font-size: 35px !important;
 		margin: 15px 0 10px;
 	}
 }
 
 @media screen and (max-width: 478px) {
 	.blog_data_title {
-		font-size: 30px;
+		font-size: 30px !important;
 		padding: 0px 2px;
 	}
 }

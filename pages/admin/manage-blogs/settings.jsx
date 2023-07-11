@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
 import { AdminLayout } from '@/components';
 import { MEMBER_ROLES, API_ROUTES, APP_ROUTES, CUSTOM_UI_TYPES, SITE_DATA } from '@/config';
-import { Button, CircularProgress, Divider, Paper, Switch, TextField } from '@mui/material';
+import { Button, CircularProgress, Divider, InputAdornment, IconButton, Paper, Switch, TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { postDataAPI } from '@/utils/api_client_side';
 import { useRouter } from 'next/router';
@@ -20,6 +20,9 @@ import FormLabel from '@mui/material/FormLabel';
 import AuthController from '@/pages/api/auth/controller';
 import CheckAdminRestriction from '@/middlewares/check_admin_restriction';
 import { DispatchUserAuth } from '@/utils/misc_functions';
+import AddIcon from '@mui/icons-material/Add';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const BlogSectionSettings = ({ settings, userAuth }) => {
 	// ** DISPATCH USER AUTH
@@ -33,6 +36,7 @@ const BlogSectionSettings = ({ settings, userAuth }) => {
 		show_comments,
 		show_views,
 		no_of_articles_on_category_card,
+		categories_section_typewriter = [],
 		blog_preview_card_custom_display = CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1,
 	} = blogSettings;
 
@@ -40,6 +44,28 @@ const BlogSectionSettings = ({ settings, userAuth }) => {
 		const { name, value, checked } = e.target;
 		// console.log({ name, value, checked });
 		setBlogSettings({ ...blogSettings, [name]: name === 'blog_preview_card_custom_display' ? value : checked ? checked : Number(value) });
+	};
+
+	// ** TYPEWRITER CONFIG
+	const categoryHomePageTypeWriterStringsInitialState = settings?.categories_section_typewriter?.length
+		? settings?.categories_section_typewriter
+		: [''];
+	const [categoryHomePageTypeWriterTexts, setCategoryHomePageTypeWriterTexts] = useState(categoryHomePageTypeWriterStringsInitialState);
+
+	const handleTypeWriterTextInputs = (index, event) => {
+		let data = [...categoryHomePageTypeWriterTexts];
+		data[index] = event.target.value;
+		setCategoryHomePageTypeWriterTexts(data);
+	};
+
+	const handleAddTypeWriterTextInputs = () => setCategoryHomePageTypeWriterTexts([...categoryHomePageTypeWriterTexts, '']);
+
+	const handleRemoveFields = (index) => {
+		if (index === 0 && categoryHomePageTypeWriterTexts.length === 1)
+			return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: `At least one field is required for the typewriter.` } });
+		let data = [...categoryHomePageTypeWriterTexts];
+		data.splice(index, 1);
+		setCategoryHomePageTypeWriterTexts(data);
 	};
 
 	const [errors, setErrors] = useState({});
@@ -60,10 +86,23 @@ const BlogSectionSettings = ({ settings, userAuth }) => {
 			Number(no_of_articles_on_category_card) > 10
 		)
 			return;
+		if (!categoryHomePageTypeWriterTexts.find((index) => index?.toString()?.length))
+			return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: `At least one field is required for the Category Home Page Typewriter!` } });
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
-			const res = await postDataAPI(API_ROUTES.MANAGE_BLOGS_SETTINGS, { ...blogSettings }, session?.token);
+			const res = await postDataAPI(
+				API_ROUTES.MANAGE_BLOGS_SETTINGS,
+				{
+					...blogSettings,
+					categories_section_typewriter: categoryHomePageTypeWriterTexts
+						?.filter((index) => index.toString()?.trim()?.length)
+						?.map((text, i) => {
+							return text?.toString()?.trim();
+						}),
+				},
+				session?.token
+			);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
@@ -126,6 +165,40 @@ const BlogSectionSettings = ({ settings, userAuth }) => {
 								{show_views ? 'Show' : 'Hide'}
 							</span>
 						</div>
+					</div>
+					<Divider className='w-full bg-primary my-2' />
+					<div className='w-full my-4'>
+						<div className='flex'>
+							<BsDot className='color-primary text-[40px] my-auto' />
+							<span className='my-auto text-[16px]'>Category Home Page Typewriter Texts</span>
+						</div>
+						{categoryHomePageTypeWriterTexts.map((text, index) => (
+							<div key={index} className='w-full flex items-center justify-center'>
+								<TextField
+									onChange={(e) => handleTypeWriterTextInputs(index, e)}
+									value={categoryHomePageTypeWriterTexts[index]}
+									color='primary'
+									className='w-full mt-4'
+									size='small'
+									label={`TypeWriter Text ${index + 1}`}
+									variant='outlined'
+									multiline
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position='start'>
+												<CategoryOutlinedIcon sx={{ color: SITE_DATA.THEME_COLOR }} />
+											</InputAdornment>
+										),
+									}}
+								/>
+								<IconButton className='mt-3 ms-2' onClick={() => handleRemoveFields(index)}>
+									<CancelIcon />
+								</IconButton>
+							</div>
+						))}
+						<Button className='py-1 normal-case mt-4 btn-site text-white btn-animated' onClick={handleAddTypeWriterTextInputs}>
+							<AddIcon fontSize='small' sx={{ mr: '5px' }} /> Add More Fields
+						</Button>
 					</div>
 					<Divider className='w-full bg-primary my-2' />
 					<div className='my-4 w-full'>

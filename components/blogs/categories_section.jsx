@@ -10,13 +10,16 @@ import { APP_ROUTES } from '@/config';
 import { Button } from '@mui/material';
 
 const CategoriesSection = ({ categories = [], blogsettings, isCategoryPage }) => {
-
 	return (
 		<section className='w-100 py-3'>
 			{!isCategoryPage && (
 				<React.Fragment>
-					<h1 className={styles.section_title}>Explore Blog Categories!</h1>
-					<h2 className={styles.section_sub_title}>Wholesome articles for your taste!</h2>
+					<h2 style={{ fontFamily: 'var(--font-family-medium)' }} className={`line-height-2 font-semibold text-[30px] text-center w-full my-[10px]`}>
+						Explore <span className='text-[var(--color-primary)] text-[30px] mx-1'>Articles & Blogs Categories!</span>
+					</h2>
+					<div className='text-[14px] text-center w-full text-gray-600 mb-6'>
+						Stay spiritually healthy with our soul-lifting & edifying articles!
+					</div>
 				</React.Fragment>
 			)}
 
@@ -29,25 +32,27 @@ const CategoriesSection = ({ categories = [], blogsettings, isCategoryPage }) =>
 						<NoDataFound
 							renderAction={
 								<Link href={APP_ROUTES.BLOGS}>
-									<Button className='mt-4 btn-site btn-animated text-white text-decor-none px-5 fw-bold'>Explore Blogs</Button>
+									<Button className='mt-4 btn-site btn-animated text-white text-decor-none px-5 font-medium-custom'>
+										Explore Blogs
+									</Button>
 								</Link>
 							}
 							sorryText='Ooops! We could not find any Blog Categories at this time!!'
 						/>
-						<Divider className='bg-primary my-2 w-100' />
+						<Divider className='my-2 w-100' />
 					</React.Fragment>
 				)}
 			</Grid>
 			{!isCategoryPage && (
 				<React.Fragment>
 					<div className={`${styles.see_more} my-4`}>
-						<Link className='fs-5 color-primary text-decor-none' href={APP_ROUTES.BLOGS_CATEGORIES}>
-							<Button variant='contained text-white text-decor-none fw-bold rounded-2 btn-animated mild-shadow btn-site'>
+						<Link className='text-[16px] color-primary text-decor-none' href={APP_ROUTES.BLOGS_CATEGORIES}>
+							<Button variant='contained text-white text-decor-none font-medium-custom rounded-2 btn-animated mild-shadow btn-site'>
 								Explore All Blogs Categories
 							</Button>
 						</Link>
 					</div>
-					<Divider className='bg-primary my-2 w-100' />
+					<Divider className='my-2 w-100' />
 				</React.Fragment>
 			)}
 		</section>

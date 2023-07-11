@@ -10,6 +10,7 @@ import Divider from '@mui/material/Divider';
 import WebController from '@/pages/api/controller';
 import Link from 'next/link';
 import { Button } from '@mui/material';
+import { CustomizeAppBackground } from '@/utils/customize_bg';
 
 const Category = ({ metatags, settings, blogsettings, category }) => {
 	const sections = [
@@ -17,6 +18,8 @@ const Category = ({ metatags, settings, blogsettings, category }) => {
 		{ title: 'Browse By Categories', href: APP_ROUTES.BLOGS_CATEGORIES },
 		`${category?.published ? category?.title : 'Not Found!'}`,
 	];
+	CustomizeAppBackground({ color: 'var(--bg-fair-one)' });
+
 	return (
 		<WebLayout headerOriginalTextColor={true} metatags={metatags} sitesettings={settings}>
 			{!category?.published && (
@@ -62,12 +65,12 @@ const Category = ({ metatags, settings, blogsettings, category }) => {
 													!blogsettings?.blog_preview_card_custom_display ||
 													blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1
 														? '238px'
-														: '420px',
+														: '480px',
 												sm:
 													!blogsettings?.blog_preview_card_custom_display ||
 													blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD1
 														? '268px'
-														: '420px',
+														: '480px',
 											}}
 											blog={blog}
 											size={'LARGE'}

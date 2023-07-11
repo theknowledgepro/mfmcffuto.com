@@ -308,7 +308,7 @@ const DrawerContent = ({ open }) => {
 				sx={{
 					width: open ? drawerWidth : '65px',
 					fontSize: '19px',
-					fontWeight: '700',
+					fontWeight: '600',
 					textShadow: '0 0 5px rgb(133 61 209 / 10%)',
 					position: 'fixed',
 					top: 0,
@@ -316,14 +316,14 @@ const DrawerContent = ({ open }) => {
 					background: '#fff',
 					zIndex: 2000,
 					flexFlow: 'column',
-					height: '68px',
+					height: '70px',
 					marginTop: { xs: -0.5, md: 0 },
 					padding: 0,
 				}}>
 				<div className='shadow w-full flex p-2'>
-					<Avatar src={auth?.user?.avatar} alt={auth?.user?.firstname} className={`${!open && 'mx-auto'} shadow`} />
+					<Avatar src={auth?.user?.avatar} alt={auth?.user?.firstname} className={`${!open && 'mx-auto'} my-auto shadow`} />
 					<div className={`my-auto ml-2 ${!open && 'hidden'}`}>
-						<div className='font-medium-custom text-[15px] text-dark w-full text-center'>{`${
+						<div className='font-medium-custom text-[15px] line-height-1 text-dark w-full text-center'>{`${
 							auth?.user?.lastname ? auth?.user?.lastname : ''
 						} ${auth?.user?.firstname ? auth?.user?.firstname : ''} ${auth?.user?.secondname ? auth?.user?.secondname : ''}`}</div>
 						<div className='font-medium-custom text-[14px] color-primary w-full mt-1'>
@@ -333,7 +333,7 @@ const DrawerContent = ({ open }) => {
 					</div>
 				</div>
 			</DrawerHeader>
-			<List className='w-full pt-5 mt-11'>
+			<List className='w-full pt-5 mt-[50px]'>
 				{AdminDashboardNavItems1.map((nav, index) => (
 					<React.Fragment key={index}>
 						{nav.children && <RenderDropdownNav nav={nav} open={open} />}

@@ -3,7 +3,7 @@
 import React, { useRef } from 'react';
 import { Box, Divider, Grid, Paper } from '@mui/material';
 import styles from '@/components/components.module.css';
-import { APP_ROUTES, CLOUD_ASSET_BASEURL, CUSTOM_UI_TYPES, LIMITS } from '@/config';
+import { APP_ROUTES, CLOUD_ASSET_BASEURL, CUSTOM_UI_TYPES, LIMITS, ASSETS } from '@/config';
 import Link from 'next/link';
 import { TagChip, CategoryChip, ImageTag } from '..';
 import UseMediaQuery from '@/utils/use_media_query';
@@ -12,14 +12,7 @@ import RemoveRedEyeTwoToneIcon from '@mui/icons-material/RemoveRedEyeTwoTone';
 import Moment from 'react-moment';
 import { stringToColor } from '@/utils/misc_functions';
 
-const BlogCard = ({
-	blog,
-	blogsettings,
-	responsiveSizes = { xs: 12, sm: 4, md: 6 },
-	responsiveHeight = { xs: '250px', sm: '410px' },
-	size,
-	blogType,
-}) => {
+const BlogCard = ({ blog, blogsettings, responsiveSizes = { xs: 12, sm: 4, md: 6 }, responsiveHeight = {}, size, blogType }) => {
 	const blogSlug = `${APP_ROUTES.BLOGS}/${blog?.slug}`;
 	const { isMatchWidth } = UseMediaQuery({ vw: '500px' });
 
@@ -27,11 +20,11 @@ const BlogCard = ({
 
 	if (blogsettings?.blog_preview_card_custom_display === CUSTOM_UI_TYPES.BLOG_UI.BLOGCARD2 && blogType !== 'FEATURED')
 		return (
-			<Grid item={true} {...responsiveSizes} className={`rounded-md m-auto ${isMatchWidth ? 'p-1' : 'p-2'}`}>
+			<Grid item={true} {...responsiveSizes} className={`rounded-sm my-auto ${isMatchWidth ? 'p-1' : 'p-2'}`}>
 				<Paper
 					elevation={2}
 					sx={{ height: { ...responsiveHeight }, borderRadius: '0px' }}
-					className='relative flex flex-col items-baseline justify-end w-full bg-white rounded-[8px]'>
+					className='relative flex flex-col items-baseline justify-end w-full bg-white rounded-[4px]'>
 					<div
 						title={blog?.title}
 						style={{ '--image-color': stringToColor(blog?.title), maxHeight: '55%', borderRadius: '0px' }}
@@ -86,7 +79,7 @@ const BlogCard = ({
 							</Link>
 							<Divider className='my-1' sx={{ width: '90%' }} />
 							<Link href={blogSlug} className='text-dark text-decor-none'>
-								<div className='mb-2 flex flex-wrap fs-7' style={{ width: '90%' }}>
+								<div className='line-height-1b mb-2 flex flex-wrap fs-7' style={{ width: '90%' }}>
 									{blog?.summary?.length > LIMITS.BLOG_SUMMARY_LIMIT
 										? blog?.summary?.slice(0, LIMITS.BLOG_SUMMARY_LIMIT) + '...'
 										: blog?.summary}
@@ -109,13 +102,20 @@ const BlogCard = ({
 									)}
 									<span className='my-auto'>
 										<span className='ml-1'>
-											<Moment format='MMMM'>{blog?.createdAt}</Moment>
+											<Moment className='text-[13px]' format='MMMM'>
+												{blog?.createdAt}
+											</Moment>
 										</span>
 										<span className='ml-1'>
-											<Moment format='DD'>{blog?.createdAt}</Moment>,
+											<Moment className='text-[13px]' format='DD'>
+												{blog?.createdAt}
+											</Moment>
+											,
 										</span>
 										<span className='ml-1'>
-											<Moment format='YYYY'>{blog?.createdAt}</Moment>
+											<Moment className='text-[13px]' format='YYYY'>
+												{blog?.createdAt}
+											</Moment>
 										</span>
 									</span>
 								</div>
@@ -124,14 +124,24 @@ const BlogCard = ({
 								<div className='text-dark flex'>
 									{blog?.author?.avatar && (
 										<ImageTag
-											src={blog?.author?.avatar}
+											src={
+												blog?.author?.avatar
+													? blog?.author?.avatar
+													: blog?.author?.gender === 'Male'
+													? ASSETS.MALE_AVATAR
+													: ASSETS.FEMALE_AVATAR
+											}
 											className={`rounded-[50%] mr-1 ${styles.blog_author_avatar}`}
 											alt={blog?.title}
 										/>
 									)}
 									<div className='text-[13px] my-auto font-medium-custom'>
-										{blog?.author?.lastname?.charAt(0)?.toUpperCase()}
-										{'. '}
+										{size === 'SMALL'
+											? blog?.author?.lastname?.charAt(0)?.toUpperCase()
+											: `${blog?.author?.lastname?.charAt(0)?.toUpperCase()}${blog?.author?.lastname
+													.slice(1, undefined)
+													?.toLowerCase()}`}
+										{size === 'SMALL' && '. '}
 										{` ${blog?.author?.firstname?.charAt(0)?.toUpperCase()}${blog?.author?.firstname
 											?.slice(1, undefined)
 											?.toLowerCase()} `}
@@ -196,13 +206,20 @@ const BlogCard = ({
 
 									<span className='my-auto'>
 										<span className=''>
-											<Moment format='MMMM'>{blog?.createdAt}</Moment>
+											<Moment className='text-[13px]' format='MMMM'>
+												{blog?.createdAt}
+											</Moment>
 										</span>
 										<span className='ml-1'>
-											<Moment format='DD'>{blog?.createdAt}</Moment>,
+											<Moment className='text-[13px]' format='DD'>
+												{blog?.createdAt}
+											</Moment>
+											,
 										</span>
 										<span className='ml-1'>
-											<Moment format='YYYY'>{blog?.createdAt}</Moment>
+											<Moment className='text-[13px]' format='YYYY'>
+												{blog?.createdAt}
+											</Moment>
 										</span>
 									</span>
 								</div>
@@ -211,14 +228,24 @@ const BlogCard = ({
 								<div className='text-white flex'>
 									{blog?.author?.avatar && (
 										<ImageTag
-											src={blog?.author?.avatar}
+											src={
+												blog?.author?.avatar
+													? blog?.author?.avatar
+													: blog?.author?.gender === 'Male'
+													? ASSETS.MALE_AVATAR
+													: ASSETS.FEMALE_AVATAR
+											}
 											className={`rounded-[50%] mr-1 ${styles.blog_author_avatar}`}
 											alt={blog?.title}
 										/>
 									)}
 									<div className='text-[13px] my-auto font-medium-custom'>
-										{blog?.author?.lastname?.charAt(0)?.toUpperCase()}
-										{'. '}
+										{size === 'SMALL'
+											? blog?.author?.lastname?.charAt(0)?.toUpperCase()
+											: `${blog?.author?.lastname?.charAt(0)?.toUpperCase()}${blog?.author?.lastname
+													.slice(1, undefined)
+													?.toLowerCase()}`}
+										{size === 'SMALL' && '. '}
 										{` ${blog?.author?.firstname?.charAt(0)?.toUpperCase()}${blog?.author?.firstname
 											?.slice(1, undefined)
 											?.toLowerCase()} `}

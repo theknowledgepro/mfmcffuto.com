@@ -177,13 +177,13 @@ const AdminController = {
 				if (isRestricted)
 					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 
-				const { show_comments, show_views, no_of_articles_on_category_card, blog_preview_card_custom_display } = req.body;
+				const { show_comments, show_views, no_of_articles_on_category_card, categories_section_typewriter, blog_preview_card_custom_display } = req.body;
 
 				const blogSettings = await SiteSettings.findOneOrCreate(
 					{ type: 'Blog-Settings' },
 					{
 						type: 'Blog-Settings',
-						config: { show_comments, show_views, no_of_articles_on_category_card, blog_preview_card_custom_display },
+						config: { show_comments, show_views, no_of_articles_on_category_card, categories_section_typewriter, blog_preview_card_custom_display },
 					}
 				).catch((err) => {
 					throw err;
@@ -193,7 +193,7 @@ const AdminController = {
 				if (blogSettings)
 					await SiteSettings.findOneAndUpdate(
 						{ type: 'Blog-Settings' },
-						{ config: { show_comments, show_views, no_of_articles_on_category_card, blog_preview_card_custom_display } }
+						{ config: { show_comments, show_views, no_of_articles_on_category_card, categories_section_typewriter, blog_preview_card_custom_display } }
 					);
 
 				// ** RECORD IN ACTIVITY_LOG DATABASE

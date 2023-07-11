@@ -1,19 +1,21 @@
 /** @format */
 
-import { WebLayout, TypeWriterWebBanner, CategoriesSection, RecentBlogsSection, BlogSectionCommonFooter } from '@/components';
+import { WebLayout, TypeWriterWebBanner, CategoriesSection, RecentlyPublishedArticles, BlogSectionCommonFooter } from '@/components';
 import React from 'react';
 import styles from '@/pages/pages_styles.module.css';
 import { APP_ROUTES, SITE_DATA } from '@/config';
 import WebController from '@/pages/api/controller';
+import { CustomizeAppBackground } from '@/utils/customize_bg';
 
 const BlogCategories = ({ metatags, settings, blogsettings, categories, recentBlogs }) => {
 	const sections = [{ title: 'Articles & Blogs', href: APP_ROUTES.BLOGS }, `Browse By Categories`];
+	CustomizeAppBackground({ color: 'var(--bg-fair-one)' });
 	return (
 		<WebLayout headerOriginalTextColor={true} metatags={metatags} sitesettings={settings}>
 			<TypeWriterWebBanner stringsArray={blogsettings?.categories_section_typewriter} sections={sections} />
 			<div className={`${styles.page_padding} `}>
 				<CategoriesSection isCategoryPage blogsettings={blogsettings} categories={categories} />
-				<RecentBlogsSection blogsettings={blogsettings} recentBlogs={recentBlogs} />
+				<RecentlyPublishedArticles blogsettings={blogsettings} articles={recentBlogs} />
 				<BlogSectionCommonFooter />
 			</div>
 		</WebLayout>

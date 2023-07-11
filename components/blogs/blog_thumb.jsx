@@ -25,7 +25,7 @@ const BlogThumb = ({ blog, blogsettings, textColorClassName, isCategory, isLast,
 				<Link target={isAdminPanelView ? '_blank' : ''} href={blogSlug} className={styles.blog_thumb_img}>
 					<ImageTag src={`${CLOUD_ASSET_BASEURL}/${blog?.thumbnail}`} className={`my-auto`} alt={blog?.title} />
 				</Link>
-				<div className='w-full flex items-start flex-column justify-start overflow-x-hidden'>
+				<div className='mr-3 flex items-start flex-col justify-start overflow-x-hidden'>
 					{!isCategory && (
 						<div className='flex flex-wrap w-full'>
 							{isTagHidden && (
@@ -65,25 +65,32 @@ const BlogThumb = ({ blog, blogsettings, textColorClassName, isCategory, isLast,
 					<div className='mb-1 text-[13px] flex flex-wrap'>
 						{(isAdminPanelView || blogsettings?.show_views) && (
 							<div className='my-auto mr-1'>
-								<RemoveRedEyeTwoToneIcon className={`${textColor} text-[15px] mr-1`} />
+								<RemoveRedEyeTwoToneIcon className={`${textColor} text-[14px] mr-1`} />
 								<span className={`${textColor} text-[13px] my-auto`}>{blog?.views?.length} views |</span>
 							</div>
 						)}
 						{(isAdminPanelView || blogsettings?.show_comments) && (
 							<div className='my-auto mr-1'>
-								<ForumOutlinedIcon className={`${textColor} text-[15px] mr-1`} />
+								<ForumOutlinedIcon className={`${textColor} text-[14px] mr-1`} />
 								<span className={`${textColor} text-[13px] my-auto`}>{blog?.comments?.length} |</span>
 							</div>
 						)}
 						<span className={`${textColor} text-[13px] my-auto`}>
 							<span className='ml-1'>
-								<Moment format='MMMM'>{blog?.createdAt}</Moment>
+								<Moment className='text-[12px]' format='MMMM'>
+									{blog?.createdAt}
+								</Moment>
 							</span>
 							<span className='ml-1'>
-								<Moment format='DD'>{blog?.createdAt}</Moment>,
+								<Moment className='text-[12px]' format='DD'>
+									{blog?.createdAt}
+								</Moment>
+								,
 							</span>
 							<span className='ml-1'>
-								<Moment format='YYYY'>{blog?.createdAt}</Moment>
+								<Moment className='text-[12px]' format='YYYY'>
+									{blog?.createdAt}
+								</Moment>
 							</span>
 						</span>
 					</div>

@@ -9,7 +9,7 @@ const BlogContent = ({ content }) => {
 			pre: document.querySelector('pre')?.innerText,
 		});
 	}, []);
-	return <div className={`my-3 blog-text-theme ${styles?.blog_content}`} dangerouslySetInnerHTML={{ __html: content }}></div>;
+	return <div className={`my-3 ${styles?.blog_content}`} dangerouslySetInnerHTML={{ __html: content }}></div>;
 };
 
 export default BlogContent;

@@ -18,7 +18,7 @@ const WebBanner = ({ sections, sectionTitle, sectionDescription }) => {
 							<WebSectionBreadCrumb activePageColor='#fff' sections={sections} />
 						</div>
 						<div>{sectionTitle}</div>
-                        <div className='mt-2 fs-6'>{sectionDescription}</div>
+                        <div className='mt-2 text-[16px]'>{sectionDescription}</div>
 					</div>
 				</div>
 			</div>

@@ -21,9 +21,11 @@ const TypeWriterWebBanner = ({ sections, stringsArray }) => {
 						)}
 						<Typewriter
 							options={{
-								strings: stringsArray ? stringsArray : ['Learn to Code', "With the world's largest web developer site."],
+								strings: stringsArray ? stringsArray : ['MFMCF FUTO', "...where champions are gathered!"],
 								autoStart: true,
 								loop: true,
+								cursorClassName: 'xss:text-[28px] md:text-[40px]',
+								wrapperClassName: 'xss:text-[28px] md:text-[40px]',
 							}}
 						/>
 					</div>
