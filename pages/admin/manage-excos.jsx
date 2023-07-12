@@ -797,8 +797,8 @@ const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert 
 			assumption_date: !assumption_date && 'This field is required.',
 		});
 		if (!name || !name_anchor_scripture || !purpose || !purpose_anchor_scripture || !academic_session || !assumption_date) return;
-		if (allGroups.filter((index) => index?.uniqueID !== groupData?.uniqueID).find((index) => index?.name === name))
-			return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: `An exco group with this name alredy exist!` } });
+		// if (allGroups.filter((index) => index?.uniqueID !== groupData?.uniqueID).find((index) => index?.name === name))
+		// 	return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: `An exco group with this name alredy exist!` } });
 
 		if (isSubmitting) return;
 		setIsSubmitting(true);
@@ -1014,11 +1014,7 @@ const ManageExcos = ({ userAuth, excosGroups }) => {
 	DispatchUserAuth({ userAuth });
 	const session = useSelector((state) => state.auth);
 
-	const [excosGroupsList, setExcosGroupsList] = useState(
-		excosGroups.map((group, index) => {
-			return { ...group, uniqueID: index + 1 };
-		})
-	);
+	const [excosGroupsList, setExcosGroupsList] = useState(excosGroups);
 	const [newAlreadyExistsAlert, setNewAlreadyExistsAlert] = useState(false);
 	const handleAddNewExcosGroup = () => {
 		setNewAlreadyExistsAlert(false);
