@@ -29,6 +29,12 @@ module.exports = {
 	// ** PAGE CUSTOMIZATION SETTINGS ACTIONS ROUTES
 	UPDATE_PAGE_CUSTOMIZATION_SETTINGS: 'admin/raw/pagesettings',
 
+	// ** UPLOAD FILE ACTION
+	UPLOAD_FILE: 'admin/raw/upload-file',
+
+	// ** MANAGE EXCOS ACTION ROUTES
+	MANAGE_EXCOS: 'admin/raw/manage-exco-group',
+
 	GET_ALL_ADMINS: 'admin/all-admins',
 	GET_ACTIVITY_LOGS: 'admin/activity-logs',
 

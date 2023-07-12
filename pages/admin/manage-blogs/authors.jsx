@@ -44,20 +44,19 @@ const CreateAuthorFunctionality = ({ isEdit, author, allAuthors, session }) => {
 	const router = useRouter();
 	const [openModal, setOpenModal] = useState(false);
 
-	const initialState = author
-		? author
-		: {
-				firstname: '',
-				secondname: '',
-				lastname: '',
-				email: '',
-				mobile: '',
-				avatar: SITE_DATA.DEFAULT_MALE_AVATAR,
-				gender: '',
-				member_role: MEMBER_ROLES.AUTHOR,
-				about: '',
-				social_handles: { facebookUrl: '', OutlinedUrl: '', whatsappUrl: '', linkedInUrl: '', twitterUrl: '', telegramUrl: '' },
-		  };
+	const initialState = {
+		firstname: '',
+		secondname: '',
+		lastname: '',
+		email: '',
+		mobile: '',
+		avatar: SITE_DATA.DEFAULT_MALE_AVATAR.src,
+		gender: '',
+		member_role: MEMBER_ROLES.AUTHOR,
+		about: '',
+		social_handles: { facebookUrl: '', OutlinedUrl: '', whatsappUrl: '', linkedInUrl: '', twitterUrl: '', telegramUrl: '' },
+		...author,
+	};
 	const [authorData, setAuthorData] = useState(initialState);
 	const { firstname, secondname, lastname, email, mobile, avatar, gender, about, social_handles } = authorData;
 	const [file, setFile] = useState(null);
@@ -336,8 +335,8 @@ const CreateAuthorFunctionality = ({ isEdit, author, allAuthors, session }) => {
 
 					<div className='w-full mt-6'>
 						<div className='w-full text-center font-medium-custom mt-6 color-primary'>Author's Social Media Handles</div>
-						<div className='mb-5 text-center text-[13px] text-red-500'>
-							Please ensure these social media handles are free of defiling content<span className='text-red-700'>!</span>
+						<div className='line-height-1b mb-5 text-center text-[13px] text-red-500'>
+							Please ensure these social media handles are free of improper or <i className='line-height-1b text-[13px]'>defiling</i> content<span className='text-red-700'>!</span>
 						</div>
 						<TextField
 							onChange={(e) =>

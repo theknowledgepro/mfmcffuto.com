@@ -6,6 +6,7 @@ const ContactForm = require('@/models/contact_form_model');
 const activityLog = require('@/middlewares/activity_log');
 const SeoSettings = require('@/models/seo_model');
 const SiteSettings = require('@/models/site_settings_model');
+const FellowshipExcos = require('@/models/excos_model');
 const ActivityLogs = require('@/models/activity_model');
 const Users = require('@/models/user_model');
 const BlogTags = require('@/models/blog_tags_model');
@@ -359,8 +360,32 @@ const AdminController = {
 			if (req.method !== 'GET') return responseLogic({ SSG: SSG, req, res, status: 404, data: { message: 'This route does not exist!' } });
 			await connectDB();
 
-			const pageSettings = await SiteSettings.findOne({ type: req.page_settings });
+			const pageSettings = await SiteSettings.findOne({ type: req.page_settings }).select('-_id -__v -createdAt -updatedAt');
 			return responseLogic({ SSG: SSG, req, res, status: 200, data: { pageSettings: pageSettings?.config ? pageSettings?.config : {} } });
+		} catch (err) {
+			return responseLogic({ SSG: SSG, res, catchError: err });
+		}
+	},
+
+	// ** FELLOWSHIP EXCOS
+	getFellowshipExcos: async (req, res, SSG = false) => {
+		try {
+			if (req.method !== 'GET') return responseLogic({ SSG: SSG, req, res, status: 404, data: { message: 'This route does not exist!' } });
+			await connectDB();
+
+			const excosGroups = await FellowshipExcos.find().sort({ createdAt: -1 });
+			return responseLogic({ SSG: SSG, req, res, status: 200, data: excosGroups });
+		} catch (err) {
+			return responseLogic({ SSG: SSG, res, catchError: err });
+		}
+	},
+	getCurrentFellowshipExcos: async (req, res, SSG = false) => {
+		try {
+			if (req.method !== 'GET') return responseLogic({ SSG: SSG, req, res, status: 404, data: { message: 'This route does not exist!' } });
+			await connectDB();
+
+			const excosGroups = await FellowshipExcos.findOne({ current: true }).sort({ createdAt: -1 });
+			return responseLogic({ SSG: SSG, req, res, status: 200, data: excosGroups });
 		} catch (err) {
 			return responseLogic({ SSG: SSG, res, catchError: err });
 		}

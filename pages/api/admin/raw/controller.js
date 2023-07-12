@@ -10,6 +10,7 @@ const Blogs = require('@/models/blog_model');
 const WorshipDays = require('@/models/worship_days_model');
 const SiteSettings = require('@/models/site_settings_model');
 const UpComingEvents = require('@/models/upcoming_events_model');
+const FellowshipExcos = require('@/models/excos_model');
 const activityLog = require('@/middlewares/activity_log');
 const validate = require('@/middlewares/validate');
 const { uploadFile, deleteFile } = require('@/middlewares/file_manager');
@@ -57,7 +58,7 @@ const RawReqController = {
 			// ** AFTER ALL VALIDATIONS, STORE AVATAR TO CLOUD STORAGE
 			const { fileData } = await uploadFile({
 				file: req.files?.avatar,
-				S3Folder: 'admin-avatars',
+				S3Folder: S3FOLDERS.ADMIN_AVATARS,
 				appendFileExtensionToFileKeyName: true,
 			});
 
@@ -264,7 +265,7 @@ const RawReqController = {
 				// ** UPLOAD CATEGORY THUMBNAIL
 				const { fileData } = await uploadFile({
 					file: req.files?.thumbnail,
-					S3Folder: 'category-thumbnails',
+					S3Folder: S3FOLDERS.CATEGORY_THUMBNAILS,
 					appendFileExtensionToFileKeyName: true,
 				});
 
@@ -394,7 +395,7 @@ const RawReqController = {
 				// ** UPLOAD BLOG THUMBNAIL
 				const { fileData } = await uploadFile({
 					file: req.files?.thumbnail,
-					S3Folder: 'blog-thumbnails',
+					S3Folder: S3FOLDERS.BLOG_THUMBNAILS,
 					appendFileExtensionToFileKeyName: true,
 				});
 
@@ -500,7 +501,7 @@ const RawReqController = {
 					// ** UPLOAD BLOG THUMBNAIL
 					const { fileData } = await uploadFile({
 						file: req.files?.thumbnail,
-						S3Folder: 'blog-thumbnails',
+						S3Folder: S3FOLDERS.BLOG_THUMBNAILS,
 						appendFileExtensionToFileKeyName: true,
 					});
 					await Blogs.findOneAndUpdate({ uniqueID }, { thumbnail: fileData?.Key });
@@ -569,7 +570,7 @@ const RawReqController = {
 				// ** UPLOAD BLOG AUTHOR AVATAR
 				const { fileData } = await uploadFile({
 					file: req.files?.avatar,
-					S3Folder: 'blog-authors',
+					S3Folder: S3FOLDERS.BLOG_AUTHORS,
 					appendFileExtensionToFileKeyName: true,
 				});
 
@@ -683,7 +684,7 @@ const RawReqController = {
 				// ** UPLOAD THUMBNAIL
 				const { fileData } = await uploadFile({
 					file: req.files?.thumbnail,
-					S3Folder: 'worship-days',
+					S3Folder: S3FOLDERS.WORSHIP_DAYS,
 					appendFileExtensionToFileKeyName: true,
 				});
 
@@ -778,6 +779,33 @@ const RawReqController = {
 			return responseLogic({ req, res, status: 404, data: { message: 'This route does not exist!' } });
 		} catch (err) {
 			return responseLogic({ res, catchError: err });
+		}
+	},
+
+	// ** MANAGE FELLOWSHIP EXCOS CONTROLLERS
+	mangeExcoGroup: async (req, res, SSG = false) => {
+		try {
+			if (req.method !== 'GET') return responseLogic({ SSG: SSG, req, res, status: 404, data: { message: 'This route does not exist!' } });
+			await connectDB();
+
+			const excosGroups = await FellowshipExcos.find().sort({ createdAt: -1 });
+			return responseLogic({ SSG: SSG, req, res, status: 200, data: excosGroups });
+		} catch (err) {
+			return responseLogic({ SSG: SSG, res, catchError: err });
+		}
+	},
+
+	// ** FILE UPLOAD CONTROLLERS
+	uploadFile: async (req, res, SSG = false) => {
+		try {
+			const { fileData } = await uploadFile({
+				file: Object.values(req.files)[0],
+				S3Folder: req.body?.fileFolder,
+				appendFileExtensionToFileKeyName: true,
+			});
+			return responseLogic({ SSG: SSG, req, res, status: 200, data: { fileName: fileData?.Key } });
+		} catch (err) {
+			return responseLogic({ SSG: SSG, res, catchError: err });
 		}
 	},
 

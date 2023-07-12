@@ -22,13 +22,22 @@ const RawRouter = async (incomingReqObj, incomingResObj) => {
 		case 'blogauthors':
 			return authenticate(req, res, RawReqController.manageBlogAuthors);
 
-		// ** WORSHIP DAYS ACTION ROUTES
+		// ** WORSHIP DAYS ACTION ROUTE
 		case 'worshipevent':
 			return authenticate(req, res, RawReqController.manageWorshipEvent);
 
-		// **PAGE CUSTOMIZATION SETTINGS ACTION ROUTES
+		// **PAGE CUSTOMIZATION SETTINGS ACTION ROUTE
 		case 'pagesettings':
 			return authenticate(req, res, RawReqController.updatePageSettings);
+
+		// ** MANAGE FELLOWSHIP EXCOS ROUTE
+		case 'manage-exco-group':
+			return authenticate(req, res, RawReqController.mangeExcoGroup);
+
+		// ** FILE UPLOAD ROUTE
+		case 'upload-file':
+			return authenticate(req, res, RawReqController.uploadFile);
+
 		// // ** SITE SETTINGS ROUTES
 		// case 'update-site-settings':
 		// 	return authenticate(req, res, RawReqController.updateSiteSettings);

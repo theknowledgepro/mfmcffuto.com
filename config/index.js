@@ -10,6 +10,7 @@ const LIMITS = require('./limits');
 const CUSTOM_UI_TYPES = require('./ui_display_types');
 const ASSETS = require('./assets');
 const S3FOLDERS = require('./s3_folders');
+const ACADEMIC_SESSIONS = require('./academic_sessions');
 
 export const SITE_DATA = {
 	URL: 'http://localhost:3000',
@@ -39,4 +40,5 @@ module.exports = {
 	CUSTOM_UI_TYPES,
 	ASSETS,
 	S3FOLDERS,
+	ACADEMIC_SESSIONS,
 };

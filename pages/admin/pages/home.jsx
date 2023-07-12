@@ -126,7 +126,7 @@ const RenderSlideSettingComponent = ({ homePageSettings, slide, allSlides, slide
 				parentClassName={'w-full'}
 				accordionSummary={
 					slide?.backgroundImage ? (
-						<ImageTag className='w-full h-full' style={{ maxHeight: '150px' }} src={slide?.backgroundImage} alt='slide-image' />
+						<ImageTag className='w-full h-full' style={{ maxHeight: '150px' }} src={`${CLOUD_ASSET_BASEURL}/${slide?.backgroundImage}`} alt='slide-image' />
 					) : (
 						<div className='text-center font-medium-custom text-[14px] w-full'>Set Up Content For Slide {slideIndex + 1}</div>
 					)
@@ -568,7 +568,6 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 						<InputLabel id='admin-level-select'>Current President</InputLabel>
 						<Select
 							error={errors.president_fullname ? true : false}
-							helperText={errors.president_fullname}
 							labelId='admin-level-select'
 							label='Current President'
 							value={
@@ -649,14 +648,15 @@ export async function getServerSideProps({ req, res }) {
 	if (isRestricted) return { redirect: { destination: APP_ROUTES.ADMIN_DASHBOARD, permanent: false } };
 
 	// ** GET PAGE DATA
-	// ** GET PAGE CONFIG FROM DB
 	req.page_settings = 'Home-Page-Settings';
 	const homePageSettings = await AdminController.getPageSettings(req, res, true);
 
+	const currentExcos = await AdminController.getCurrentFellowshipExcos(req, res, true);
 	return {
 		props: {
 			userAuth: verifyUserAuth?.user ? verifyUserAuth : {},
 			homePageSettings: homePageSettings?.data?.pageSettings,
+			currentExcos: currentExcos?.data?.excos ? currentExcos?.data?.excos : [],
 		},
 	};
 }
