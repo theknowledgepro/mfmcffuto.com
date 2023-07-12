@@ -126,7 +126,12 @@ const RenderSlideSettingComponent = ({ homePageSettings, slide, allSlides, slide
 				parentClassName={'w-full'}
 				accordionSummary={
 					slide?.backgroundImage ? (
-						<ImageTag className='w-full h-full' style={{ maxHeight: '150px' }} src={`${CLOUD_ASSET_BASEURL}/${slide?.backgroundImage}`} alt='slide-image' />
+						<ImageTag
+							className='w-full h-full'
+							style={{ maxHeight: '150px' }}
+							src={`${CLOUD_ASSET_BASEURL}/${slide?.backgroundImage}`}
+							alt='slide-image'
+						/>
 					) : (
 						<div className='text-center font-medium-custom text-[14px] w-full'>Set Up Content For Slide {slideIndex + 1}</div>
 					)
@@ -478,6 +483,7 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 		}
 	};
 
+	console.log({ currentExcos });
 	return (
 		<div className='w-full border-b border-zinc-300 pb-2 pt-4 font-medium-custom color-primary pb-4'>
 			<div className='w-full flex border-b border-zinc-300 pb-2 pt-4 font-medium-custom color-primary'>
