@@ -10,6 +10,7 @@ import CheckAdminRestriction from '@/middlewares/check_admin_restriction';
 import CottageTwoToneIcon from '@mui/icons-material/CottageTwoTone';
 import {
 	IconButton,
+	Avatar,
 	Divider,
 	Paper,
 	Box,
@@ -629,7 +630,7 @@ const HomePageSettings = ({ userAuth, homePageSettings, currentExcos }) => {
 			pageIcon={<CottageTwoToneIcon sx={{ fontSize: 'inherit', my: 'auto', mr: 1 }} className='text-muted' />}
 			pageTitle={'Home Settings'}>
 			<SlideSettings homePageSettings={homePageSettings} session={session} />
-			<AboutUsSettings homePageSettings={homePageSettings} session={session}  />
+			<AboutUsSettings homePageSettings={homePageSettings} session={session} />
 			<FromPresidentDeskSettings homePageSettings={homePageSettings} currentExcos={currentExcos} session={session} />
 		</AdminLayout>
 	);
