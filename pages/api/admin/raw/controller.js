@@ -783,7 +783,7 @@ const RawReqController = {
 	},
 
 	// ** MANAGE FELLOWSHIP EXCOS CONTROLLERS
-	mangeExcoGroup: async (req, res, SSG = false) => {
+	manageExcoGroup: async (req, res, SSG = false) => {
 		try {
 			await connectDB();
 			if (req.user?.member_role !== MEMBER_ROLES.MASTER && req.user?.member_role !== MEMBER_ROLES.MANAGER)
@@ -791,7 +791,7 @@ const RawReqController = {
 
 			// ** CREATE EXCO GROUP
 			if (req.method === 'POST') {
-				const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.CREATE_EXCO_GROUP, adminId: req?.user?._id });
+				const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.UPDATE_EXCO_GROUP, adminId: req?.user?._id });
 				if (isRestricted)
 					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 
@@ -836,6 +836,25 @@ const RawReqController = {
 					user_id: req?.user?._id,
 				});
 				return responseLogic({ req, res, status: 200, data: { message: `Executive Group ${isNew ? 'Created' : 'Updated'} Successfully!` } });
+			}
+			// ** DELETE EXCO GROUP
+			if (req.method === 'DELETE') {
+				const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.DELETE_EXCO_GROUP, adminId: req?.user?._id });
+				if (isRestricted)
+					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
+				const { group } = req?.query;
+				const excoGroup = await FellowshipExcos.findOneAndDelete({ name: group });
+
+				// ** DELETE BLOG FILE FROM CLOUD STORAGE
+				await deleteFile({ keyName: excoGroup?.group_picture });
+
+				// ** RECORD IN ACTIVITY_LOG DATABASE
+				await activityLog({
+					deed: ACTIVITY_TYPES.DELETE_EXCO_GROUP.title,
+					details: `${ACTIVITY_TYPES.DELETE_EXCO_GROUP.desc} - ${excoGroup?.name}`,
+					user_id: req?.user?._id,
+				});
+				return responseLogic({ req, res, status: 200, data: { message: 'Executives Group Deleted Successfully!' } });
 			}
 			return responseLogic({ req, res, status: 404, data: { message: 'This route does not exist!' } });
 		} catch (err) {

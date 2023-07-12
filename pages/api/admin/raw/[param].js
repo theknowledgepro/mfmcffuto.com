@@ -32,7 +32,7 @@ const RawRouter = async (incomingReqObj, incomingResObj) => {
 
 		// ** MANAGE FELLOWSHIP EXCOS ROUTE
 		case 'manage-exco-group':
-			return authenticate(req, res, RawReqController.mangeExcoGroup);
+			return authenticate(req, res, RawReqController.manageExcoGroup);
 
 		// ** FILE UPLOAD ROUTE
 		case 'upload-file':
