@@ -592,7 +592,7 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 											exco?.secondname ? exco?.secondname : ''
 										}`}>
 										<div className='w-full flex items-center justify-left'>
-											<Avatar src={exco?.avatar} alt={exco?.firstname} className={``} />
+											<Avatar src={`${CLOUD_ASSET_BASEURL}/${exco?.avatar.trim()}`} alt={exco?.firstname} className={``} />
 											<span className='ml-2 my-auto'>{`${exco?.lastname ? exco?.lastname : ''} ${
 												exco?.firstname ? exco?.firstname : ''
 											} ${exco?.secondname ? exco?.secondname : ''}`}</span>
@@ -629,8 +629,8 @@ const HomePageSettings = ({ userAuth, homePageSettings, currentExcos }) => {
 			pageIcon={<CottageTwoToneIcon sx={{ fontSize: 'inherit', my: 'auto', mr: 1 }} className='text-muted' />}
 			pageTitle={'Home Settings'}>
 			<SlideSettings homePageSettings={homePageSettings} session={session} />
-			<AboutUsSettings homePageSettings={homePageSettings} session={session} currentExcos={currentExcos} />
-			<FromPresidentDeskSettings homePageSettings={homePageSettings} session={session} />
+			<AboutUsSettings homePageSettings={homePageSettings} session={session}  />
+			<FromPresidentDeskSettings homePageSettings={homePageSettings} currentExcos={currentExcos} session={session} />
 		</AdminLayout>
 	);
 };
