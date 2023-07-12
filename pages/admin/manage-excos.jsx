@@ -799,22 +799,21 @@ const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert 
 			assumption_date: !assumption_date && 'This field is required.',
 		});
 		if (!name || !name_anchor_scripture || !purpose || !purpose_anchor_scripture || !academic_session || !assumption_date) return;
-		// if (allGroups.filter((index) => index?.uniqueID !== groupData?.uniqueID).find((index) => index?.name === name))
-		// 	return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: `An exco group with this name alredy exist!` } });
+		if (groupData?._id && allGroups.filter((index) => index?._id !== groupData?._id).find((index) => index?.name === name))
+			return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: `An exco group with this name alredy exist!` } });
 
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
 			const res = await postFormDataAPI(
 				API_ROUTES.MANAGE_EXCOS,
-				{ ...groupData, isNew: !group?.name, group_picture: file ? file : group_picture },
+				{ ...groupData, isNew, group_picture: file ? file : group_picture },
 				session?.token
 			);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
 				router.push(APP_ROUTES.MANAGE_EXCOS);
-				handleCloseModal();
 			}
 		} catch (err) {
 			setIsSubmitting(false);

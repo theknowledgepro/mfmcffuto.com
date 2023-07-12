@@ -796,12 +796,6 @@ const RawReqController = {
 				if (isRestricted)
 					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 
-				const { fileData } = await uploadFile({
-					file: req.files?.group_picture,
-					S3Folder: S3FOLDERS.EXCOS_GROUP_PICTURES,
-					appendFileExtensionToFileKeyName: true,
-				});
-
 				const {
 					name,
 					name_anchor_scripture,
@@ -816,19 +810,58 @@ const RawReqController = {
 					isNew,
 				} = req.body;
 
-				const newExcoGroup = await new FellowshipExcos({
-					name,
-					name_anchor_scripture,
-					purpose,
-					purpose_anchor_scripture,
-					excos,
-					academic_session,
-					assumption_date,
-					resignation_date,
-					group_picture: fileData?.Key,
-					current,
-				});
-				await newExcoGroup.save();
+				let newExcoGroup;
+				if (isNew) {
+					const { fileData } = await uploadFile({
+						file: req.files?.group_picture,
+						S3Folder: S3FOLDERS.EXCOS_GROUP_PICTURES,
+						appendFileExtensionToFileKeyName: true,
+					});
+
+					newExcoGroup = await new FellowshipExcos({
+						name,
+						name_anchor_scripture,
+						purpose,
+						purpose_anchor_scripture,
+						excos,
+						academic_session,
+						assumption_date,
+						resignation_date,
+						group_picture: fileData?.Key,
+						current,
+					});
+					await newExcoGroup.save();
+				} else {
+					newExcoGroup = await FellowshipGroups.findOneAndUpdate(
+						{ name },
+						{
+							name,
+							name_anchor_scripture,
+							purpose,
+							purpose_anchor_scripture,
+							excos,
+							academic_session,
+							assumption_date,
+							resignation_date,
+							current,
+						},
+						{ new: false }
+					);
+					if (newExcoGroup?.group_picture) {
+						const { fileData } = await uploadFile({
+							file: req.files?.group_picture,
+							fileKeyNameToReplace: newExcoGroup?.group_picture,
+							appendFileExtensionToFileKeyName: true,
+						});
+					} else {
+						const { fileData } = await uploadFile({
+							file: req.files?.group_picture,
+							S3Folder: S3FOLDERS.EXCOS_GROUP_PICTURES,
+							appendFileExtensionToFileKeyName: true,
+						});
+						await FellowshipGroups.findOneAndUpdate({ name }, { group_picture: fileData?.Key });
+					}
+				}
 
 				// ** RECORD IN ACTIVITY_LOG DATABASE
 				await activityLog({
