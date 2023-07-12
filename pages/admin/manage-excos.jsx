@@ -263,7 +263,7 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 			return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: `This email is already used for an exco!` } });
 
 		if (!file) {
-			handleUpdateExco({ exco: { ...excoData, avatar: res.data.avatar } });
+			handleUpdateExco({ exco: excoData });
 			handleCloseModal();
 			return;
 		}
