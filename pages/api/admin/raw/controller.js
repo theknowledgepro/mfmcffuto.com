@@ -17,6 +17,7 @@ const { uploadFile, deleteFile } = require('@/middlewares/file_manager');
 const { v4: uuidv4 } = require('uuid');
 const CheckAdminRestriction = require('@/middlewares/check_admin_restriction');
 const { ADMIN_PANEL_ACTIONS, MEMBER_ROLES, ACTIVITY_TYPES, S3FOLDERS } = require('@/config');
+const path = require('path');
 
 const capitalizeFirstLetter = (word) => {
 	return word?.trim()?.charAt(0)?.toUpperCase() + word?.substring(1);
@@ -900,12 +901,14 @@ const RawReqController = {
 			switch (req.body.page_settings) {
 				case 'Home-Page-Settings':
 					if (Object.values(req.files).length > 0 && req.body?.slideIndex) {
+						const fileExt = path.extname(req.files.backgroundImage.originalFilename.toLowerCase());
 						customFileName = Date.now().toString();
 						s3_folder = S3FOLDERS.SLIDES;
 						dataToRecord = {
 							...req.body,
 							slides: req.body?.slides?.map((slide, index) => {
-								if (index === Number(req.body.slideIndex)) return { ...slide, backgroundImage: `${s3_folder}/${customFileName}` };
+								if (index === Number(req.body.slideIndex))
+									return { ...slide, backgroundImage: `${s3_folder}/${customFileName}${fileExt}` };
 								return slide;
 							}),
 							slideIndex: undefined,
@@ -938,7 +941,7 @@ const RawReqController = {
 						file: req.files?.backgroundImage,
 						S3Folder: s3_folder,
 						customFileName,
-						appendFileExtensionToFileKeyName: false,
+						appendFileExtensionToFileKeyName: true,
 					});
 				}
 				const newRecord = new SiteSettings({ type: req.body.page_settings, config: dataToRecord });
