@@ -730,7 +730,6 @@ const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert 
 				group_picture: '',
 				current: false,
 				uniqueID: allGroups.length + 1,
-				...group,
 		  };
 
 	console.log({ group });
