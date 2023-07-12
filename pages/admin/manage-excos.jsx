@@ -712,25 +712,26 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert }) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
-	const initialState = group?.name
-		? {
-				...group,
-				uniqueID: allGroups.length + 1,
-				group_picture: group?.group_picture ? `${CLOUD_ASSET_BASEURL}/${group?.group_picture?.trim()}` : '',
-		  }
-		: {
-				name: '',
-				name_anchor_scripture: '',
-				purpose: '',
-				purpose_anchor_scripture: '',
-				excos: [],
-				academic_session: '',
-				assumption_date: '',
-				resignation_date: '',
-				group_picture: '',
-				current: false,
-				uniqueID: allGroups.length + 1,
-		  };
+	const initialState =
+		group?.name && !isNew
+			? {
+					...group,
+					uniqueID: allGroups.length + 1,
+					group_picture: group?.group_picture ? `${CLOUD_ASSET_BASEURL}/${group?.group_picture?.trim()}` : '',
+			  }
+			: {
+					name: '',
+					name_anchor_scripture: '',
+					purpose: '',
+					purpose_anchor_scripture: '',
+					excos: [],
+					academic_session: '',
+					assumption_date: '',
+					resignation_date: '',
+					group_picture: '',
+					current: false,
+					uniqueID: allGroups.length + 1,
+			  };
 
 	console.log({ group });
 
@@ -822,6 +823,7 @@ const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert 
 
 	return (
 		<Paper className='mx-auto max-w-[600px] p-2 my-5'>
+        {isNew && 'New one oooo'}
 			{isNewAlert && (
 				<div className='text-red-600 border-b border-zinc-300 w-full text-center font-medium-custom text-[17px] p-2'>
 					Please fill up the details below to create new Executives Group!
