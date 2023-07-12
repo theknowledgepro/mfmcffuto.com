@@ -711,7 +711,7 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert }) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
-	const initialState = group
+	const initialState = group?.name
 		? {
 				...group,
 				uniqueID: allGroups.length + 1,
