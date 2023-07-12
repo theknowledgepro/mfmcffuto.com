@@ -110,7 +110,7 @@ const RenderSlideSettingComponent = ({ homePageSettings, slide, allSlides, slide
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
 				setSlideData({ ...slideData, ...res?.data?.updatedSlideData });
-				router.push(`${APP_ROUTES.PAGES_CUSTOMIZATION}/home`);
+				router.push(router.pathname);
 				handleCloseModal();
 			}
 		} catch (err) {
@@ -331,7 +331,7 @@ const AboutUsSettings = ({ session, homePageSettings }) => {
 
 			if (res?.status === 200) {
 				setIsSubmitting(false);
-				router.push(`${APP_ROUTES.PAGES_CUSTOMIZATION}/home`);
+				router.push(router.pathname);
 			}
 		} catch (err) {
 			setIsSubmitting(false);
@@ -502,7 +502,7 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 
 			if (res?.status === 200) {
 				setIsSubmitting(false);
-				router.push(`${APP_ROUTES.PAGES_CUSTOMIZATION}/home`);
+				router.push(router.pathname);
 			}
 		} catch (err) {
 			setIsSubmitting(false);
