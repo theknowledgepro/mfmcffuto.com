@@ -12,6 +12,7 @@ module.exports = {
 	DELETE_ADMIN: { title: 'DELETE_ADMIN', desc: 'Deleted admin account' },
 
 	UPDATE_SITE_SETTINGS: { title: 'UPDATE_SITE_SETTINGS', desc: 'Updated site settings' },
+	UPDATE_PAGE_SETTINGS: { title: 'UPDATE_PAGE_SETTINGS', desc: 'Updated page settings' },
 	CONFIGURE_SITE_SETTINGS: { title: 'CONFIGURE_SITE_SETTINGS', desc: 'Configured settings for this site' },
 
 	READ_CONTACT_FORM: { title: 'READ_CONTACT_FORM', desc: 'Read contact form - ID: ' },

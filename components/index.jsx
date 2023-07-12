@@ -41,6 +41,7 @@ export { default as GiveTithesAndOfferingsSection } from './tithes_and_offerings
 export { default as SermonsPreviewSection } from './sermons_preview_section';
 export { default as FellowshipGroupsPreview } from './fellowship_groups_preview';
 export { default as SeeMoreLink } from './see_more_link';
+export { default as ControlledAccordion } from './controlled_accordion';
 
 // ** BLOG SECTION COMPONENTS
 export { default as CategoriesSection } from './blogs/categories_section';

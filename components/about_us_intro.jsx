@@ -5,6 +5,7 @@ import comp_styles from './components.module.css';
 import { Button } from '@mui/material';
 import { APP_ROUTES, ASSETS } from '@/config';
 import Link from 'next/link';
+import ImageTag from './image_tag';
 
 const AboutUsIntro = ({ sitesettings, homePageSettings }) => {
 	const [tabIndex, setTabIndex] = useState(0);
@@ -64,7 +65,7 @@ const AboutUsIntro = ({ sitesettings, homePageSettings }) => {
 							<div className='pt-3 text-[16px]'>
 								{homePageSettings?.our_mission?.map((mission, index) => (
 									<div key={index} className='flex w-full my-2' style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-										{/* <Image src={pinEmoji} className={`mr-2 my-auto`} style={{ width: '25px', height: '25px' }} /> */}
+										<ImageTag src={ASSETS.PIN_EMOJI} className={`mr-2 my-auto`} style={{ width: '25px', height: '25px' }} />
 										<div className='my-auto' style={{ width: 'calc(100% - 40px)' }}>
 											{mission?.trim()}
 										</div>

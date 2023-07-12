@@ -21,15 +21,12 @@ import styles from '@/pages/pages_styles.module.css';
 import Typewriter from 'typewriter-effect';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { SITE_DATA, ASSETS } from '@/config';
-import React, { useRef } from 'react';
-import image1 from '@/assets/demo/1.jpg';
-import image2 from '@/assets/demo/2.jpg';
-import image3 from '@/assets/demo/3.jpg';
+import { SITE_DATA, ASSETS, CLOUD_ASSET_BASEURL } from '@/config';
+import React from 'react';
 import WebController from '@/pages/api/controller';
 import AdminController from '@/pages/api/admin/controller';
 
-const HomePage = ({ metatags, settings, recentBlogs, blogsettings, worshipDays }) => {
+const HomePage = ({ metatags, settings, recentBlogs, blogsettings, worshipDays, homePageSettings }) => {
 	const carouselSettings = {
 		dots: false,
 		infinite: true,
@@ -42,40 +39,19 @@ const HomePage = ({ metatags, settings, recentBlogs, blogsettings, worshipDays }
 		slidesToScroll: 1,
 	};
 
-	const slides = [
-		{
-			title: 'Experience Worship!',
-			content: 'Experience WorshipExperience WorshipExperience WorshipExperience WorshipExperience Worship',
-			image: image1,
-		},
-		{
-			title: 'The Place of Encounter',
-			content:
-				'The Place of EncounterThe Place of EncounterThe Place of EncounterThe Place of EncounterThe Place of EncounterThe Place of EncounterThe Place of Encounter',
-			image: image2,
-		},
-		{
-			title: 'Home Of Prayer!',
-			content: 'Home Of PrayerHome Of PrayerHome Of PrayerHome Of PrayerHome Of Prayer',
-			image: image3,
-		},
-	];
-
-	const useSlider = useRef(null);
-
 	return (
 		<WebLayout metatags={metatags} sitesettings={settings}>
 			<Slider
 				className='relative'
-				ref={(slider) => {
-					useSlider.current = slider;
-				}}
+				// ref={(slider) => {
+				// 	useSlider.current = slider;
+				// }}
 				{...carouselSettings}>
-				{slides.map((slide, i) => (
+				{homePageSettings?.slides?.map((slide, i) => (
 					<div key={i} className={`relative min-h-[99vh] bg-inherit`}>
 						<ImageTag
 							className='absolute bg-inherit h-full object-cover w-full '
-							src={slide?.image}
+							src={`${CLOUD_ASSET_BASEURL}/${slide?.backgroundImage}`}
 							style={{ maxHeight: '768px' }}
 							alt={`Slide Thumbnail`}
 						/>
@@ -90,7 +66,7 @@ const HomePage = ({ metatags, settings, recentBlogs, blogsettings, worshipDays }
 												onInit={(typewriter) => {
 													typewriter
 														.pauseFor(i * 20500)
-														.typeString(slide?.content)
+														.typeString(slide?.description)
 														.deleteAll()
 														.start();
 												}}
@@ -114,7 +90,7 @@ const HomePage = ({ metatags, settings, recentBlogs, blogsettings, worshipDays }
 			</Slider>
 
 			<div className={`${styles.page_padding} pb-[40px]`}>
-				<AboutUsIntro />
+				<AboutUsIntro homePageSettings={homePageSettings} sitesettings={settings} />
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
@@ -126,7 +102,7 @@ const HomePage = ({ metatags, settings, recentBlogs, blogsettings, worshipDays }
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full`}>
-				<FromthePresidentsDesk />
+				<FromthePresidentsDesk homePageSettings={homePageSettings} />
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
@@ -178,6 +154,9 @@ export async function getServerSideProps({ req, res, query }) {
 
 	// ** GET WORSHIP DAYS
 	const worshipDays = await AdminController.getAllWorshipDays(req, res, true);
+	// ** GET PAGE CONFIG FROM DB
+	req.page_settings = 'Home-Page-Settings';
+	const homePageSettings = await AdminController.getPageSettings(req, res, true);
 	return {
 		props: {
 			metatags: JSON.parse(
@@ -191,6 +170,7 @@ export async function getServerSideProps({ req, res, query }) {
 			blogsettings: blogSettings,
 			recentBlogs: recentBlogs?.length ? recentBlogs : [],
 			worshipDays: worshipDays?.data?.length ? worshipDays?.data : [],
+			homePageSettings: homePageSettings?.data?.pageSettings,
 		},
 	};
 }

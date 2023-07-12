@@ -13,7 +13,7 @@ const s3 = new AWS.S3({
 // const randomFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
 const fileHostName = 'https://dvlye389i9odw.cloudfront.net/';
 
-const uploadFile = async ({ file, S3Folder, fileKeyNameToReplace, appendFileExtensionToFileKeyName }) => {
+const uploadFile = async ({ file, S3Folder, customFileName, fileKeyNameToReplace, appendFileExtensionToFileKeyName }) => {
 	if (!file) return {};
 	const fileSize = file?.size;
 	const filePath = file.filepath;
@@ -22,7 +22,9 @@ const uploadFile = async ({ file, S3Folder, fileKeyNameToReplace, appendFileExte
 
 	const fileKeyName = fileKeyNameToReplace
 		? fileKeyNameToReplace
-		: `${S3Folder ? `${S3Folder}/` : ''}${Date.now().toString()}${appendFileExtensionToFileKeyName ? fileExt : ''}`;
+		: `${S3Folder ? `${S3Folder}/` : ''}${customFileName ? customFileName : Date.now().toString()}${
+				appendFileExtensionToFileKeyName ? fileExt : ''
+		  }`;
 	console.log({ fileKeyName });
 
 	const { fileData } = await new Promise((resolve, reject) => {

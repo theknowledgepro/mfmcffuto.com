@@ -352,6 +352,19 @@ const AdminController = {
 			return responseLogic({ SSG: SSG, res, catchError: err });
 		}
 	},
+
+	// ** SITE PAGE SETTINGS CONTROLLER
+	getPageSettings: async (req, res, SSG = false) => {
+		try {
+			if (req.method !== 'GET') return responseLogic({ SSG: SSG, req, res, status: 404, data: { message: 'This route does not exist!' } });
+			await connectDB();
+
+			const pageSettings = await SiteSettings.findOne({ type: req.page_settings });
+			return responseLogic({ SSG: SSG, req, res, status: 200, data: { pageSettings: pageSettings?.config ? pageSettings?.config : {} } });
+		} catch (err) {
+			return responseLogic({ SSG: SSG, res, catchError: err });
+		}
+	},
 	// ** CONTACT FORM SUBMISSIONS CONTROLLERS
 	// getContactFormSubmissions: async (req, res, SSG = false) => {
 	// 	try {

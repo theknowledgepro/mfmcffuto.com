@@ -9,6 +9,7 @@ const MEMBER_ROLES = require('./member_roles');
 const LIMITS = require('./limits');
 const CUSTOM_UI_TYPES = require('./ui_display_types');
 const ASSETS = require('./assets');
+const S3FOLDERS = require('./s3_folders');
 
 export const SITE_DATA = {
 	URL: 'http://localhost:3000',
@@ -37,4 +38,5 @@ module.exports = {
 	CLOUD_ASSET_BASEURL,
 	CUSTOM_UI_TYPES,
 	ASSETS,
+	S3FOLDERS,
 };

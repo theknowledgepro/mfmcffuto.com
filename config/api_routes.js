@@ -9,6 +9,8 @@ module.exports = {
 	PASSWORD_RESET: 'auth/reset-account-password',
 
 	// ** ADMIN PANEL ACTIONS ROUTES
+
+	// ** MANAGE BLOGS ACTIONS ROUTES
 	CREATE_ADMIN: 'admin/raw/create-admin',
 	EDIT_ADMIN: 'admin/raw/edit-admin',
 	DELETE_ADMIN: 'admin/delete-admin',
@@ -21,8 +23,11 @@ module.exports = {
 	MANAGE_BLOGS_SETTINGS: `admin/blog-settings`,
 	GET_BLOG_CONTENT: 'admin/blog-content',
 
-	// DAYS OF WORSHIP ACTION ROUTES
+	// ** DAYS OF WORSHIP ACTION ROUTES
 	MANAGE_DAYS_OF_WORSHIP: 'admin/raw/worshipevent',
+
+	// ** PAGE CUSTOMIZATION SETTINGS ACTIONS ROUTES
+	UPDATE_PAGE_CUSTOMIZATION_SETTINGS: 'admin/raw/pagesettings',
 
 	GET_ALL_ADMINS: 'admin/all-admins',
 	GET_ACTIVITY_LOGS: 'admin/activity-logs',

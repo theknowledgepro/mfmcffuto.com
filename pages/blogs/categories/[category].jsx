@@ -50,9 +50,9 @@ const Category = ({ metatags, settings, blogsettings, category }) => {
 			{category?.published && (
 				<React.Fragment>
 					<TypeWriterWebBanner stringsArray={category?.type_writer_strings} sections={sections} />
-					<div className={`${styles.page_padding} w-100`}>
-						<Grid columns={{ xs: 12, sm: 12, md: 12 }} container={true} className='pb-4 d-flex flex-column-reverse flex-md-row'>
-							<Grid xs={12} sm={12} md={9.5} item={true} className='pb-5 d-flex flex-column'>
+					<div className={`${styles.page_padding} w-full mt-5`}>
+						<Grid columns={{ xs: 12, sm: 12, md: 12 }} container={true} className='pb-4 flex md:flex-row'>
+							<Grid xs={12} sm={12} md={9.5} item={true} className='pb-5 flex flex-col xss:order-2 md:order-1'>
 								{category?.blogs?.length === 0 && (
 									<NoDataFound sorryText='Ooops! We could not find any blog for this category at this time!' />
 								)}
@@ -80,20 +80,20 @@ const Category = ({ metatags, settings, blogsettings, category }) => {
 									))}
 								</Grid>
 							</Grid>
-							<Grid xs={12} sm={12} md={2.5} item={true} className={`${styles.sticky_card_from_md_up} overflow-hidden p-2`}>
-								<Divider className='bg-primary my-2 w-100' />
-								<div className={`${comp_styles.category_title} ${styles.blog_data_title} ms-2 mb-4`}>{category?.title}</div>
+							<Grid xs={12} sm={12} md={2.5} item={true} className={`${styles.sticky_card_from_md_up} xss:order-1 md:order-2 mb-4 overflow-hidden p-2`}>
+								<Divider className='bg-primary my-2 w-full' />
+								<div className={`${comp_styles.category_title} ${styles.blog_data_title} ms-2 mb-4 pb-3`}>{category?.title}</div>
 
 								{category?.blogs?.length > 0 && (
-									<div className='mt-4 w-100 fs-9 text-secondary'>
+									<div className='mt-4 w-full fs-9 text-secondary'>
 										{category?.blogs?.length} published article{category?.blogs?.length > 1 ? 's' : ''} in this category.
 									</div>
 								)}
 
-								<div className='w-100 mt-2'>
+								<div className='w-full mt-2'>
 									<blockquote>{category?.description}</blockquote>
 								</div>
-								<Divider className='bg-primary mt-3 w-100' />
+								<Divider className='bg-primary mt-3 w-full' />
 							</Grid>
 						</Grid>
 					</div>

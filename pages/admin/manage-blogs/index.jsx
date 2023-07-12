@@ -284,7 +284,7 @@ const CreateBlogFunctionality = ({ allCategories, allTags, allBlogs, blogAuthors
 					<Box sx={{ minWidth: 120, minHeight: 20, mt: '40px' }}>
 						<FormControl fullWidth size='small'>
 							<InputLabel id='admin-level-select'>Author</InputLabel>
-							<Select labelId='admin-level-select' value={defaultAuthor?._id} label='Sort By' onChange={handleSelectAuthor}>
+							<Select label='Author' labelId='admin-level-select' value={defaultAuthor?._id} onChange={handleSelectAuthor}>
 								{blogAuthors.map((author, index) => (
 									<MenuItem key={index} value={author?._id}>
 										<div className='w-full flex items-center justify-left'>

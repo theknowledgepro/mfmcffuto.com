@@ -147,6 +147,12 @@ const AdminDashboardNavItems1 = [
 		id: 'upcomingevents',
 	},
 	{
+		name: 'Fellowship Excos',
+		icon: <ChurchOutlinedIcon className={admin_comp_styles.nav_icon} />,
+		href: APP_ROUTES.MANAGE_EXCOS,
+		id: 'fellowshipexcos',
+	},
+	{
 		name: 'Contact Form',
 		icon: <PermContactCalendarTwoToneIcon className={admin_comp_styles.nav_icon} />,
 		href: APP_ROUTES.CONTACT_FORM_SUBMISSIONS,

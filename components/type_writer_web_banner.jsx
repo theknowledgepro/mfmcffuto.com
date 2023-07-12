@@ -10,7 +10,7 @@ const TypeWriterWebBanner = ({ sections, stringsArray }) => {
 	return (
 		<React.Fragment>
 			<div
-				style={{ '--typewriter-web-banner-height': '60vh', '--typewriter-web-banner-max-height': '60vh' }}
+				style={{ '--typewriter-web-banner-height': '70vh', '--typewriter-web-banner-max-height': '70vh' }}
 				className={`${styles.typewriter_web_banner_container}`}>
 				<div className={`${styles.typewriter_web_banner_typewritercontainer}`}>
 					<div className={`${pages_styles.page_padding}`}>
@@ -24,8 +24,8 @@ const TypeWriterWebBanner = ({ sections, stringsArray }) => {
 								strings: stringsArray ? stringsArray : ['MFMCF FUTO', "...where champions are gathered!"],
 								autoStart: true,
 								loop: true,
-								cursorClassName: 'xss:text-[28px] md:text-[40px]',
-								wrapperClassName: 'xss:text-[28px] md:text-[40px]',
+								cursorClassName: 'xss:text-[24px] md:text-[40px]',
+								wrapperClassName: 'xss:text-[24px] md:text-[40px]',
 							}}
 						/>
 					</div>

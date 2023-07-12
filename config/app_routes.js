@@ -34,6 +34,7 @@ module.exports = {
 	ACTIVITY_LOGS: '/admin/activity-logs',
 
 	MANAGE_DAYS_OF_WORSHIP: '/admin/days-of-worship',
+	MANAGE_EXCOS: '/admin/manage-excos',
 
 	// ** AUTHENTICATION ROUTES
 	LOGIN: '/admin/login',

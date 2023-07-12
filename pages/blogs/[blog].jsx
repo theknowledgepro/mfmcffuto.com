@@ -155,8 +155,8 @@ const BlogPage = ({
 											{blogData?.author?.lastname?.charAt(0)?.toUpperCase()}
 										</Avatar>
 										<div className='flex flex-col'>
-											<div className='text-[13px] my-auto blog-text-theme fw-bold'>Author - {authorName}</div>
-											<div className='mt-1 text-[13px] blog-text-theme flex flex-wrap'>
+											<div className='line-height-1b text-[13px] my-auto blog-text-theme fw-bold'>Author - {authorName}</div>
+											<div className='line-height-1b mt-1 text-[13px] blog-text-theme flex flex-wrap'>
 												{blogsettings?.show_views && (
 													<div className='my-auto mr-1'>
 														<RemoveRedEyeTwoToneIcon className='text-[15px] blog-text-theme mr-1' />

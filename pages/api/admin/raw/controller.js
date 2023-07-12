@@ -8,13 +8,14 @@ const BlogTags = require('@/models/blog_tags_model');
 const BlogCategories = require('@/models/blog_categories_model');
 const Blogs = require('@/models/blog_model');
 const WorshipDays = require('@/models/worship_days_model');
+const SiteSettings = require('@/models/site_settings_model');
 const UpComingEvents = require('@/models/upcoming_events_model');
 const activityLog = require('@/middlewares/activity_log');
 const validate = require('@/middlewares/validate');
 const { uploadFile, deleteFile } = require('@/middlewares/file_manager');
 const { v4: uuidv4 } = require('uuid');
 const CheckAdminRestriction = require('@/middlewares/check_admin_restriction');
-const { ADMIN_PANEL_ACTIONS, MEMBER_ROLES, ACTIVITY_TYPES } = require('@/config');
+const { ADMIN_PANEL_ACTIONS, MEMBER_ROLES, ACTIVITY_TYPES, S3FOLDERS } = require('@/config');
 
 const capitalizeFirstLetter = (word) => {
 	return word?.trim()?.charAt(0)?.toUpperCase() + word?.substring(1);
@@ -760,7 +761,7 @@ const RawReqController = {
 				if (isRestricted)
 					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 
-				const worshipData = await WorshipDays.findOneAndDelete({ _id: req.query._id });
+				const worshipData = await WorshipDays.findOneAndDelete({ _id: req.query.worshipDay });
 
 				// ** DELETE THUMBNAIL FROM CLOUD STORAGE
 				if (worshipData?.thumbnail) await deleteFile({ keyName: worshipData?.thumbnail });
@@ -775,6 +776,82 @@ const RawReqController = {
 			}
 
 			return responseLogic({ req, res, status: 404, data: { message: 'This route does not exist!' } });
+		} catch (err) {
+			return responseLogic({ res, catchError: err });
+		}
+	},
+
+	// ** PAGE CUSTOMIZATION SETTINGS CONTROLLER
+	updatePageSettings: async (req, res) => {
+		try {
+			await connectDB();
+			if (req.user?.member_role !== MEMBER_ROLES.MASTER && req.user?.member_role !== MEMBER_ROLES.MANAGER)
+				return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
+
+			const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.UPDATE_PAGE_SETTINGS, adminId: req?.user?._id });
+			if (isRestricted) return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
+
+			// ** SET DATA TO RECORD FOR EACH PAGE SETTINGS AND DEPENDING ON FILE UPLOADED??
+			let dataToRecord = {};
+			let customFileName;
+			let s3_folder;
+
+			switch (req.body.page_settings) {
+				case 'Home-Page-Settings':
+					if (Object.values(req.files).length > 0 && req.body?.slideIndex) {
+						customFileName = Date.now().toString();
+						s3_folder = S3FOLDERS.SLIDES;
+						dataToRecord = {
+							...req.body,
+							slides: req.body?.slides?.map((slide, index) => {
+								if (index === Number(req.body.slideIndex)) return { ...slide, backgroundImage: `${s3_folder}/${customFileName}` };
+								return slide;
+							}),
+							slideIndex: undefined,
+						};
+					} else dataToRecord = req.body;
+					break;
+				default:
+					break;
+			}
+
+			// ** RECORD IN DB
+			const settingsExist = await SiteSettings.findOne({ type: req.body.page_settings });
+			if (settingsExist) {
+				const updatedData = await SiteSettings.findOneAndUpdate({ type: req.body.page_settings }, { config: dataToRecord }, { new: false });
+				switch (req.body.page_settings) {
+					case 'Home-Page-Settings':
+						if (Object.values(req.files).length > 0 && req.body?.slideIndex && updatedData?.config?.slides?.length) {
+							// ** DELETION FOR SLIDES UPDATE
+							const slideObject = updatedData?.config?.slides[Number(req.body?.slideIndex)];
+							await deleteFile({ keyName: slideObject?.backgroundImage });
+						}
+						break;
+					default:
+						break;
+				}
+			} else {
+				// ** UPLOAD NEW FILE
+				if (Object.values(req.files).length > 0) {
+					const { fileData } = await uploadFile({
+						file: req.files?.backgroundImage,
+						S3Folder: s3_folder,
+						customFileName,
+						appendFileExtensionToFileKeyName: false,
+					});
+				}
+				const newRecord = new SiteSettings({ type: req.body.page_settings, config: dataToRecord });
+				await newRecord.save();
+			}
+
+			// ** RECORD IN ACTIVITY_LOG DATABASE
+			await activityLog({
+				deed: ACTIVITY_TYPES.UPDATE_PAGE_SETTINGS.title,
+				details: `${ACTIVITY_TYPES.UPDATE_PAGE_SETTINGS.desc} - ${req.body.page_settings}`,
+				user_id: req?.user?._id,
+				res,
+			});
+			return responseLogic({ req, res, status: 200, data: { message: 'Page Settings Updated Successfully!' } });
 		} catch (err) {
 			return responseLogic({ res, catchError: err });
 		}

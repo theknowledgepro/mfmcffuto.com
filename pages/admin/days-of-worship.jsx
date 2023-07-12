@@ -8,25 +8,8 @@ import AuthController from '@/pages/api/auth/controller';
 import AdminController from '@/pages/api/admin/controller';
 import CheckAdminRestriction from '@/middlewares/check_admin_restriction';
 import ChurchOutlinedIcon from '@mui/icons-material/ChurchOutlined';
-import {
-	Avatar,
-	Divider,
-	Paper,
-	Box,
-	Button,
-	TextField,
-	CircularProgress,
-	FormControl,
-	InputLabel,
-	MenuItem,
-	Select,
-	Switch,
-	InputAdornment,
-} from '@mui/material';
-import Moment from 'react-moment';
+import { Box, Button, TextField, CircularProgress, FormControl, InputLabel, MenuItem, Select, Switch, InputAdornment } from '@mui/material';
 import { BsDot } from 'react-icons/bs';
-import styles from './admin_styles.module.css';
-import handleDataSort from '@/utils/handle_data_sort';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { WorshipEvent } from '@/components/worship_days';
@@ -38,7 +21,7 @@ import comp_styles from '@/components/components.module.css';
 import { GLOBALTYPES } from '@/redux/types';
 import { validate } from '@/utils/validate';
 import { handleClientAPIRequestErrors } from '@/utils/errors';
-import { patchFormDataAPI, postFormDataAPI } from '@/utils/api_client_side';
+import { deleteDataAPI, patchFormDataAPI, postFormDataAPI } from '@/utils/api_client_side';
 
 const CreateWorhipEvent = ({ allWorshipDays, session, worshipDay, isEdit }) => {
 	const dispatch = useDispatch();
@@ -376,7 +359,74 @@ const CreateWorhipEvent = ({ allWorshipDays, session, worshipDay, isEdit }) => {
 	);
 };
 
-const ActivityLogs = ({ userAuth, worshipDays }) => {
+const DeleteWorhipEvent = ({ session, worshipDay }) => {
+	const dispatch = useDispatch();
+	const router = useRouter();
+	const [openModal, setOpenModal] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const handleDeleteWorshipEvent = async () => {
+		if (isSubmitting) return;
+		setIsSubmitting(true);
+		try {
+			const res = await deleteDataAPI(`${API_ROUTES.MANAGE_DAYS_OF_WORSHIP}?worshipDay=${worshipDay?._id}`, session?.token);
+			if (res?.status === 200) {
+				setIsSubmitting(false);
+				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
+				setOpenModal(false);
+				router.push(APP_ROUTES.MANAGE_DAYS_OF_WORSHIP);
+			}
+		} catch (err) {
+			setIsSubmitting(false);
+			handleClientAPIRequestErrors({ err, dispatch, loadingData: null });
+		}
+	};
+	return (
+		<MuiModal
+			openModal={openModal}
+			setOpenModal={setOpenModal}
+			closeOnOverlayClick={true}
+			modalSize={'xs'}
+			disableDefaultFullScreen={true}
+			modalTitle={
+				<div className='w-full text-[16px] font-medium-custom flex items-center justify-between'>
+					<div>
+						Delete <span className='color-primary'>{worshipDay?.title}?</span>
+					</div>
+				</div>
+			}
+			modalBody={
+				<div className='w-full text-center'>
+					<div>Are you sure you want to delete this Worship Day?</div>
+					<div>It will be permanently deleted.</div>
+				</div>
+			}
+			modalActions={
+				<React.Fragment>
+					{!isSubmitting && (
+						<React.Fragment>
+							<Button
+								onClick={handleDeleteWorshipEvent}
+								className='w-full normal-case bg-red-600 text-white'
+								color='danger'
+								variant='contained'>
+								<DeleteIcon fontSize='small' sx={{ mr: '5px' }} /> Delete
+							</Button>
+							<Button onClick={() => setOpenModal(false)} className='w-full btn-site normal-case' variant='contained'>
+								<CancelIcon fontSize='small' sx={{ mr: '5px' }} /> Cancel
+							</Button>
+						</React.Fragment>
+					)}
+					{isSubmitting && <CircularProgress style={{ color: 'var(--color-primary)', margin: 'auto', height: '40px', width: '40px' }} />}
+				</React.Fragment>
+			}>
+			<Button variant='contained' className='bg-red-600 text-white' sx={{ ml: 1 }}>
+				<DeleteIcon />
+			</Button>
+		</MuiModal>
+	);
+};
+
+const DaysOfWorship = ({ userAuth, worshipDays }) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	// ** DISPATCH USER AUTH
@@ -393,7 +443,10 @@ const ActivityLogs = ({ userAuth, worshipDays }) => {
 				{worshipDays.map((event, index) => (
 					<div className='col-span-1 md:px-1 py-3' key={index}>
 						<WorshipEvent cardWrapperClassName='w-full' event={event} />
-						<CreateWorhipEvent allWorshipDays={worshipDays} session={session} worshipDay={event} isEdit={true} />
+						<div className='flex items-center justify-center gap-2'>
+							<CreateWorhipEvent allWorshipDays={worshipDays} session={session} worshipDay={event} isEdit={true} />
+							<DeleteWorhipEvent session={session} worshipDay={event} />
+						</div>
 					</div>
 				))}
 			</div>
@@ -429,4 +482,4 @@ export async function getServerSideProps({ req, res }) {
 	};
 }
 
-export default ActivityLogs;
+export default DaysOfWorship;
