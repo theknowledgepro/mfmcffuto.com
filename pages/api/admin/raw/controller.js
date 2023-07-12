@@ -785,19 +785,73 @@ const RawReqController = {
 	// ** MANAGE FELLOWSHIP EXCOS CONTROLLERS
 	mangeExcoGroup: async (req, res, SSG = false) => {
 		try {
-			if (req.method !== 'GET') return responseLogic({ SSG: SSG, req, res, status: 404, data: { message: 'This route does not exist!' } });
 			await connectDB();
+			if (req.user?.member_role !== MEMBER_ROLES.MASTER && req.user?.member_role !== MEMBER_ROLES.MANAGER)
+				return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 
-			const excosGroups = await FellowshipExcos.find().sort({ createdAt: -1 });
-			return responseLogic({ SSG: SSG, req, res, status: 200, data: excosGroups });
+			// ** CREATE EXCO GROUP
+			if (req.method === 'POST') {
+				const isRestricted = await CheckAdminRestriction({ action: ADMIN_PANEL_ACTIONS.CREATE_EXCO_GROUP, adminId: req?.user?._id });
+				if (isRestricted)
+					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
+
+				const { fileData } = await uploadFile({
+					file: req.files?.group_picture,
+					S3Folder: S3FOLDERS.EXCOS_GROUP_PICTURES,
+					appendFileExtensionToFileKeyName: true,
+				});
+
+				const {
+					name,
+					name_anchor_scripture,
+					purpose,
+					purpose_anchor_scripture,
+					excos,
+					academic_session,
+					assumption_date,
+					resignation_date,
+					group_picture,
+					current,
+					isNew,
+				} = req.body;
+
+				const newExcoGroup = await new FellowshipExcos({
+					name,
+					name_anchor_scripture,
+					purpose,
+					purpose_anchor_scripture,
+					excos,
+					academic_session,
+					assumption_date,
+					resignation_date,
+					group_picture: fileData?.Key,
+					current,
+				});
+				await newExcoGroup.save();
+
+				// ** RECORD IN ACTIVITY_LOG DATABASE
+				await activityLog({
+					deed: isNew ? ACTIVITY_TYPES.CREATE_EXCO_GROUP.title : ACTIVITY_TYPES.UPDATE_EXCO_GROUP.title,
+					details: isNew ? `${ACTIVITY_TYPES.CREATE_EXCO_GROUP.desc} - ${name}` : `${ACTIVITY_TYPES.UPDATE_EXCO_GROUP.desc} - ${name}`,
+					user_id: req?.user?._id,
+				});
+				return responseLogic({ req, res, status: 200, data: { message: `Executive Group ${isNew ? 'Created' : 'Updated'} Successfully!` } });
+			}
+			return responseLogic({ req, res, status: 404, data: { message: 'This route does not exist!' } });
 		} catch (err) {
-			return responseLogic({ SSG: SSG, res, catchError: err });
+			return responseLogic({ res, catchError: err });
 		}
 	},
 
 	// ** FILE UPLOAD CONTROLLERS
 	uploadFile: async (req, res, SSG = false) => {
 		try {
+			if (req.body?.fileToDelete) {
+				const fileToDelete = req.body?.fileToDelete;
+				console.log({ fileToDelete });
+				await deleteFile({ keyName: fileToDelete });
+			}
+
 			const { fileData } = await uploadFile({
 				file: Object.values(req.files)[0],
 				S3Folder: req.body?.fileFolder,

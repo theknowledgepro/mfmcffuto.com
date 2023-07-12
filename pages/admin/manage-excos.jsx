@@ -272,10 +272,14 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
-			const res = await postFormDataAPI(API_ROUTES.UPLOAD_FILE, { file: file, fileFolder: S3FOLDERS.EXCOS_AVATARS }, session?.token);
+			const res = await postFormDataAPI(
+				API_ROUTES.UPLOAD_FILE,
+				{ file: file, fileFolder: S3FOLDERS.EXCOS_AVATARS, fileToDelete: exco?.avatar ? exco?.avatar : undefined },
+				session?.token
+			);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
-				console.log({ avatar: res.data.fileName });
+				// console.log({ avatar: res.data.fileName });
 				handleUpdateExco({ exco: { ...excoData, avatar: res.data.fileName } });
 				handleCloseModal();
 			}
@@ -685,7 +689,7 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 			}>
 			{!isNew && (
 				<div className='flex cursor-pointer my-4 border-b border-zinc-300 pb-2 items-center justify-start w-full'>
-					<Avatar src={exco?.avatar} className='mr-2 my-auto' />
+					<Avatar src={`${CLOUD_ASSET_BASEURL}/${exco?.avatar?.trim()}`} className='border mr-2 my-auto' />
 					<div className='flex flex-col'>
 						<div className='line-height-1b text-[14px] font-medium-custom'>
 							{`${exco?.lastname ? exco?.lastname : ''} ${exco?.firstname ? exco?.firstname : ''} ${
@@ -782,7 +786,11 @@ const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert 
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
-			const res = await postFormDataAPI(API_ROUTES.MANAGE_EXCOS, { ...groupData, group_picture: file ? file : group_picture }, session?.token);
+			const res = await postFormDataAPI(
+				API_ROUTES.MANAGE_EXCOS,
+				{ ...groupData, isNew: !group?.name, group_picture: file ? file : group_picture },
+				session?.token
+			);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });

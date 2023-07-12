@@ -40,5 +40,9 @@ module.exports = {
 	UPDATE_DAY_OF_WORSHIP: { title: 'UPDATE_DAY_OF_WORSHIP', desc: 'Updated Worship Day' },
 	DELETE_DAY_OF_WORSHIP: { title: 'DELETE_DAY_OF_WORSHIP', desc: 'Deleted Worship Day' },
 
+	CREATE_EXCO_GROUP: { title: 'CREATE_EXCO_GROUP', desc: 'Created Executive Group' },
+	UPDATE_EXCO_GROUP: { title: 'UPDATE_EXCO_GROUP', desc: 'Updated Executive Group' },
+	DELETE_EXCO_GROUP: { title: 'DELETE_EXCO_GROUP', desc: 'Deleted Executive Group' },
+
 	UPDATE_PAGE_SEO_DATA: { title: 'UPDATE_PAGE_SEO_DATA', desc: 'Updated SEO settings for ' },
 };

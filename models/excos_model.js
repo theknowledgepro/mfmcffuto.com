@@ -13,7 +13,8 @@ const ExcosSchema = new mongoose.Schema(
 		academic_session: { type: String, required: true },
 		assumption_date: { type: String },
 		resignation_date: { type: String },
-		current: { type: Boolean, required: true, default: false },
+        group_picture: { type: String },
+        current: { type: Boolean, required: true, default: false },
 	},
 	{ timestamps: true }
 );
