@@ -56,7 +56,6 @@ import admin_comp_styles from '@/components/admin/admin_components.module.css';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
 
-
 const handleReload = (router) => {
 	return router.reload(router.asPath);
 };
@@ -82,7 +81,7 @@ const DeleteExcoGroup = ({ session, allGroups, setAllGroups, group, isNew }) => 
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
 				setOpenModal(false);
-				handleReload(router)
+				handleReload(router);
 			}
 		} catch (err) {
 			setIsSubmitting(false);
@@ -816,7 +815,7 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 				API_ROUTES.MANAGE_EXCOS,
 				{
 					...groupData,
-					excos: excos.map((exco, index) => {
+					excos: groupData?.excos.map((exco, index) => {
 						return { ...exco, uniqueID: index + 1 };
 					}),
 					isNew,
@@ -827,7 +826,7 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
-				handleReload(router)
+				handleReload(router);
 			}
 		} catch (err) {
 			setIsSubmitting(false);
@@ -1074,7 +1073,7 @@ const ManageExcos = ({ userAuth, excosGroups }) => {
 						setNewAlreadyExistsAlert(false);
 						setNewGroup(false);
 					}}
-                    isNewAlert={Object.keys(group)?.length === 0 && newAlreadyExistsAlert}
+					isNewAlert={Object.keys(group)?.length === 0 && newAlreadyExistsAlert}
 					isNew={Object.keys(group)?.length === 0}
 					key={index}
 					session={session}
