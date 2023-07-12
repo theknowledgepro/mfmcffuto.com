@@ -606,7 +606,7 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 							error={errors.president_fullname ? true : false}
 							labelId='admin-level-select'
 							label='Current President'
-							value={defaultPresidentFullName}
+							defaultValue={defaultPresidentFullName}
 							onChange={handleSelectPresident}>
 							{currentExcos?.length > 0 ? (
 								currentExcos.map((exco, index) => (
