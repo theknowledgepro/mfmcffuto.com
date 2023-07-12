@@ -25,7 +25,7 @@ import {
 	InputAdornment,
 } from '@mui/material';
 import { BsDot } from 'react-icons/bs';
-import { useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -38,8 +38,7 @@ import { handleClientAPIRequestErrors } from '@/utils/errors';
 import { patchFormDataAPI, postFormDataAPI } from '@/utils/api_client_side';
 import NewspaperSharpIcon from '@mui/icons-material/NewspaperSharp';
 
-const handleReload = () => {
-	const router = useRouter();
+const handleReload = (router) => {
 	return router.replace(router.asPath);
 };
 
@@ -115,7 +114,7 @@ const RenderSlideSettingComponent = ({ homePageSettings, slide, allSlides, slide
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
 				setSlideData({ ...slideData, ...res?.data?.updatedSlideData });
-				handleReload();
+				handleReload(router);
 				handleCloseModal();
 			}
 		} catch (err) {
@@ -336,7 +335,7 @@ const AboutUsSettings = ({ session, homePageSettings }) => {
 
 			if (res?.status === 200) {
 				setIsSubmitting(false);
-				handleReload();
+				handleReload(router);
 			}
 		} catch (err) {
 			setIsSubmitting(false);
@@ -507,7 +506,7 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 
 			if (res?.status === 200) {
 				setIsSubmitting(false);
-				handleReload();
+				handleReload(router);
 			}
 		} catch (err) {
 			setIsSubmitting(false);
