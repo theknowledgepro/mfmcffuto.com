@@ -1014,7 +1014,11 @@ const ManageExcos = ({ userAuth, excosGroups }) => {
 	DispatchUserAuth({ userAuth });
 	const session = useSelector((state) => state.auth);
 
-	const [excosGroupsList, setExcosGroupsList] = useState(excosGroups);
+	const [excosGroupsList, setExcosGroupsList] = useState(
+		excosGroups.map((group, index) => {
+			return { ...group, uniqueID: index + 1 };
+		})
+	);
 	const [newAlreadyExistsAlert, setNewAlreadyExistsAlert] = useState(false);
 	const handleAddNewExcosGroup = () => {
 		setNewAlreadyExistsAlert(false);
