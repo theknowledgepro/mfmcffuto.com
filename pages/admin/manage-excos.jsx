@@ -56,6 +56,11 @@ import admin_comp_styles from '@/components/admin/admin_components.module.css';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
 
+
+const handleReload = (router) => {
+	return router.reload(router.asPath);
+};
+
 const DeleteExcoGroup = ({ session, allGroups, setAllGroups, group, isNew }) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
@@ -77,7 +82,7 @@ const DeleteExcoGroup = ({ session, allGroups, setAllGroups, group, isNew }) => 
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
 				setOpenModal(false);
-				router.push(APP_ROUTES.MANAGE_EXCOS);
+				handleReload(router)
 			}
 		} catch (err) {
 			setIsSubmitting(false);
@@ -134,11 +139,12 @@ const DeleteExcoGroup = ({ session, allGroups, setAllGroups, group, isNew }) => 
 };
 
 const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
+	// console.log({ exco });
 	const dispatch = useDispatch();
 	const [openModal, setOpenModal] = useState(false);
 
 	const initialState = exco
-		? { ...exco, avatar: exco?.avatar ? `${CLOUD_ASSET_BASEURL}/${exco?.avatar?.trim()}` : ASSETS.MALE_AVATAR.src }
+		? { uniqueID: allExcos.length + 1, ...exco, avatar: exco?.avatar ? `${CLOUD_ASSET_BASEURL}/${exco?.avatar?.trim()}` : ASSETS.MALE_AVATAR.src }
 		: {
 				firstname: '',
 				secondname: '',
@@ -171,7 +177,7 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 		skills = [],
 		department = '',
 		office = '',
-		uniqueID = exco?.uniqueID ?? allExcos.length + 1,
+		uniqueID = '',
 	} = excoData;
 	const [file, setFile] = useState(null);
 
@@ -709,7 +715,7 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 	);
 };
 
-const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert }) => {
+const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew, isNewAlert }) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const initialState =
@@ -733,7 +739,7 @@ const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert 
 					uniqueID: allGroups.length + 1,
 			  };
 
-	console.log({ group });
+	// console.log({ group: isNew });
 
 	const [groupData, setGroupData] = useState(initialState);
 	const [file, setFile] = useState(null);
@@ -805,25 +811,33 @@ const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert 
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
+			// console.log({ ...groupData, isNew, group_picture: file ? file : group_picture });
 			const res = await postFormDataAPI(
 				API_ROUTES.MANAGE_EXCOS,
-				{ ...groupData, isNew, group_picture: file ? file : group_picture },
+				{
+					...groupData,
+					excos: excos.map((exco, index) => {
+						return { ...exco, uniqueID: index + 1 };
+					}),
+					isNew,
+					group_picture: file ? file : group_picture,
+				},
 				session?.token
 			);
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
-				router.push(APP_ROUTES.MANAGE_EXCOS);
+				handleReload(router)
 			}
 		} catch (err) {
 			setIsSubmitting(false);
 			handleClientAPIRequestErrors({ err, dispatch, loadingData: null });
 		}
+		resetAlerts();
 	};
 
 	return (
 		<Paper className='mx-auto max-w-[600px] p-2 my-5'>
-        {isNew && 'New one oooo'}
 			{isNewAlert && (
 				<div className='text-red-600 border-b border-zinc-300 w-full text-center font-medium-custom text-[17px] p-2'>
 					Please fill up the details below to create new Executives Group!
@@ -1018,15 +1032,17 @@ const ManageExcos = ({ userAuth, excosGroups }) => {
 
 	const [excosGroupsList, setExcosGroupsList] = useState(excosGroups);
 	const [newAlreadyExistsAlert, setNewAlreadyExistsAlert] = useState(false);
+	const [newGroup, setNewGroup] = useState(false);
 	const handleAddNewExcosGroup = () => {
 		setNewAlreadyExistsAlert(false);
-		if (excosGroupsList.find((index) => Object.keys(index)?.length === 0)) {
+		if (newGroup) {
 			setNewAlreadyExistsAlert(true);
 			return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: 'A new exco group has been created for you!', title: false } });
 		}
-		setExcosGroupsList([{}, ...excosGroupsList]);
+		setNewGroup(true);
 		window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
 	};
+
 	return (
 		<AdminLayout
 			metatags={{ meta_title: `Manage Excos | ${SITE_DATA.NAME}` }}
@@ -1036,11 +1052,29 @@ const ManageExcos = ({ userAuth, excosGroups }) => {
 				<AddIcon fontSize='small' sx={{ mr: '5px' }} /> Add Executives Group
 			</Button>
 
+			{newGroup && (
+				<ExcoGroup
+					allGroups={excosGroupsList}
+					setAllGroups={setExcosGroupsList}
+					isNewAlert={newAlreadyExistsAlert}
+					resetAlerts={() => {
+						setNewAlreadyExistsAlert(false);
+						setNewGroup(false);
+					}}
+					isNew={true}
+					session={session}
+					group={{}}
+				/>
+			)}
 			{excosGroupsList?.map((group, index) => (
 				<ExcoGroup
 					allGroups={excosGroupsList}
 					setAllGroups={setExcosGroupsList}
-					isNewAlert={Object.keys(group)?.length === 0 && newAlreadyExistsAlert}
+					resetAlerts={() => {
+						setNewAlreadyExistsAlert(false);
+						setNewGroup(false);
+					}}
+                    isNewAlert={Object.keys(group)?.length === 0 && newAlreadyExistsAlert}
 					isNew={Object.keys(group)?.length === 0}
 					key={index}
 					session={session}

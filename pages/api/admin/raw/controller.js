@@ -809,9 +809,10 @@ const RawReqController = {
 					current,
 					isNew,
 				} = req.body;
+				// console.log({ isNew });
 
 				let newExcoGroup;
-				if (isNew) {
+				if (isNew === 'true') {
 					const { fileData } = await uploadFile({
 						file: req.files?.group_picture,
 						S3Folder: S3FOLDERS.EXCOS_GROUP_PICTURES,
@@ -832,7 +833,7 @@ const RawReqController = {
 					});
 					await newExcoGroup.save();
 				} else {
-					newExcoGroup = await FellowshipGroups.findOneAndUpdate(
+					newExcoGroup = await FellowshipExcos.findOneAndUpdate(
 						{ name },
 						{
 							name,
@@ -853,23 +854,31 @@ const RawReqController = {
 							fileKeyNameToReplace: newExcoGroup?.group_picture,
 							appendFileExtensionToFileKeyName: true,
 						});
-					} else {
+					} else if (req.files?.group_picture) {
 						const { fileData } = await uploadFile({
 							file: req.files?.group_picture,
 							S3Folder: S3FOLDERS.EXCOS_GROUP_PICTURES,
 							appendFileExtensionToFileKeyName: true,
 						});
-						await FellowshipGroups.findOneAndUpdate({ name }, { group_picture: fileData?.Key });
+						await FellowshipExcos.findOneAndUpdate({ name }, { group_picture: fileData?.Key });
 					}
 				}
 
 				// ** RECORD IN ACTIVITY_LOG DATABASE
 				await activityLog({
-					deed: isNew ? ACTIVITY_TYPES.CREATE_EXCO_GROUP.title : ACTIVITY_TYPES.UPDATE_EXCO_GROUP.title,
-					details: isNew ? `${ACTIVITY_TYPES.CREATE_EXCO_GROUP.desc} - ${name}` : `${ACTIVITY_TYPES.UPDATE_EXCO_GROUP.desc} - ${name}`,
+					deed: isNew === 'true' ? ACTIVITY_TYPES.CREATE_EXCO_GROUP.title : ACTIVITY_TYPES.UPDATE_EXCO_GROUP.title,
+					details:
+						isNew === 'true'
+							? `${ACTIVITY_TYPES.CREATE_EXCO_GROUP.desc} - ${name}`
+							: `${ACTIVITY_TYPES.UPDATE_EXCO_GROUP.desc} - ${name}`,
 					user_id: req?.user?._id,
 				});
-				return responseLogic({ req, res, status: 200, data: { message: `Executive Group ${isNew ? 'Created' : 'Updated'} Successfully!` } });
+				return responseLogic({
+					req,
+					res,
+					status: 200,
+					data: { message: `Executive Group ${isNew === 'true' ? 'Created' : 'Updated'} Successfully!` },
+				});
 			}
 			// ** DELETE EXCO GROUP
 			if (req.method === 'DELETE') {
@@ -879,8 +888,9 @@ const RawReqController = {
 				const { group } = req?.query;
 				const excoGroup = await FellowshipExcos.findOneAndDelete({ name: group });
 
-				// ** DELETE BLOG FILE FROM CLOUD STORAGE
+				// ** DELETE FILES FROM CLOUD STORAGE
 				await deleteFile({ keyName: excoGroup?.group_picture });
+				for (let i = 0; i < excoGroup?.excos?.length; i++) await deleteFile({ keyName: excoGroup?.excos[i].avatar });
 
 				// ** RECORD IN ACTIVITY_LOG DATABASE
 				await activityLog({
