@@ -89,7 +89,8 @@ const RenderSlideSettingComponent = ({ homePageSettings, slide, allSlides, slide
 			description: !description && 'This field is required.',
 		});
 		if (!main_headline || !description) return;
-		if (!file) return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: `Please attach a background for this slide!` } });
+		if (!file && slide?.backgroundImage)
+			return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: `Please attach a background for this slide!` } });
 		if (isSubmitting) return;
 		setIsSubmitting(true);
 		try {
