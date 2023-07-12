@@ -138,7 +138,7 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 	const [openModal, setOpenModal] = useState(false);
 
 	const initialState = exco
-		? { ...exco, avatar: exco?.avatar ? `${CLOUD_ASSET_BASEURL}/${exco?.avatar?.trim()}` : ASSETS.MALE_AVATAR.src, uniqueID: allExcos.length + 1 }
+		? { ...exco, avatar: exco?.avatar ? `${CLOUD_ASSET_BASEURL}/${exco?.avatar?.trim()}` : ASSETS.MALE_AVATAR.src }
 		: {
 				firstname: '',
 				secondname: '',
@@ -171,6 +171,7 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 		skills = [],
 		department = '',
 		office = '',
+		uniqueID = exco?.uniqueID ?? allExcos.length + 1,
 	} = excoData;
 	const [file, setFile] = useState(null);
 
