@@ -46,8 +46,8 @@ const RenderSlideSettingComponent = ({ homePageSettings, slide, allSlides, slide
 	const initialState = {
 		main_headline: '',
 		description: '',
-		backgroundImage: slide?.backgroundImage ? `${CLOUD_ASSET_BASEURL}/${slide?.backgroundImage}` : '',
 		...slide,
+		backgroundImage: slide?.backgroundImage ? `${CLOUD_ASSET_BASEURL}/${slide?.backgroundImage}` : '',
 	};
 	const [slideData, setSlideData] = useState(initialState);
 	const { main_headline = '', description = '', backgroundImage = '' } = slideData;
