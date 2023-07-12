@@ -895,20 +895,22 @@ const RawReqController = {
 
 			// ** SET DATA TO RECORD FOR EACH PAGE SETTINGS AND DEPENDING ON FILE UPLOADED??
 			let dataToRecord = {};
-			let customFileName;
-			let s3_folder;
 
 			switch (req.body.page_settings) {
 				case 'Home-Page-Settings':
 					if (Object.values(req.files).length > 0 && req.body?.slideIndex) {
-						const fileExt = path.extname(req.files.backgroundImage.originalFilename.toLowerCase());
-						customFileName = Date.now().toString();
-						s3_folder = S3FOLDERS.SLIDES;
+						// ** UPLOAD NEW FILE
+						if (Object.values(req.files).length > 0) {
+							const { fileData } = await uploadFile({
+								file: req.files?.backgroundImage,
+								S3Folder: S3FOLDERS.SLIDES,
+								appendFileExtensionToFileKeyName: true,
+							});
+						}
 						dataToRecord = {
 							...req.body,
 							slides: req.body?.slides?.map((slide, index) => {
-								if (index === Number(req.body.slideIndex))
-									return { ...slide, backgroundImage: `${s3_folder}/${customFileName}${fileExt}` };
+								if (index === Number(req.body.slideIndex)) return { ...slide, backgroundImage: fileData?.key };
 								return slide;
 							}),
 							slideIndex: undefined,
@@ -935,15 +937,6 @@ const RawReqController = {
 						break;
 				}
 			} else {
-				// ** UPLOAD NEW FILE
-				if (Object.values(req.files).length > 0) {
-					const { fileData } = await uploadFile({
-						file: req.files?.backgroundImage,
-						S3Folder: s3_folder,
-						customFileName,
-						appendFileExtensionToFileKeyName: true,
-					});
-				}
 				const newRecord = new SiteSettings({ type: req.body.page_settings, config: dataToRecord });
 				await newRecord.save();
 			}
