@@ -25,7 +25,9 @@ const FromthePresidentsDesk = ({ homePageSettings }) => {
 						{homePageSettings?.from_the_president_desk?.semester_anchor_scriptures}
 					</div>
 
-					<div className={`${comp_styles.tab_body} mt-3`}>{homePageSettings?.from_the_president_desk?.writings}</div>
+					<div
+						className={`${comp_styles.tab_body} mt-3`}
+						dangerouslySetInnerHTML={{ __html: homePageSettings?.from_the_president_desk?.writings }}></div>
 				</div>
 
 				<div className='col-span-1 mb-5 flex flex-col items-center justify-center'>
