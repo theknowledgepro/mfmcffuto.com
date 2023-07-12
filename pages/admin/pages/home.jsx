@@ -629,7 +629,7 @@ const HomePageSettings = ({ userAuth, homePageSettings, currentExcos }) => {
 			pageIcon={<CottageTwoToneIcon sx={{ fontSize: 'inherit', my: 'auto', mr: 1 }} className='text-muted' />}
 			pageTitle={'Home Settings'}>
 			<SlideSettings homePageSettings={homePageSettings} session={session} />
-			<AboutUsSettings homePageSettings={homePageSettings} session={session} currentExcos={currentExcos?.excos} />
+			<AboutUsSettings homePageSettings={homePageSettings} session={session} currentExcos={currentExcos} />
 			<FromPresidentDeskSettings homePageSettings={homePageSettings} session={session} />
 		</AdminLayout>
 	);
