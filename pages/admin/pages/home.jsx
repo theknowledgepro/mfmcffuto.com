@@ -38,9 +38,13 @@ import { handleClientAPIRequestErrors } from '@/utils/errors';
 import { patchFormDataAPI, postFormDataAPI } from '@/utils/api_client_side';
 import NewspaperSharpIcon from '@mui/icons-material/NewspaperSharp';
 
+const handleReload = () => {
+	const router = useRouter();
+	return router.replace(router.asPath);
+};
+
 const RenderSlideSettingComponent = ({ homePageSettings, slide, allSlides, slideIndex, session }) => {
 	const dispatch = useDispatch();
-	const router = useRouter();
 	const [openModal, setOpenModal] = useState(false);
 
 	const initialState = {
@@ -111,7 +115,7 @@ const RenderSlideSettingComponent = ({ homePageSettings, slide, allSlides, slide
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
 				setSlideData({ ...slideData, ...res?.data?.updatedSlideData });
-				router.push(router.pathname);
+				handleReload();
 				handleCloseModal();
 			}
 		} catch (err) {
@@ -332,7 +336,7 @@ const AboutUsSettings = ({ session, homePageSettings }) => {
 
 			if (res?.status === 200) {
 				setIsSubmitting(false);
-				router.push(router.pathname);
+				handleReload();
 			}
 		} catch (err) {
 			setIsSubmitting(false);
@@ -503,7 +507,7 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 
 			if (res?.status === 200) {
 				setIsSubmitting(false);
-				router.push(router.pathname);
+				handleReload();
 			}
 		} catch (err) {
 			setIsSubmitting(false);
