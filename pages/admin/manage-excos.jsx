@@ -733,6 +733,8 @@ const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert 
 				...group,
 		  };
 
+	console.log({ group });
+
 	const [groupData, setGroupData] = useState(initialState);
 	const [file, setFile] = useState(null);
 	const {

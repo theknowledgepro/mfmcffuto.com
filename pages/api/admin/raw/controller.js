@@ -900,13 +900,11 @@ const RawReqController = {
 				case 'Home-Page-Settings':
 					if (Object.values(req.files).length > 0 && req.body?.slideIndex) {
 						// ** UPLOAD NEW FILE
-						if (Object.values(req.files).length > 0) {
-							const { fileData } = await uploadFile({
-								file: req.files?.backgroundImage,
-								S3Folder: S3FOLDERS.SLIDES,
-								appendFileExtensionToFileKeyName: true,
-							});
-						}
+						const { fileData } = await uploadFile({
+							file: req.files?.backgroundImage,
+							S3Folder: S3FOLDERS.SLIDES,
+							appendFileExtensionToFileKeyName: true,
+						});
 						dataToRecord = {
 							...req.body,
 							slides: req.body?.slides?.map((slide, index) => {
