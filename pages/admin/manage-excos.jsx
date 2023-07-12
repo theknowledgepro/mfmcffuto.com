@@ -37,8 +37,7 @@ import comp_styles from '@/components/components.module.css';
 import { GLOBALTYPES } from '@/redux/types';
 import { validate } from '@/utils/validate';
 import { handleClientAPIRequestErrors } from '@/utils/errors';
-import { deleteDataAPI, patchFormDataAPI, postFormDataAPI } from '@/utils/api_client_side';
-import NewspaperSharpIcon from '@mui/icons-material/NewspaperSharp';
+import { deleteDataAPI, postFormDataAPI } from '@/utils/api_client_side';
 import SupervisorAccountOutlinedIcon from '@mui/icons-material/SupervisorAccountOutlined';
 import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
@@ -710,20 +709,28 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 };
 
 const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert }) => {
-	const initialState = {
-		name: '',
-		name_anchor_scripture: '',
-		purpose: '',
-		purpose_anchor_scripture: '',
-		excos: [],
-		academic_session: '',
-		assumption_date: '',
-		resignation_date: '',
-		group_picture: group?.group_picture ? `${CLOUD_ASSET_BASEURL}/${group?.group_picture?.trim()}` : '',
-		current: false,
-		uniqueID: allGroups.length + 1,
-		...group,
-	};
+	const dispatch = useDispatch();
+	const router = useRouter();
+	const initialState = group
+		? {
+				group,
+				uniqueID: allGroups.length + 1,
+				group_picture: group?.group_picture ? `${CLOUD_ASSET_BASEURL}/${group?.group_picture?.trim()}` : '',
+		  }
+		: {
+				name: '',
+				name_anchor_scripture: '',
+				purpose: '',
+				purpose_anchor_scripture: '',
+				excos: [],
+				academic_session: '',
+				assumption_date: '',
+				resignation_date: '',
+				group_picture: '',
+				current: false,
+				uniqueID: allGroups.length + 1,
+				...group,
+		  };
 
 	const [groupData, setGroupData] = useState(initialState);
 	const [file, setFile] = useState(null);
