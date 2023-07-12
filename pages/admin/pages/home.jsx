@@ -1,7 +1,7 @@
 /** @format */
 
 import { AdminLayout, ControlledAccordion, ImageTag, MuiModal } from '@/components';
-import { API_ROUTES, CLOUD_ASSET_BASEURL, APP_ROUTES, LIMITS, MEMBER_ROLES, SITE_DATA } from '@/config';
+import { API_ROUTES, CLOUD_ASSET_BASEURL, APP_ROUTES, MEMBER_ROLES, SITE_DATA } from '@/config';
 import React, { useState } from 'react';
 import { DispatchUserAuth } from '@/utils/misc_functions';
 import AuthController from '@/pages/api/auth/controller';
@@ -24,12 +24,9 @@ import {
 	Switch,
 	InputAdornment,
 } from '@mui/material';
-import Moment from 'react-moment';
 import { BsDot } from 'react-icons/bs';
-import handleDataSort from '@/utils/handle_data_sort';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { WorshipEvent } from '@/components/worship_days';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -434,6 +431,15 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 	const dispatch = useDispatch();
 	const router = useRouter();
 
+	const defaultPresidentFullName =
+		currentExcos?.length > 0
+			? `${currentExcos[0]?.lastname ? currentExcos[0]?.lastname : ''} ${currentExcos[0]?.firstname ? currentExcos[0]?.firstname : ''} ${
+					currentExcos[0]?.secondname ? currentExcos[0]?.secondname : ''
+			  }`
+			: '';
+
+	const defaultPresidentAvatar = currentExcos?.length > 0 ? `${currentExcos[0]?.avatar}` : '';
+
 	const [sectionData, setSectionData] = useState(
 		homePageSettings?.from_the_president_desk
 			? homePageSettings?.from_the_president_desk
@@ -442,16 +448,36 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 					semester_emphasis: '',
 					semester_anchor_scriptures: '',
 					writings: '',
-					president_fullname: '',
+					president_fullname: defaultPresidentFullName,
+					president_avatar: defaultPresidentAvatar,
 			  }
 	);
-	const { semester_theme = '', semester_emphasis = '', semester_anchor_scriptures = '', writings = '', president_fullname = '' } = sectionData;
+	const {
+		semester_theme = '',
+		semester_emphasis = '',
+		semester_anchor_scriptures = '',
+		writings = '',
+		president_fullname = defaultPresidentFullName,
+		president_avatar = defaultPresidentAvatar,
+	} = sectionData;
 	const handleChangeInput = (e) => {
 		const { name, value } = e.target;
 		setSectionData({ ...sectionData, [name]: value });
 	};
 	const handleSelectPresident = (e) => {
-		setSectionData({ ...sectionData, president_fullname: e.target.value });
+		const matchingIndex = currentExcos.filter(
+			(index) =>
+				`${index?.lastname ? index?.lastname : ''} ${index?.firstname ? index?.firstname : ''} ${
+					index?.secondname ? index?.secondname : ''
+				}` === e.target.value
+		)[0];
+		setSectionData({
+			...sectionData,
+			president_fullname: `${matchingIndex[0]?.lastname ? matchingIndex[0]?.lastname : ''} ${
+				matchingIndex[0]?.firstname ? matchingIndex[0]?.firstname : ''
+			} ${matchingIndex[0]?.secondname ? matchingIndex[0]?.secondname : ''}`,
+			president_avatar: matchingIndex?.avatar,
+		});
 	};
 	const [errors, setErrors] = useState({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -484,7 +510,6 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 		}
 	};
 
-	console.log({ currentExcos });
 	return (
 		<div className='w-full border-b border-zinc-300 pb-2 pt-4 font-medium-custom color-primary pb-4'>
 			<div className='w-full flex border-b border-zinc-300 pb-2 pt-4 font-medium-custom color-primary'>
@@ -577,13 +602,7 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 							error={errors.president_fullname ? true : false}
 							labelId='admin-level-select'
 							label='Current President'
-							value={
-								currentExcos?.length > 0
-									? `${currentExcos[0]?.lastname ? currentExcos[0]?.lastname : ''} ${
-											currentExcos[0]?.firstname ? currentExcos[0]?.firstname : ''
-									  } ${currentExcos[0]?.secondname ? currentExcos[0]?.secondname : ''}`
-									: ''
-							}
+							value={defaultPresidentFullName}
 							onChange={handleSelectPresident}>
 							{currentExcos?.length > 0 ? (
 								currentExcos.map((exco, index) => (

@@ -138,7 +138,7 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 	const [openModal, setOpenModal] = useState(false);
 
 	const initialState = exco
-		? { ...exco, avatar: exco?.avatar ? `${CLOUD_ASSET_BASEURL}/${exco?.avatar?.trim()}` : ASSETS.MALE_AVATAR.src }
+		? { ...exco, avatar: exco?.avatar ? `${CLOUD_ASSET_BASEURL}/${exco?.avatar?.trim()}` : ASSETS.MALE_AVATAR.src, uniqueID: allExcos.length + 1 }
 		: {
 				firstname: '',
 				secondname: '',
@@ -756,7 +756,16 @@ const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert 
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const handleUpdateExco = ({ exco }) => {
 		console.log({ exco });
-		setGroupData({ ...groupData, excos: [exco, ...excos] });
+		const newExco = exco;
+		setGroupData({
+			...groupData,
+			excos: excos.find((index) => index?.uniqueID === newExco?.uniqueID)
+				? excos.map((exco, index) => {
+						if (exco?.uniqueID === newExco?.uniqueID) return newExco;
+						return exco;
+				  })
+				: [...excos, newExco],
+		});
 	};
 
 	const handleThumbnailUpload = (event) => {
