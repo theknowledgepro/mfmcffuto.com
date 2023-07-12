@@ -713,7 +713,7 @@ const ExcoGroup = ({ session, allGroups, setAllGroups, group, isNew, isNewAlert 
 	const router = useRouter();
 	const initialState = group
 		? {
-				group,
+				...group,
 				uniqueID: allGroups.length + 1,
 				group_picture: group?.group_picture ? `${CLOUD_ASSET_BASEURL}/${group?.group_picture?.trim()}` : '',
 		  }
