@@ -14,7 +14,7 @@ const FromthePresidentsDesk = ({ homePageSettings }) => {
 			</h2>
 			<div className={`items-center justify-center grid xss:grid-cols-1 md:grid-cols-2`}>
 				<div className={`col-span-1 mb-5`}>
-					<div className={`xss:text-[26px] md:text-[40px] font-medium-custom mt-3 color-primary`}>
+					<div className={`line-height-2 xss:text-[26px] md:text-[40px] font-medium-custom mt-3 color-primary`}>
 						{homePageSettings?.from_the_president_desk?.semester_theme}
 					</div>
 					<div className={`mt-2 font-medium-custom`}>
