@@ -51,3 +51,7 @@ export const makeObectArrayUniqueByValueIndex = ({ array, index }) => {
     })
     return uniqueArray;
 }
+
+export const handleReloadPageData = (router) => {
+    return router.reload(router.asPath);
+}

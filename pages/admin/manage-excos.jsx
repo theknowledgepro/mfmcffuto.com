@@ -3,7 +3,7 @@
 import { AdminLayout, MuiModal } from '@/components';
 import { API_ROUTES, CLOUD_ASSET_BASEURL, ACADEMIC_SESSIONS, S3FOLDERS, APP_ROUTES, ASSETS, MEMBER_ROLES, SITE_DATA } from '@/config';
 import React, { useState } from 'react';
-import { DispatchUserAuth } from '@/utils/misc_functions';
+import { DispatchUserAuth, handleReloadPageData } from '@/utils/misc_functions';
 import AuthController from '@/pages/api/auth/controller';
 import AdminController from '@/pages/api/admin/controller';
 import CheckAdminRestriction from '@/middlewares/check_admin_restriction';
@@ -55,10 +55,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import admin_comp_styles from '@/components/admin/admin_components.module.css';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
-
-const handleReload = (router) => {
-	return router.reload(router.asPath);
-};
+import { v1 } from 'uuid';
 
 const DeleteExcoGroup = ({ session, allGroups, setAllGroups, group, isNew }) => {
 	const dispatch = useDispatch();
@@ -81,7 +78,7 @@ const DeleteExcoGroup = ({ session, allGroups, setAllGroups, group, isNew }) => 
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
 				setOpenModal(false);
-				handleReload(router);
+				handleReloadPageData(router);
 			}
 		} catch (err) {
 			setIsSubmitting(false);
@@ -142,25 +139,7 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 	const dispatch = useDispatch();
 	const [openModal, setOpenModal] = useState(false);
 
-	const initialState = exco
-		? { uniqueID: allExcos.length + 1, ...exco, avatar: exco?.avatar ? `${CLOUD_ASSET_BASEURL}/${exco?.avatar?.trim()}` : ASSETS.MALE_AVATAR.src }
-		: {
-				firstname: '',
-				secondname: '',
-				lastname: '',
-				email: '',
-				mobile: '',
-				avatar: ASSETS.MALE_AVATAR.src,
-				gender: '',
-				about: '',
-				social_handles: {},
-				hobbies: [],
-				skills: [],
-				department: '',
-				office: '',
-				uniqueID: allExcos.length + 1,
-				...exco,
-		  };
+	const initialState = { ...exco, avatar: exco?.avatar ? `${CLOUD_ASSET_BASEURL}/${exco?.avatar?.trim()}` : ASSETS.MALE_AVATAR.src };
 	const [excoData, setExcoData] = useState(initialState);
 	const {
 		firstname = '',
@@ -176,7 +155,7 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 		skills = [],
 		department = '',
 		office = '',
-		uniqueID = '',
+		uniqueID = v1(),
 	} = excoData;
 	const [file, setFile] = useState(null);
 
@@ -269,7 +248,9 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 			return dispatch({ type: GLOBALTYPES.TOAST, payload: { info: `This email is already used for an exco!` } });
 
 		if (!file) {
+			// console.log({ excoData });
 			handleUpdateExco({ exco: excoData });
+			setExcoData({});
 			handleCloseModal();
 			return;
 		}
@@ -719,11 +700,7 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 	const router = useRouter();
 	const initialState =
 		group?.name && !isNew
-			? {
-					...group,
-					uniqueID: allGroups.length + 1,
-					group_picture: group?.group_picture ? `${CLOUD_ASSET_BASEURL}/${group?.group_picture?.trim()}` : '',
-			  }
+			? { uniqueID: v1(), ...group, group_picture: group?.group_picture ? `${CLOUD_ASSET_BASEURL}/${group?.group_picture?.trim()}` : '' }
 			: {
 					name: '',
 					name_anchor_scripture: '',
@@ -735,10 +712,8 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 					resignation_date: '',
 					group_picture: '',
 					current: false,
-					uniqueID: allGroups.length + 1,
+					uniqueID: v1(),
 			  };
-
-	// console.log({ group: isNew });
 
 	const [groupData, setGroupData] = useState(initialState);
 	const [file, setFile] = useState(null);
@@ -763,7 +738,7 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 	const [errors, setErrors] = useState({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const handleUpdateExco = ({ exco }) => {
-		console.log({ exco });
+		// console.log({ exco });
 		const newExco = exco;
 		setGroupData({
 			...groupData,
@@ -815,9 +790,6 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 				API_ROUTES.MANAGE_EXCOS,
 				{
 					...groupData,
-					excos: groupData?.excos.map((exco, index) => {
-						return { ...exco, uniqueID: index + 1 };
-					}),
 					isNew,
 					group_picture: file ? file : group_picture,
 				},
@@ -826,7 +798,7 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 			if (res?.status === 200) {
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
-				handleReload(router);
+				handleReloadPageData(router);
 			}
 		} catch (err) {
 			setIsSubmitting(false);
@@ -836,148 +808,135 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 	};
 
 	return (
-		<Paper className='mx-auto max-w-[600px] p-2 my-5'>
-			{isNewAlert && (
-				<div className='text-red-600 border-b border-zinc-300 w-full text-center font-medium-custom text-[17px] p-2'>
-					Please fill up the details below to create new Executives Group!
+		<React.Fragment>
+			{!isNew && (
+				<div className='max-w-[600px] mx-auto mt-8 border rounded-[5px] border-zinc-300 py-3 w-full text-center text-[22px]'>
+					<span className='color-primary text-[22px] mx-1'>{group.name}</span>
+					of the {group.academic_session} Academic Session.
 				</div>
 			)}
-
-			<div className='w-full'>
-				<TextField
-					onChange={handleChangeInput}
-					value={name}
-					color='primary'
-					className='w-full mt-8'
-					name='name'
-					label='Executives Ordained Name'
-					variant='outlined'
-					helperText={errors.name}
-					error={errors.name ? true : false}
-					InputProps={{
-						startAdornment: (
-							<InputAdornment position='start'>
-								<SupervisorAccountOutlinedIcon sx={{ color: SITE_DATA.THEME_COLOR }} />
-							</InputAdornment>
-						),
-					}}
-				/>
-				<TextField
-					onChange={handleChangeInput}
-					value={name_anchor_scripture}
-					color='primary'
-					className='w-full mt-8'
-					name='name_anchor_scripture'
-					label='Executives Ordained Name Anchor Scripture'
-					variant='outlined'
-					helperText={errors.name_anchor_scripture}
-					error={errors.name_anchor_scripture ? true : false}
-					InputProps={{
-						startAdornment: (
-							<InputAdornment position='start'>
-								<MenuBookOutlinedIcon sx={{ color: SITE_DATA.THEME_COLOR }} />
-							</InputAdornment>
-						),
-					}}
-				/>
-				<TextField
-					onChange={handleChangeInput}
-					value={purpose}
-					color='primary'
-					className='w-full mt-8'
-					name='purpose'
-					label='Executives Mission Statement'
-					variant='standard'
-					helperText={errors.purpose}
-					error={errors.purpose ? true : false}
-					InputProps={{
-						startAdornment: (
-							<InputAdornment position='start'>
-								<SupervisorAccountOutlinedIcon sx={{ color: SITE_DATA.THEME_COLOR }} />
-							</InputAdornment>
-						),
-					}}
-				/>
-				<TextField
-					onChange={handleChangeInput}
-					value={purpose_anchor_scripture}
-					color='primary'
-					className='w-full mt-8'
-					name='purpose_anchor_scripture'
-					label='Executives Mission Statement Anchor Scripture'
-					variant='outlined'
-					helperText={errors.purpose_anchor_scripture}
-					error={errors.purpose_anchor_scripture ? true : false}
-					InputProps={{
-						startAdornment: (
-							<InputAdornment position='start'>
-								<MenuBookOutlinedIcon sx={{ color: SITE_DATA.THEME_COLOR }} />
-							</InputAdornment>
-						),
-					}}
-				/>
-				<Box sx={{ minWidth: 120, minHeight: 20, mt: '40px', mb: '30px' }}>
-					<FormControl fullWidth size='small'>
-						<InputLabel id='admin-level-select'>Academic Session</InputLabel>
-						<Select
-							error={errors.academic_session ? true : false}
-							label='Academic Session'
-							value={academic_session}
-							name='academic_session'
-							onChange={handleChangeInput}>
-							{ACADEMIC_SESSIONS.map((acad_session, index) => (
-								<MenuItem key={index} value={acad_session}>
-									{acad_session}
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>
-				</Box>
-
-				<div className='my-5 w-full'>
-					<div className='flex'>
-						<BsDot className='color-primary text-[40px] my-auto' />
-						<span className='my-auto'>Set As Current Executives</span>
+			<Paper className='mx-auto max-w-[600px] p-2 my-5'>
+				{isNewAlert && (
+					<div className='text-red-600 border-b border-zinc-300 w-full text-center font-medium-custom text-[17px] p-2'>
+						Please fill up the details below to create new Executives Group!
 					</div>
-					<div className='flex'>
-						<Switch checked={Boolean(current)} onChange={handleChangeInput} name='current' />
-						<span className={`${current ? 'color-primary' : 'text-gray-500'} font-medium-custom my-auto`}>
-							{current ? 'Current Executives' : 'Previous Executives'}
-						</span>
-					</div>
-				</div>
+				)}
 
-				<TextField
-					onChange={handleChangeInput}
-					value={assumption_date}
-					color='primary'
-					className='w-full mt-8'
-					name='assumption_date'
-					label='Assumed Office On'
-					variant='outlined'
-					inputProps={{ type: 'date' }}
-					helperText={errors.assumption_date}
-					error={errors.assumption_date ? true : false}
-					InputProps={{
-						startAdornment: (
-							<InputAdornment position='start'>
-								<AccessTimeOutlinedIcon sx={{ color: SITE_DATA.THEME_COLOR }} />
-							</InputAdornment>
-						),
-					}}
-				/>
-				{!current && (
+				<div className='w-full'>
 					<TextField
 						onChange={handleChangeInput}
-						value={resignation_date}
+						value={name}
 						color='primary'
 						className='w-full mt-8'
-						name='resignation_date'
-						label='Resigned From Office On'
+						name='name'
+						label='Executives Ordained Name'
+						variant='outlined'
+						helperText={errors.name}
+						error={errors.name ? true : false}
+						InputProps={{
+							startAdornment: (
+								<InputAdornment position='start'>
+									<SupervisorAccountOutlinedIcon sx={{ color: SITE_DATA.THEME_COLOR }} />
+								</InputAdornment>
+							),
+						}}
+					/>
+					<TextField
+						onChange={handleChangeInput}
+						value={name_anchor_scripture}
+						color='primary'
+						className='w-full mt-8'
+						name='name_anchor_scripture'
+						label='Executives Ordained Name Anchor Scripture'
+						variant='outlined'
+						helperText={errors.name_anchor_scripture}
+						error={errors.name_anchor_scripture ? true : false}
+						InputProps={{
+							startAdornment: (
+								<InputAdornment position='start'>
+									<MenuBookOutlinedIcon sx={{ color: SITE_DATA.THEME_COLOR }} />
+								</InputAdornment>
+							),
+						}}
+					/>
+					<TextField
+						onChange={handleChangeInput}
+						value={purpose}
+						color='primary'
+						className='w-full mt-8'
+						name='purpose'
+						label='Executives Mission Statement'
+						variant='standard'
+						helperText={errors.purpose}
+						error={errors.purpose ? true : false}
+						InputProps={{
+							startAdornment: (
+								<InputAdornment position='start'>
+									<SupervisorAccountOutlinedIcon sx={{ color: SITE_DATA.THEME_COLOR }} />
+								</InputAdornment>
+							),
+						}}
+					/>
+					<TextField
+						onChange={handleChangeInput}
+						value={purpose_anchor_scripture}
+						color='primary'
+						className='w-full mt-8'
+						name='purpose_anchor_scripture'
+						label='Executives Mission Statement Anchor Scripture'
+						variant='outlined'
+						helperText={errors.purpose_anchor_scripture}
+						error={errors.purpose_anchor_scripture ? true : false}
+						InputProps={{
+							startAdornment: (
+								<InputAdornment position='start'>
+									<MenuBookOutlinedIcon sx={{ color: SITE_DATA.THEME_COLOR }} />
+								</InputAdornment>
+							),
+						}}
+					/>
+					<Box sx={{ minWidth: 120, minHeight: 20, mt: '40px', mb: '30px' }}>
+						<FormControl fullWidth size='small'>
+							<InputLabel id='admin-level-select'>Academic Session</InputLabel>
+							<Select
+								error={errors.academic_session ? true : false}
+								label='Academic Session'
+								value={academic_session}
+								name='academic_session'
+								onChange={handleChangeInput}>
+								{ACADEMIC_SESSIONS.map((acad_session, index) => (
+									<MenuItem key={index} value={acad_session}>
+										{acad_session}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					</Box>
+
+					<div className='my-5 w-full'>
+						<div className='flex'>
+							<BsDot className='color-primary text-[40px] my-auto' />
+							<span className='my-auto'>Set As Current Executives</span>
+						</div>
+						<div className='flex'>
+							<Switch checked={Boolean(current)} onChange={handleChangeInput} name='current' />
+							<span className={`${current ? 'color-primary' : 'text-gray-500'} font-medium-custom my-auto`}>
+								{current ? 'Current Executives' : 'Previous Executives'}
+							</span>
+						</div>
+					</div>
+
+					<TextField
+						onChange={handleChangeInput}
+						value={assumption_date}
+						color='primary'
+						className='w-full mt-8'
+						name='assumption_date'
+						label='Assumed Office On'
 						variant='outlined'
 						inputProps={{ type: 'date' }}
-						helperText={errors.resignation_date}
-						error={errors.resignation_date ? true : false}
+						helperText={errors.assumption_date}
+						error={errors.assumption_date ? true : false}
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position='start'>
@@ -986,40 +945,69 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 							),
 						}}
 					/>
-				)}
-
-				<div className='my-5 w-full'>
-					<div className='text-center border-b border-zinc-300 color-primary font-medium-custom'>Executives Who Served In This Group</div>
-					{excos.map((exco, index) => (
-						<ExcoData session={session} allExcos={excos} key={index} exco={exco} handleUpdateExco={handleUpdateExco} />
-					))}
-					<ExcoData session={session} allExcos={excos} isNew={true} exco={{}} handleUpdateExco={handleUpdateExco} />
-				</div>
-
-				<div className={`${comp_styles.img_input} rounded-[5px] mild-shadow mt-4 flex flex-col items-center justify-center`}>
-					{group_picture && (
-						<img
-							alt='Select Executive Group Photo'
-							style={{ width: '100%', height: '100%', objectFit: 'cover', maxHeight: '300px' }}
-							src={group_picture}
+					{!current && (
+						<TextField
+							onChange={handleChangeInput}
+							value={resignation_date}
+							color='primary'
+							className='w-full mt-8'
+							name='resignation_date'
+							label='Resigned From Office On'
+							variant='outlined'
+							inputProps={{ type: 'date' }}
+							helperText={errors.resignation_date}
+							error={errors.resignation_date ? true : false}
+							InputProps={{
+								startAdornment: (
+									<InputAdornment position='start'>
+										<AccessTimeOutlinedIcon sx={{ color: SITE_DATA.THEME_COLOR }} />
+									</InputAdornment>
+								),
+							}}
 						/>
 					)}
-					{!group_picture && <div className='font-medium-custom color-primary'>Click to Upload Executive Group Photo</div>}
-					<input onChange={handleThumbnailUpload} type='file' id={`${comp_styles.avatar_input}`} accept='image/*' />
+
+					<div className='my-5 w-full'>
+						<div className='text-center border-b border-zinc-300 color-primary font-medium-custom'>
+							Executives Who Served In This Group
+						</div>
+						{excos.map((exco, index) => (
+							<ExcoData
+								session={session}
+								allExcos={excos}
+								key={index}
+								exco={{ ...exco, uniqueID: v1() }}
+								handleUpdateExco={handleUpdateExco}
+							/>
+						))}
+						<ExcoData session={session} allExcos={excos} isNew={true} exco={{ uniqueID: v1() }} handleUpdateExco={handleUpdateExco} />
+					</div>
+
+					<div className={`${comp_styles.img_input} rounded-[5px] mild-shadow mt-4 flex flex-col items-center justify-center`}>
+						{group_picture && (
+							<img
+								alt='Select Executive Group Photo'
+								style={{ width: '100%', height: '100%', objectFit: 'cover', maxHeight: '300px' }}
+								src={group_picture}
+							/>
+						)}
+						{!group_picture && <div className='font-medium-custom color-primary'>Click to Upload Executive Group Photo</div>}
+						<input onChange={handleThumbnailUpload} type='file' id={`${comp_styles.avatar_input}`} accept='image/*' />
+					</div>
 				</div>
-			</div>
-			<div className='flex items-center justify-center my-4'>
-				{isSubmitting && <CircularProgress style={{ color: SITE_DATA.THEME_COLOR, height: '50px', width: '50px' }} />}
-				{!isSubmitting && (
-					<React.Fragment>
-						<Button onClick={handleUpdate} variant='contained' className='font-medium-custom normal-case btn-site'>
-							<SupervisorAccountOutlinedIcon sx={{ fontSize: '22px', my: 'auto', mr: 1 }} /> Update Group
-						</Button>
-						<DeleteExcoGroup allGroups={allGroups} setAllGroups={setAllGroups} session={session} isNew={isNew} group={group} />
-					</React.Fragment>
-				)}
-			</div>
-		</Paper>
+				<div className='flex items-center justify-center my-4'>
+					{isSubmitting && <CircularProgress style={{ color: SITE_DATA.THEME_COLOR, height: '50px', width: '50px' }} />}
+					{!isSubmitting && (
+						<React.Fragment>
+							<Button onClick={handleUpdate} variant='contained' className='font-medium-custom normal-case btn-site'>
+								<SupervisorAccountOutlinedIcon sx={{ fontSize: '22px', my: 'auto', mr: 1 }} /> Update Group
+							</Button>
+							<DeleteExcoGroup allGroups={allGroups} setAllGroups={setAllGroups} session={session} isNew={isNew} group={group} />
+						</React.Fragment>
+					)}
+				</div>
+			</Paper>
+		</React.Fragment>
 	);
 };
 

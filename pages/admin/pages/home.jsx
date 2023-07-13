@@ -3,7 +3,7 @@
 import { AdminLayout, ControlledAccordion, ImageTag, MuiModal } from '@/components';
 import { API_ROUTES, CLOUD_ASSET_BASEURL, APP_ROUTES, MEMBER_ROLES, SITE_DATA } from '@/config';
 import React, { useState } from 'react';
-import { DispatchUserAuth } from '@/utils/misc_functions';
+import { DispatchUserAuth, handleReloadPageData } from '@/utils/misc_functions';
 import AuthController from '@/pages/api/auth/controller';
 import AdminController from '@/pages/api/admin/controller';
 import CheckAdminRestriction from '@/middlewares/check_admin_restriction';
@@ -37,10 +37,6 @@ import { validate } from '@/utils/validate';
 import { handleClientAPIRequestErrors } from '@/utils/errors';
 import { patchFormDataAPI, postFormDataAPI } from '@/utils/api_client_side';
 import NewspaperSharpIcon from '@mui/icons-material/NewspaperSharp';
-
-const handleReload = (router) => {
-	return router.replace(router.asPath);
-};
 
 const RenderSlideSettingComponent = ({ homePageSettings, slide, allSlides, slideIndex, session }) => {
 	const dispatch = useDispatch();
@@ -114,7 +110,7 @@ const RenderSlideSettingComponent = ({ homePageSettings, slide, allSlides, slide
 				setIsSubmitting(false);
 				dispatch({ type: GLOBALTYPES.TOAST, payload: { success: res?.data?.message } });
 				setSlideData({ ...slideData, ...res?.data?.updatedSlideData });
-				handleReload(router);
+				handleReloadPageData(router);
 				handleCloseModal();
 			}
 		} catch (err) {
@@ -335,7 +331,7 @@ const AboutUsSettings = ({ session, homePageSettings }) => {
 
 			if (res?.status === 200) {
 				setIsSubmitting(false);
-				handleReload(router);
+				handleReloadPageData(router);
 			}
 		} catch (err) {
 			setIsSubmitting(false);
@@ -475,17 +471,19 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 					index?.secondname ? index?.secondname : ''
 				}` === e.target.value
 		)[0];
+		// console.log({ matchingIndex });
 		setSectionData({
 			...sectionData,
-			president_fullname: `${matchingIndex[0]?.lastname ? matchingIndex[0]?.lastname : ''} ${
-				matchingIndex[0]?.firstname ? matchingIndex[0]?.firstname : ''
-			} ${matchingIndex[0]?.secondname ? matchingIndex[0]?.secondname : ''}`,
+			president_fullname: `${matchingIndex?.lastname ? matchingIndex?.lastname : ''} ${
+				matchingIndex?.firstname ? matchingIndex?.firstname : ''
+			} ${matchingIndex?.secondname ? matchingIndex?.secondname : ''}`,
 			president_avatar: matchingIndex?.avatar,
 		});
 	};
 	const [errors, setErrors] = useState({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const handleUpdate = async () => {
+		console.log({ sectionData });
 		setErrors({
 			semester_theme: !semester_theme && 'This field is required!',
 			semester_emphasis: !semester_emphasis && 'This field is required!',
@@ -506,7 +504,7 @@ const FromPresidentDeskSettings = ({ session, homePageSettings, currentExcos = [
 
 			if (res?.status === 200) {
 				setIsSubmitting(false);
-				handleReload(router);
+				handleReloadPageData(router);
 			}
 		} catch (err) {
 			setIsSubmitting(false);
