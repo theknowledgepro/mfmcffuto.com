@@ -14,7 +14,8 @@ const FromthePresidentsDesk = ({ homePageSettings }) => {
 			</h2>
 			<div className={`items-center justify-center grid xss:grid-cols-1 md:grid-cols-2`}>
 				<div className={`col-span-1 mb-5`}>
-					<div className={`line-height-2 xss:text-[26px] md:text-[40px] font-medium-custom mt-3 color-primary ${comp_styles.category_title}`}>
+					<div
+						className={`line-height-2 xss:text-[26px] md:text-[40px] font-medium-custom mt-3 color-primary normal-case ${comp_styles.category_title}`}>
 						{homePageSettings?.from_the_president_desk?.semester_theme}
 					</div>
 					<div className={`mt-2 font-medium-custom`}>
@@ -26,7 +27,8 @@ const FromthePresidentsDesk = ({ homePageSettings }) => {
 					</div>
 
 					<pre
-						className={`${comp_styles.tab_body} mt-3`}
+						className={`${comp_styles.tab_body} line-height-1b p-0 m-0 mt-3`}
+						style={{ whiteSpace: 'pre-wrap' }}
 						dangerouslySetInnerHTML={{ __html: homePageSettings?.from_the_president_desk?.writings }}></pre>
 				</div>
 
