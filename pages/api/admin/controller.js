@@ -385,7 +385,17 @@ const AdminController = {
 			await connectDB();
 
 			const excosGroup = await FellowshipExcos.findOne({ current: true }).select('-__v -createdAt -updatedAt -_id').sort({ createdAt: -1 });
-			return responseLogic({ SSG: SSG, req, res, status: 200, data: excosGroup });
+
+			const { removeFields = [] } = req.query;
+			const filteredExcoData = {
+				...excosGroup,
+				excos: excosGroup?.excos?.map((exco, index) => {
+					for (var i = 0; i < removeFields?.length; i++) delete exco[removeFields[i]];
+					return exco;
+				}),
+			};
+
+			return responseLogic({ SSG: SSG, req, res, status: 200, data: filteredExcoData });
 		} catch (err) {
 			return responseLogic({ SSG: SSG, res, catchError: err });
 		}

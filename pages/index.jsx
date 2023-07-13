@@ -108,11 +108,11 @@ const HomePage = ({ metatags, settings, recentBlogs, blogsettings, worshipDays, 
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
-				<MeetAcadTeamSection />
+				<MeetCurrentExecutives currentExcosGroup={currentExcosGroup} />
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-two)]`}>
-				<MeetCurrentExecutives currentExcosGroup={currentExcosGroup} />
+				<MeetAcadTeamSection />
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
@@ -161,6 +161,7 @@ export async function getServerSideProps({ req, res, query }) {
 	const homePageSettings = await AdminController.getPageSettings(req, res, true);
 
 	// ** GET CURRENT EXCOS
+	req.query.removeFields = ['mobile', 'department', 'about', 'email', 'skills', 'hobbies', 'uniqueID', 'gender', ''];
 	const currentExcosGroup = await AdminController.getCurrentFellowshipExcosGroup(req, res, true);
 	return {
 		props: {

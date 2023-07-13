@@ -10,6 +10,9 @@ import { ExcoCard } from '.';
 const MeetCurrentExecutives = ({ currentExcosGroup, carouselSettings = {} }) => {
 	const { isMatchWidth: base } = UseMediaQuery({ vw: '520px' });
 	const { isMatchWidth: sm } = UseMediaQuery({ vw: '920px' });
+
+	const [beforeChange, setBeforeChange] = React.useState(0);
+	const [afterChange, setAfterChange] = React.useState(0);
 	const defaultCarouselSettings = {
 		dots: true,
 		infinite: true,
@@ -20,10 +23,11 @@ const MeetCurrentExecutives = ({ currentExcosGroup, carouselSettings = {} }) => 
 		speed: 700,
 		slidesToShow: currentExcosGroup?.excos?.length >= 3 ? (base ? 1 : sm ? 2 : 3) : 1,
 		slidesToScroll: currentExcosGroup?.excos?.length >= 3 ? (base ? 1 : sm ? 1 : 1) : 1,
+		beforeChange: (current, next) => setBeforeChange(next),
+		afterChange: (current) => setAfterChange(current),
 		...carouselSettings,
 	};
 
-	console.log({ md: currentExcosGroup?.excos });
 	return (
 		<section className='w-full flex flex-col items-center justify-center mb-5'>
 			<h2
@@ -36,7 +40,7 @@ const MeetCurrentExecutives = ({ currentExcosGroup, carouselSettings = {} }) => 
 			<div className='w-full'>
 				<Slider className='relative' {...defaultCarouselSettings}>
 					{currentExcosGroup?.excos?.map((exco, index) => (
-						<ExcoCard key={index} exco={exco} wrapperClassName={''} />
+						<ExcoCard isActiveIndex={afterChange === index} key={index} exco={exco} wrapperClassName={''} />
 					))}
 				</Slider>
 			</div>

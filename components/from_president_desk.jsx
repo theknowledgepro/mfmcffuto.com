@@ -3,6 +3,7 @@
 import React from 'react';
 import comp_styles from './components.module.css';
 import { ImageTag } from '.';
+import { CLOUD_ASSET_BASEURL, ASSETS, S3FOLDERS } from '@/config';
 
 const FromthePresidentsDesk = ({ homePageSettings }) => {
 	return (
@@ -35,7 +36,13 @@ const FromthePresidentsDesk = ({ homePageSettings }) => {
 				<div className='col-span-1 mb-5 flex flex-col items-center justify-center'>
 					<div className='w-full h-full flex flex-col items-center justify-center'>
 						<ImageTag
-							src={homePageSettings?.from_the_president_desk?.president_avatar}
+							src={
+								homePageSettings?.from_the_president_desk?.president_avatar
+									? homePageSettings?.from_the_president_desk?.president_avatar?.includes(S3FOLDERS.EXCOS_AVATARS)
+										? `${CLOUD_ASSET_BASEURL}/${homePageSettings?.from_the_president_desk?.president_avatar}`
+										: homePageSettings?.from_the_president_desk?.president_avatar
+									: ASSETS.MALE_AVATAR
+							}
 							className={`shadow-[0_0_3px_rgba(166,53,144,0.8)] w-[340px] h-[340px] rounded-[50%] border border-zinc-400`}
 							alt='fellowship-president'
 						/>
