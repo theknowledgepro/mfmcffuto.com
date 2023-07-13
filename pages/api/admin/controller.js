@@ -379,13 +379,13 @@ const AdminController = {
 			return responseLogic({ SSG: SSG, res, catchError: err });
 		}
 	},
-	getCurrentFellowshipExcos: async (req, res, SSG = false) => {
+	getCurrentFellowshipExcosGroup: async (req, res, SSG = false) => {
 		try {
 			if (req.method !== 'GET') return responseLogic({ SSG: SSG, req, res, status: 404, data: { message: 'This route does not exist!' } });
 			await connectDB();
 
-			const excosGroups = await FellowshipExcos.findOne({ current: true }).sort({ createdAt: -1 });
-			return responseLogic({ SSG: SSG, req, res, status: 200, data: excosGroups });
+			const excosGroup = await FellowshipExcos.findOne({ current: true }).select('-__v -createdAt -updatedAt -_id').sort({ createdAt: -1 });
+			return responseLogic({ SSG: SSG, req, res, status: 200, data: excosGroup });
 		} catch (err) {
 			return responseLogic({ SSG: SSG, res, catchError: err });
 		}

@@ -26,7 +26,7 @@ import React from 'react';
 import WebController from '@/pages/api/controller';
 import AdminController from '@/pages/api/admin/controller';
 
-const HomePage = ({ metatags, settings, recentBlogs, blogsettings, worshipDays, homePageSettings }) => {
+const HomePage = ({ metatags, settings, recentBlogs, blogsettings, worshipDays, homePageSettings, currentExcosGroup }) => {
 	const carouselSettings = {
 		dots: false,
 		infinite: true,
@@ -60,7 +60,9 @@ const HomePage = ({ metatags, settings, recentBlogs, blogsettings, worshipDays, 
 								className={`relative xss:ml-[8px] md:ml-[70px] pt-[100px] pb-[30px] pr-[100px ] border-l-[15px] border-[var(--color-primary)] xss:h-[70%] md:h-[62%] before:content-[''] before:absolute before:top-0 before:left-0 before:w-[100px] before:h-[15px] before:bg-[var(--color-primary)] after:content-[''] after:absolute after:top-[100%] after:mt-[-15px] after:left-0 after:w-[100px] after:h-[15px] after:bg-[var(--color-primary)]`}>
 								<div className={`flex justify-start`}>
 									<div className={`px-3 xss:w-[90vw] md:w-[60vw]`}>
-										<h1 className={`line-height-2 xss:text-[30px] md:text-[50px] font-[600] text-white mb-4`}>{slide?.main_headline}</h1>
+										<h1 className={`line-height-2 xss:text-[30px] md:text-[50px] font-[600] text-white mb-4`}>
+											{slide?.main_headline}
+										</h1>
 										<div className='xss:text-[17px] md:text-[20px] font-[400] text-white mb-4 pb-2'>
 											<Typewriter
 												onInit={(typewriter) => {
@@ -110,7 +112,7 @@ const HomePage = ({ metatags, settings, recentBlogs, blogsettings, worshipDays, 
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-two)]`}>
-				<MeetCurrentExecutives />
+				<MeetCurrentExecutives currentExcosGroup={currentExcosGroup} />
 			</div>
 
 			<div className={`${styles.page_padding} py-[40px] w-full bg-[var(--bg-fair-one)]`}>
@@ -157,6 +159,9 @@ export async function getServerSideProps({ req, res, query }) {
 	// ** GET PAGE CONFIG FROM DB
 	req.page_settings = 'Home-Page-Settings';
 	const homePageSettings = await AdminController.getPageSettings(req, res, true);
+
+	// ** GET CURRENT EXCOS
+	const currentExcosGroup = await AdminController.getCurrentFellowshipExcosGroup(req, res, true);
 	return {
 		props: {
 			metatags: JSON.parse(
@@ -171,6 +176,7 @@ export async function getServerSideProps({ req, res, query }) {
 			recentBlogs: recentBlogs?.length ? recentBlogs : [],
 			worshipDays: worshipDays?.data?.length ? worshipDays?.data : [],
 			homePageSettings: homePageSettings?.data?.pageSettings,
+			currentExcosGroup: currentExcosGroup?.data ? currentExcosGroup?.data : {},
 		},
 	};
 }

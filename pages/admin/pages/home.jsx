@@ -679,12 +679,12 @@ export async function getServerSideProps({ req, res }) {
 	req.page_settings = 'Home-Page-Settings';
 	const homePageSettings = await AdminController.getPageSettings(req, res, true);
 
-	const currentExcos = await AdminController.getCurrentFellowshipExcos(req, res, true);
+	const currentExcosGroup = await AdminController.getCurrentFellowshipExcosGroup(req, res, true);
 	return {
 		props: {
 			userAuth: verifyUserAuth?.user ? verifyUserAuth : {},
 			homePageSettings: homePageSettings?.data?.pageSettings,
-			currentExcos: currentExcos?.data?.excos ? currentExcos?.data?.excos : [],
+			currentExcos: currentExcosGroup?.data?.excos?.length ? currentExcosGroup?.data?.excos : [],
 		},
 	};
 }

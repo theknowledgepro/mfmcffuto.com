@@ -42,6 +42,7 @@ export { default as SermonsPreviewSection } from './sermons_preview_section';
 export { default as FellowshipGroupsPreview } from './fellowship_groups_preview';
 export { default as SeeMoreLink } from './see_more_link';
 export { default as ControlledAccordion } from './controlled_accordion';
+export { default as ExcoCard } from './exco_card';
 
 // ** BLOG SECTION COMPONENTS
 export { default as CategoriesSection } from './blogs/categories_section';
