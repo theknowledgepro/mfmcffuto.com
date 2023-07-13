@@ -6,6 +6,7 @@ import { Button } from '@mui/material';
 import { APP_ROUTES, ASSETS } from '@/config';
 import Link from 'next/link';
 import ImageTag from './image_tag';
+import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 
 const AboutUsIntro = ({ sitesettings, homePageSettings }) => {
 	const [tabIndex, setTabIndex] = useState(0);
@@ -65,7 +66,7 @@ const AboutUsIntro = ({ sitesettings, homePageSettings }) => {
 							<div className='pt-3 text-[16px]'>
 								{homePageSettings?.our_mission?.map((mission, index) => (
 									<div key={index} className='flex w-full my-2' style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-										<ImageTag src={ASSETS.PIN_EMOJI} className={`mr-2 my-auto`} style={{ width: '25px', height: '25px' }} />
+										<LocalOfferOutlinedIcon className={`mr-2 my-auto text-[25px] color-primary`} />
 										<div className='my-auto' style={{ width: 'calc(100% - 40px)' }}>
 											{mission?.trim()}
 										</div>
