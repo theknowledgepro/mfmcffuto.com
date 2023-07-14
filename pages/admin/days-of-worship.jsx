@@ -433,6 +433,10 @@ const DaysOfWorship = ({ userAuth, worshipDays }) => {
 	DispatchUserAuth({ userAuth });
 	const session = useSelector((state) => state.auth);
 
+	const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+	const sortByDay = (array, sortArray) => {
+		return [...array].sort((a, b) => sortArray.indexOf(a.day) - sortArray.indexOf(b.day));
+	};
 	return (
 		<AdminLayout
 			metatags={{ meta_title: `Days Of Worship | ${SITE_DATA.NAME}` }}
@@ -440,7 +444,7 @@ const DaysOfWorship = ({ userAuth, worshipDays }) => {
 			pageTitle={'Days Of Worship'}>
 			<CreateWorhipEvent allWorshipDays={worshipDays} session={session} />
 			<div className='w-full grid xss:grid-cols-1 sm:grid-cols-2 md:grid-cols-3'>
-				{worshipDays.map((event, index) => (
+				{sortByDay(worshipDays, days).map((event, index) => (
 					<div className='col-span-1 md:px-1 py-3' key={index}>
 						<WorshipEvent cardWrapperClassName='w-full' event={event} />
 						<div className='flex items-center justify-center gap-2'>

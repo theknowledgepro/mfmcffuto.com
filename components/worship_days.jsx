@@ -84,7 +84,7 @@ const WorshipDays = ({
 	],
 }) => {
 	const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-	const sortDays = (array, sortArray) => {
+	const sortByDay = (array, sortArray) => {
 		return [...array].sort((a, b) => sortArray.indexOf(a.day) - sortArray.indexOf(b.day));
 	};
 
@@ -96,7 +96,7 @@ const WorshipDays = ({
 				<span className='text-[var(--color-primary)] text-[30px] mr-2'>Worship</span>with Us!
 			</h2>
 			<div className='w-full grid xss:grid-cols-1 sm:grid-cols-2 md:grid-cols-3'>
-				{sortDays(worshipDays, days).map((event, index) => (
+				{sortByDay(worshipDays, days).map((event, index) => (
 					<WorshipEvent event={event} key={index} />
 				))}
 			</div>

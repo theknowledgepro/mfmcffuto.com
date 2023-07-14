@@ -797,6 +797,7 @@ const RawReqController = {
 					return responseLogic({ req, res, status: 401, data: { message: 'You are not authorized to perform this action!' } });
 
 				const {
+					_id,
 					name,
 					name_anchor_scripture,
 					purpose,
@@ -834,7 +835,7 @@ const RawReqController = {
 					await newExcoGroup.save();
 				} else {
 					newExcoGroup = await FellowshipExcos.findOneAndUpdate(
-						{ name },
+						{ _id },
 						{
 							name,
 							name_anchor_scripture,
