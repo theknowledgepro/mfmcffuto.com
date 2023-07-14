@@ -388,12 +388,13 @@ const AdminController = {
 
 			const { removeFields = [] } = req.query;
 			const filteredExcoData = {
-				...excosGroup,
-				excos: excosGroup?.excos?.map((exco, index) => {
+				...excosGroup?._doc,
+				excos: excosGroup?._doc?.excos?.map((exco, index) => {
 					for (var i = 0; i < removeFields?.length; i++) delete exco[removeFields[i]];
 					return exco;
 				}),
 			};
+			console.log({ filteredExcoData });
 
 			return responseLogic({ SSG: SSG, req, res, status: 200, data: filteredExcoData });
 		} catch (err) {

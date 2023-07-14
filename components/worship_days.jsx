@@ -83,6 +83,11 @@ const WorshipDays = ({
 		{},
 	],
 }) => {
+	const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+	const sortDays = (array, sortArray) => {
+		return [...array].sort((a, b) => sortArray.indexOf(a.day) - sortArray.indexOf(b.day));
+	};
+
 	return (
 		<section className='w-full flex flex-col items-center justify-center mb-5'>
 			<h2
@@ -91,7 +96,7 @@ const WorshipDays = ({
 				<span className='text-[var(--color-primary)] text-[30px] mr-2'>Worship</span>with Us!
 			</h2>
 			<div className='w-full grid xss:grid-cols-1 sm:grid-cols-2 md:grid-cols-3'>
-				{worshipDays.map((event, index) => (
+				{sortDays(worshipDays, days).map((event, index) => (
 					<WorshipEvent event={event} key={index} />
 				))}
 			</div>

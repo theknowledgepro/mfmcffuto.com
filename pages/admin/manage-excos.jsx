@@ -31,7 +31,6 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import CancelIcon from '@mui/icons-material/Cancel';
 import comp_styles from '@/components/components.module.css';
 import { GLOBALTYPES } from '@/redux/types';
@@ -57,15 +56,15 @@ import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlin
 import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
 import { v1 } from 'uuid';
 
-const DeleteExcoGroup = ({ session, allGroups, setAllGroups, group, isNew }) => {
+const DeleteExcoGroup = ({ session, allGroups, setAllGroups, setNewGroup, group, isNew }) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const [openModal, setOpenModal] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const handleDeleteWorshipEvent = async () => {
+	const handleDeleteExcoGroup = async () => {
 		if (isNew) {
-			setAllGroups(allGroups.filter((index) => !Object.keys(index).length === 0));
+			setNewGroup(false);
 			setOpenModal(false);
 			window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
 			return;
@@ -113,7 +112,7 @@ const DeleteExcoGroup = ({ session, allGroups, setAllGroups, group, isNew }) => 
 					{!isSubmitting && (
 						<React.Fragment>
 							<Button
-								onClick={handleDeleteWorshipEvent}
+								onClick={handleDeleteExcoGroup}
 								className='w-full normal-case bg-red-600 text-white'
 								color='danger'
 								variant='contained'>
@@ -139,7 +138,11 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 	const dispatch = useDispatch();
 	const [openModal, setOpenModal] = useState(false);
 
-	const initialState = { ...exco, avatar: exco?.avatar ? `${CLOUD_ASSET_BASEURL}/${exco?.avatar?.trim()}` : ASSETS.MALE_AVATAR.src };
+	const initialState = {
+		uniqueID: v1(),
+		...exco,
+		avatar: exco?.avatar ? `${CLOUD_ASSET_BASEURL}/${exco?.avatar?.trim()}` : ASSETS.MALE_AVATAR.src,
+	};
 	const [excoData, setExcoData] = useState(initialState);
 	const {
 		firstname = '',
@@ -155,7 +158,6 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 		skills = [],
 		department = '',
 		office = '',
-		uniqueID = v1(),
 	} = excoData;
 	const [file, setFile] = useState(null);
 
@@ -226,6 +228,7 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 	};
 
 	const handleAddExco = async () => {
+		// console.log({ exco: exco?.uniqueID, all: allExcos.filter((index) => index?.uniqueID !== exco?.uniqueID) });
 		setErrors({
 			firstname: !firstname && 'This field is required.',
 			secondname: !secondname && 'This field is required.',
@@ -285,8 +288,8 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 					{<SupervisorAccountOutlinedIcon fontSize='small' sx={{ mr: '5px' }} />}
 					{isNew
 						? `Add New Executive`
-						: `${excoData?.lastname ? excoData?.lastname : ''} ${excoData?.firstname ? excoData?.firstname : ''} ${
-								excoData?.secondname ? excoData?.secondname : ''
+						: `${exco?.lastname ? exco?.lastname : ''} ${exco?.firstname ? exco?.firstname : ''} ${
+								exco?.secondname ? exco?.secondname : ''
 						  }`}
 				</div>
 			}
@@ -695,7 +698,7 @@ const ExcoData = ({ session, exco, allExcos, isNew, handleUpdateExco }) => {
 	);
 };
 
-const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew, isNewAlert }) => {
+const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, setNewGroup, group, isNew, isNewAlert }) => {
 	const dispatch = useDispatch();
 	const router = useRouter();
 	const initialState =
@@ -712,7 +715,6 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 					resignation_date: '',
 					group_picture: '',
 					current: false,
-					uniqueID: v1(),
 			  };
 
 	const [groupData, setGroupData] = useState(initialState);
@@ -811,8 +813,8 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 		<React.Fragment>
 			{!isNew && (
 				<div className='max-w-[600px] mx-auto mt-8 border rounded-[5px] border-zinc-300 py-3 w-full text-center text-[22px]'>
-					<span className='color-primary text-[22px] mx-1'>{group.name}</span>
-					of the {group.academic_session} Academic Session.
+					The <span className='color-primary text-[22px] mx-1'>{group.name}</span> Executives of the {group.academic_session} Academic
+					Session.
 				</div>
 			)}
 			<Paper className='mx-auto max-w-[600px] p-2 my-5'>
@@ -976,7 +978,7 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 								session={session}
 								allExcos={excos}
 								key={index}
-								exco={{ ...exco, uniqueID: v1() }}
+								exco={{ uniqueID: v1(), ...exco }}
 								handleUpdateExco={handleUpdateExco}
 							/>
 						))}
@@ -1002,7 +1004,14 @@ const ExcoGroup = ({ session, resetAlerts, allGroups, setAllGroups, group, isNew
 							<Button onClick={handleUpdate} variant='contained' className='font-medium-custom normal-case btn-site'>
 								<SupervisorAccountOutlinedIcon sx={{ fontSize: '22px', my: 'auto', mr: 1 }} /> Update Group
 							</Button>
-							<DeleteExcoGroup allGroups={allGroups} setAllGroups={setAllGroups} session={session} isNew={isNew} group={group} />
+							<DeleteExcoGroup
+								allGroups={allGroups}
+								setAllGroups={setAllGroups}
+								setNewGroup={setNewGroup}
+								session={session}
+								isNew={isNew}
+								group={group}
+							/>
 						</React.Fragment>
 					)}
 				</div>
@@ -1043,6 +1052,7 @@ const ManageExcos = ({ userAuth, excosGroups }) => {
 				<ExcoGroup
 					allGroups={excosGroupsList}
 					setAllGroups={setExcosGroupsList}
+					setNewGroup={setNewGroup}
 					isNewAlert={newAlreadyExistsAlert}
 					resetAlerts={() => {
 						setNewAlreadyExistsAlert(false);
@@ -1050,13 +1060,14 @@ const ManageExcos = ({ userAuth, excosGroups }) => {
 					}}
 					isNew={true}
 					session={session}
-					group={{}}
+					group={{ uniqueID: v1() }}
 				/>
 			)}
 			{excosGroupsList?.map((group, index) => (
 				<ExcoGroup
 					allGroups={excosGroupsList}
 					setAllGroups={setExcosGroupsList}
+					setNewGroup={setNewGroup}
 					resetAlerts={() => {
 						setNewAlreadyExistsAlert(false);
 						setNewGroup(false);
@@ -1065,7 +1076,7 @@ const ManageExcos = ({ userAuth, excosGroups }) => {
 					isNew={Object.keys(group)?.length === 0}
 					key={index}
 					session={session}
-					group={group}
+					group={{ uniqueID: v1(), ...group }}
 				/>
 			))}
 		</AdminLayout>

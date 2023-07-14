@@ -657,7 +657,7 @@ const HomePageSettings = ({ userAuth, homePageSettings, currentExcos }) => {
 	);
 };
 
-export async function getServerSideProps({ req, res }) {
+export async function getServerSideProps({ req, res, query }) {
 	// ** REDIRECT TO LOGIN IF COOKIE NOT EXIST
 	const verifyUserAuth = await AuthController.generateAccessToken(req, res);
 	if (verifyUserAuth?.redirect) return verifyUserAuth;
@@ -679,6 +679,8 @@ export async function getServerSideProps({ req, res }) {
 	req.page_settings = 'Home-Page-Settings';
 	const homePageSettings = await AdminController.getPageSettings(req, res, true);
 
+	req.query = query;
+	req.query.removeFields = [];
 	const currentExcosGroup = await AdminController.getCurrentFellowshipExcosGroup(req, res, true);
 	return {
 		props: {
